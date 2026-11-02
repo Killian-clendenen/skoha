@@ -1,10 +1,11 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey } from './core.js';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove } from './core.js';
+import { KB } from './kb.js';
 
-const KEY = 'freereps.v2';
+const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
-const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10 };
+const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true };
 let db = load();
 function load() {
   try {
@@ -58,16 +59,30 @@ function boardOpts() {
 }
 function tryMove(chess, from, to, promo = 'q') { try { return chess.move({ from, to, promotion: promo }); } catch { return null; } }
 
-// ---------- tabs ----------
-document.querySelectorAll('nav button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+// ---------- router: #/  #/opening/<id>  #/line/<id>/<n>  #/train  #/build  #/settings ----------
 function showTab(t) {
-  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  if (t !== 'drill') drillCg.setAutoShapes([]); if (t !== 'line') lineCg.setAutoShapes([]);
   document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === t));
-  if (t === 'home') renderHome();
+  const nav = { home: 'home', opening: 'home', line: 'home', drill: 'drill', build: 'build', settings: 'settings' }[t];
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === nav));
   if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); }
   if (t === 'build') buildCg.redrawAll();
+  if (t === 'line') lineCg.redrawAll();
   if (t === 'settings') renderSettings();
+  scrollTo({ top: 0, behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto' });
 }
+const go = h => { if (location.hash !== h) history.pushState(null, '', h); route(); };
+function route() {
+  const [, p, a, b] = (location.hash || '#/').split('/');
+  if (p === 'opening' && repById(a)) { showTab('opening'); renderOpening(repById(a)); }
+  else if (p === 'line' && repById(a)) { showTab('line'); openLine(repById(a), Number(b) || 0); }
+  else if (p === 'train') showTab('drill');
+  else if (p === 'build') showTab('build');
+  else if (p === 'settings') showTab('settings');
+  else { showTab('home'); renderHome(); }
+}
+addEventListener('popstate', route); addEventListener('hashchange', route);
+const repById = id => db.reps.find(r => r.id === id || r.starter === id);
 
 // ---------- home ----------
 function repStats(rep, now = Date.now()) {
@@ -78,55 +93,150 @@ function repStats(rep, now = Date.now()) {
   return { total: keys.size, due, fresh, learned, mistakes, chapters: new Set(rep.lines.map(l => l.ch)).size };
 }
 let STARTERS = [];
-fetch('starters/index.json').then(r => r.json()).then(j => { STARTERS = j; renderHome(); }).catch(() => {});
-async function addStarter(s) {
-  const { lines, errors } = parsePgn(await (await fetch('starters/' + s.file)).text(), s.name);
-  if (errors.length) console.warn(errors);
-  const rep = { id: uid(), name: s.name, color: s.color, lines, starter: s.id }; db.reps.push(rep); save(); return rep;
+async function loadStarters() {
+  try { STARTERS = await (await fetch('starters/index.json')).json(); } catch { STARTERS = []; }
+  db.removed ||= [];
+  for (const s of STARTERS) {
+    let pg; try { pg = parsePgn(await (await fetch('starters/' + s.file)).text(), s.name); } catch { continue; }
+    if (pg.errors.length) console.warn(s.id, pg.errors);
+    let rep = db.reps.find(r => r.starter === s.id);
+    if (!rep && !db.removed.includes(s.id)) { rep = { id: s.id, name: s.name, color: s.color, starter: s.id }; db.reps.push(rep); }
+    if (rep) { rep.lines = pg.lines; rep.intros = pg.intros; }   // refresh annotations; progress is keyed by position so it survives
+  }
+  save();
 }
+const metaOf = rep => STARTERS.find(s => s.id === rep.starter) || {};
+const chaptersOf = rep => [...new Set(rep.lines.map(l => l.ch))];
+function ocard(rep, extra = '') {
+  const s = repStats(rep), m = metaOf(rep), el = document.createElement('div');
+  el.className = 'ocard' + (m.featured ? ' featured' : ''); el.dataset.id = rep.id;
+  el.innerHTML = `<div class="eco">${esc(m.eco || (rep.color === 'w' ? 'White' : 'Black'))}</div>
+    <h3>${esc(rep.name)}${m.featured ? '<span class="badge">Featured</span>' : ''}</h3>
+    <div class="muted">${esc(KB[rep.starter]?.tagline || m.blurb || '')}</div>
+    <div class="chips">${chaptersOf(rep).map(c => `<a class="chip" href="#/opening/${rep.id}" data-ch="${esc(c)}">${esc(c)}</a>`).join('')}</div>${extra}
+    <div class="bar"><i style="width:${s.total ? 100 * s.learned / s.total : 0}%"></i></div>
+    <div class="muted">${rep.lines.length} lines · ${s.total} moves · ${s.learned} learned · ${s.due} due</div>`;
+  el.onclick = e => { if (e.target.closest('a.chip.vs')) return; e.preventDefault(); const ch = e.target.closest('.chip')?.dataset.ch; go('#/opening/' + rep.id); if (ch) setTimeout(() => document.getElementById('ch-' + slug(ch))?.scrollIntoView({ behavior: 'smooth' }), 50); };
+  return el;
+}
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 function renderHome() {
   const T = { total: 0, due: 0, fresh: 0, learned: 0 };
   db.reps.forEach(r => { const s = repStats(r); for (const k in T) T[k] += s[k]; });
   const st = db.stats || { reviews: 0, correct: 0 };
-  $('#stats').innerHTML = [[T.due, 'due now'], [T.fresh, 'new moves'], [T.learned + '/' + T.total, 'moves learned'],
-    [st.reviews ? Math.round(100 * st.correct / st.reviews) + '%' : '–', 'accuracy (' + st.reviews + ' answers)'], [db.streak?.n || 0, 'day streak']]
+  $('#stats').innerHTML = [[T.due, 'due now'], [T.learned + '/' + T.total, 'moves learned'],
+    [st.reviews ? Math.round(100 * st.correct / st.reviews) + '%' : '–', 'accuracy'], [db.streak?.n || 0, 'day streak']]
     .map(([n, l]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
-  $('#replist').innerHTML = db.reps.length ? '' : '<p class="muted">No repertoires yet — add a starter below or build your own.</p>';
-  db.reps.forEach(r => {
-    const s = repStats(r); const el = document.createElement('div'); el.className = 'card';
-    el.innerHTML = `<b>${esc(r.name)}</b><span class="muted">${r.color === 'w' ? 'White' : 'Black'} · ${s.chapters} chapters · ${r.lines.length} lines · ${s.total} moves</span>
-      <div class="bar"><i style="width:${s.total ? 100 * s.learned / s.total : 0}%"></i></div>
-      <span class="muted">${s.due} due · ${s.fresh} new · ${s.mistakes} with mistakes</span>
-      <div class="row"><button class="primary">Train</button><button>Edit</button><button>PGN</button><button class="danger">Delete</button></div>`;
-    const [d, e, p, x] = el.querySelectorAll('button');
-    d.onclick = () => { showTab('drill'); $('#drillRep').value = r.id; startSession('due'); };
-    e.onclick = () => editRep(r);
-    p.onclick = () => download(r.name.replace(/\W+/g, '_') + '.pgn', toPgn(r), 'application/x-chess-pgn');
-    x.onclick = () => { if (confirm('Delete ' + r.name + '?')) { db.reps = db.reps.filter(q => q !== r); delete db.cards[r.id]; save(); renderHome(); } };
-    $('#replist').append(el);
-  });
-  $('#starters').innerHTML = '';
-  STARTERS.forEach(s => {
-    const el = document.createElement('div'); el.className = 'card' + (s.featured ? ' featured' : '');
-    const have = db.reps.some(r => r.starter === s.id);
-    el.innerHTML = `<b>${esc(s.name)}${s.featured ? '<span class="badge">Featured</span>' : ''}</b><span class="muted">${s.color === 'w' ? 'White' : 'Black'} · ${esc(s.blurb || '')}</span>
-      <div class="row"><button ${s.featured ? 'class="primary"' : ''}>${have ? 'Add again' : 'Add'}</button></div>`;
-    el.querySelector('button').onclick = async () => { await addStarter(s); renderHome(); };
-    $('#starters').append(el);
-  });
+  const W = $('#whiteList'), B = $('#blackList'), C = $('#customList'); W.innerHTML = B.innerHTML = C.innerHTML = '';
+  const starters = db.reps.filter(r => r.starter).sort((a, b) => STARTERS.findIndex(s => s.id === a.starter) - STARTERS.findIndex(s => s.id === b.starter));
+  const blackFor = w => starters.filter(b => b.color === 'b' && (metaOf(b).answers === metaOf(w).first || (metaOf(b).vs || []).includes(w.starter)));
+  const whiteFor = b => starters.filter(w => w.color === 'w' && (metaOf(b).answers === metaOf(w).first || (metaOf(b).vs || []).includes(w.starter)));
+  const vsChips = (label, list) => list.length ? `<div class="chips"><span class="muted">${label}</span>${list.map(r => `<a class="chip vs" href="#/opening/${r.id}">${esc(r.name)}</a>`).join('')}</div>` : '';
+  starters.filter(r => r.color === 'w').forEach(r => W.append(ocard(r, vsChips('Black answers in your library:', blackFor(r)))));
+  starters.filter(r => r.color === 'b').forEach(r => B.append(ocard(r, vsChips(`Answers 1.${metaOf(r).answers || '?'}${whiteFor(r).length ? ' · meets' : ''}`, whiteFor(r)))));
+  const custom = db.reps.filter(r => !r.starter); $('#customWrap').hidden = !custom.length; custom.forEach(r => C.append(ocard(r)));
+  const removed = STARTERS.filter(s => (db.removed || []).includes(s.id));
+  if (removed.length) { const d = document.createElement('div'); d.className = 'muted'; d.innerHTML = 'Removed starters: ' + removed.map(s => `<button data-restore="${s.id}">Restore ${esc(s.name)}</button>`).join(' ');
+    d.querySelectorAll('button').forEach(b => b.onclick = async () => { db.removed = db.removed.filter(x => x !== b.dataset.restore); await loadStarters(); renderHome(); }); C.after(d); $('#customWrap').hidden = false; }
 }
+
+// ---------- opening page ----------
+let openingTab = 'lines';
+function renderOpening(rep) {
+  const m = metaOf(rep), kb = KB[rep.starter], s = repStats(rep), el = $('#opening');
+  const byCh = {}; rep.lines.forEach((l, i) => (byCh[l.ch] ||= []).push(i));
+  el.innerHTML = `<div class="crumbs"><a href="#/">Home</a> › ${esc(rep.name)}</div>
+  <div class="ohero"><div class="eco">${esc(m.eco || '')} · ${rep.color === 'w' ? 'You play White' : 'You play Black'}</div><h1 class="grad">${esc(rep.name)}</h1>
+    <p class="lead">${esc(kb?.tagline || m.blurb || '')}</p>
+    <div class="row"><button class="primary" data-act="due">Train due (${s.due + Math.min(s.fresh, 999)} to go)</button><button data-act="random">Random lines</button><button data-act="mistakes">Mistakes</button>
+      <button data-act="edit">Edit</button><button data-act="pgn">Export PGN</button><button data-act="del" class="danger">Remove</button></div>
+    <div class="muted">${Object.keys(byCh).length} chapters · ${rep.lines.length} lines · ${s.total} of your moves · ${s.learned} learned · ${s.mistakes} with mistakes</div></div>
+  <div class="otabs"><button data-t="lines" class="${openingTab === 'lines' ? 'on' : ''}">Lines</button>${kb ? `<button data-t="kb" class="${openingTab === 'kb' ? 'on' : ''}">Knowledge base</button>` : ''}</div>
+  <div id="oBody"></div>`;
+  el.querySelectorAll('.otabs button').forEach(b => b.onclick = () => { openingTab = b.dataset.t; renderOpening(rep); });
+  el.querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
+    const a = b.dataset.act;
+    if (['due', 'random', 'mistakes'].includes(a)) { go('#/train'); $('#drillRep').value = rep.id; setMode(a); }
+    if (a === 'edit') editRep(rep);
+    if (a === 'pgn') download(rep.name.replace(/\W+/g, '_') + '.pgn', toPgn(rep), 'application/x-chess-pgn');
+    if (a === 'del' && confirm('Remove ' + rep.name + ' and its progress?')) { db.reps = db.reps.filter(q => q !== rep); delete db.cards[rep.id]; if (rep.starter) (db.removed ||= []).push(rep.starter); save(); go('#/'); }
+  });
+  const body = $('#oBody');
+  if (openingTab === 'kb' && kb) {
+    const list = a => a?.length ? `<ul>${a.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '<p class="muted">—</p>';
+    body.innerHTML = `<div class="kb"><div class="box wide"><h3>Overview</h3><p>${esc(kb.overview)}</p></div>
+      <div class="box wide"><h3>History</h3><p>${esc(kb.history)}</p></div>
+      <div class="box"><h3>Key ideas</h3>${list(kb.ideas)}</div><div class="box"><h3>Typical pawn structures</h3>${list(kb.structures)}</div>
+      <div class="box"><h3>Plans for White</h3>${list(kb.plansWhite)}</div><div class="box"><h3>Plans for Black</h3>${list(kb.plansBlack)}</div>
+      <div class="box"><h3>Traps &amp; tricks</h3>${list(kb.traps)}</div><div class="box"><h3>Model games</h3>${list(kb.games)}</div>
+      <div class="box wide"><h3>Tips</h3>${list(kb.tips)}</div></div>`;
+  } else {
+    body.innerHTML = Object.entries(byCh).map(([ch, idx]) => `<div class="chapter" id="ch-${slug(ch)}"><h3>${esc(ch)}</h3>
+      ${rep.intros?.[ch] ? `<p class="muted">${esc(rep.intros[ch])}</p>` : ''}
+      <div class="row"><button data-chapter="${esc(ch)}">Drill this chapter</button></div>
+      <div class="lines">${idx.map((i, k) => `<a class="lineitem" href="#/line/${rep.id}/${i}"><span class="num">${k + 1}</span><span class="mv">${fmt(rep.lines[i].m)}</span><span class="muted">${rep.lines[i].m.length} ply</span></a>`).join('')}</div></div>`).join('');
+    body.querySelectorAll('[data-chapter]').forEach(b => b.onclick = () => { go('#/train'); $('#drillRep').value = rep.id; fillPickers(); $('#drillChapter').value = b.dataset.chapter; setMode('chapter'); });
+  }
+}
+
+// ---------- line page (study view with annotations + arrows) ----------
+const BRUSH = { G: 'green', R: 'red', Y: 'yellow', B: 'blue' };
+const shapesOf = n => n ? [...(n.cal || []).map(([o, d, c]) => ({ orig: o, dest: d, brush: BRUSH[c] || 'green' })), ...(n.csl || []).map(([o, c]) => ({ orig: o, brush: BRUSH[c] || 'green' }))] : [];
+const lineCg = Chessground($('#lineBoard'), { viewOnly: true, coordinates: true, animation: { enabled: true, duration: 200 }, drawable: { enabled: true, visible: true } });
+const study = { rep: null, li: 0, ply: 0, chess: null, verbose: [] };
+function noteHtml(rep, line, ply, mv, inCheck) {
+  const n = line.n?.[ply]; const mine = (ply % 2 === 0 ? 'w' : 'b') === rep.color;
+  const num = Math.floor(ply / 2) + 1 + (ply % 2 ? '...' : '.');
+  const txt = n?.t ? `<p>${esc(n.t)}</p>` : `<p class="auto">${esc(describeMove(mv, inCheck))}</p>`;
+  return `<div><span class="san">${num} ${esc(line.m[ply])}${esc(n?.g || '')}</span><span class="who ${mine ? 'you' : 'opp'}">${mine ? 'Your move' : 'Opponent'}</span></div>${txt}`;
+}
+function openLine(rep, li) {
+  study.rep = rep; study.li = Math.min(li, rep.lines.length - 1); const line = rep.lines[study.li];
+  const c = new Chess(); study.verbose = line.m.map(s => { const m = c.move(s); return { m, check: c.inCheck(), fen: c.fen() }; });
+  const idx = rep.lines.map((l, i) => i).filter(i => rep.lines[i].ch === line.ch); const k = idx.indexOf(study.li) + 1;
+  $('#lineCrumbs').innerHTML = `<a href="#/">Home</a> › <a href="#/opening/${rep.id}">${esc(rep.name)}</a> › ${esc(line.ch)} › Line ${k}`;
+  $('#lnChapter').textContent = `${rep.name} · ${line.ch}`; $('#lnTitle').textContent = `Line ${k} of ${idx.length}`;
+  lineCg.set({ orientation: cname(rep.color) });
+  $('#lnMoves').innerHTML = line.m.map((s, i) => `${i % 2 ? '' : `<span class="n">${i / 2 + 1}.</span>`}<button data-p="${i + 1}" class="${(i % 2 === 0 ? 'w' : 'b') === rep.color ? 'you' : ''} ${line.n?.[i]?.t ? 'has' : ''}">${esc(s)}${esc(line.n?.[i]?.g || '')}</button>`).join('');
+  $('#lnMoves').querySelectorAll('button').forEach(b => b.onclick = () => studyGo(Number(b.dataset.p)));
+  studyGo(0, true);
+}
+function studyGo(p, silent) {
+  const line = study.rep.lines[study.li]; p = Math.max(0, Math.min(line.m.length, p)); const fwd = p === study.ply + 1; study.ply = p;
+  const v = study.verbose[p - 1];
+  lineCg.set({ fen: v ? v.fen : 'start', lastMove: v ? [v.m.from, v.m.to] : undefined, check: v?.check || false, turnColor: p % 2 ? 'black' : 'white' });
+  lineCg.setAutoShapes(v ? shapesOf(line.n?.[p - 1]) : []);
+  $('#lnNote').innerHTML = v ? noteHtml(study.rep, line, p - 1, v.m, v.check)
+    : `<div><span class="san">Start</span><span class="who opp">${esc(line.ch)}</span></div><p>${esc(study.rep.intros?.[line.ch] || 'Step through the line with ▶ or the → key. Every move comes with its idea.')}</p>`;
+  $('#lnMoves').querySelectorAll('button').forEach(b => b.classList.toggle('cur', Number(b.dataset.p) === p));
+  $('#lnMoves').querySelector('button.cur')?.scrollIntoView({ block: 'nearest' });
+  if (!silent && v && fwd) Sound.play(soundFor(v.m, v.check));
+}
+$('#lnFirst').onclick = () => studyGo(0); $('#lnPrev').onclick = () => studyGo(study.ply - 1); $('#lnNext').onclick = () => studyGo(study.ply + 1); $('#lnLast').onclick = () => studyGo(99);
+$('#lnDrill').onclick = () => { const r = study.rep, li = study.li; go('#/train'); $('#drillRep').value = r.id; fillPickers(); $('#drillLine').value = li; setMode('line'); };
+const lineStep = d => { const r = study.rep, n = (study.li + d + r.lines.length) % r.lines.length; go(`#/line/${r.id}/${n}`); };
+$('#lnPrevLine').onclick = () => lineStep(-1); $('#lnNextLine').onclick = () => lineStep(1);
+addEventListener('keydown', e => {
+  if (!$('#line').classList.contains('active') || e.target.matches('input,textarea,select')) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); studyGo(study.ply + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); studyGo(study.ply - 1); }
+  if (e.key === 'Home') studyGo(0); if (e.key === 'End') studyGo(99);
+});
+
 function download(name, text, type) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click();
 }
 
 // ---------- settings ----------
-const SET = { sSound: 'sound', sVolume: 'volume', sAnim: 'anim', sDelay: 'delay', sPremove: 'premove', sDests: 'dests', sCoords: 'coords', sAutoNext: 'autoNext', sFlip: 'flip', sNew: 'newLimit' };
+const SET = { sSound: 'sound', sVolume: 'volume', sAnim: 'anim', sDelay: 'delay', sPremove: 'premove', sDests: 'dests', sCoords: 'coords', sAutoNext: 'autoNext', sFlip: 'flip', sNew: 'newLimit', sNotes: 'notes' };
 function renderSettings() {
+  $('#sTheme').value = S().theme || 'brown';
   for (const [id, k] of Object.entries(SET)) { const el = $('#' + id); if (el.type === 'checkbox') el.checked = S()[k]; else el.value = S()[k]; }
 }
 for (const [id, k] of Object.entries(SET)) $('#' + id).onchange = e => {
   const el = e.target; S()[k] = el.type === 'checkbox' ? el.checked : Number(el.value); save(); applyBoardSettings();
 };
+$('#sTheme').onchange = e => { S().theme = e.target.value; save(); applyTheme(); };
+function applyTheme() { document.body.className = document.body.className.replace(/\bbt-\S+/g, '').trim() + (S().theme && S().theme !== 'brown' ? ' bt-' + S().theme : ''); }
 function applyBoardSettings() { drillCg.set(boardOpts()); buildCg.set({ ...boardOpts(), premovable: { enabled: false } }); setOrientation(); drillCg.redrawAll(); buildCg.redrawAll(); }
 $('#testSounds').onclick = () => { Sound.init(); ['move', 'capture', 'castle', 'check', 'error', 'complete'].forEach((n, i) => setTimeout(() => Sound.play(n), 60 + i * 450)); };
 $('#exportBtn').onclick = () => download('freereps-backup-' + new Date().toISOString().slice(0, 10) + '.json',
@@ -164,11 +274,19 @@ function fillPickers() {
   $('#drillLine').innerHTML = r.lines.map((l, i) => `<option value="${i}">${esc(l.ch)}: ${fmt(l.m.slice(0, 14)).replace(/<\/?b>/g, '')}${l.m.length > 14 ? '…' : ''}</option>`).join('');
 }
 $('#drillRep').onchange = fillPickers;
-document.querySelectorAll('#modes button').forEach(b => b.onclick = () => {
-  const m = b.dataset.mode; document.querySelectorAll('#modes button').forEach(x => x.classList.toggle('primary', x === b));
+function setMode(m) {
+  document.querySelectorAll('#modes button').forEach(x => x.classList.toggle('primary', x.dataset.mode === m));
   $('#drillChapter').hidden = m !== 'chapter'; $('#drillLine').hidden = m !== 'line';
   startSession(m);
-});
+}
+document.querySelectorAll('#modes button').forEach(b => b.onclick = () => setMode(b.dataset.mode));
+$('#drillStudy').onclick = () => { if (drill.rep && drill.li >= 0) go(`#/line/${drill.rep.id}/${drill.li}`); };
+function drillNote(ply) {
+  const l = drill.rep.lines[drill.li]; const n = l.n?.[ply];
+  if (!S().notes || !n?.t) return;
+  $('#drillNote').innerHTML = `<span class="san">${Math.floor(ply / 2) + 1}${ply % 2 ? '...' : '.'} ${esc(l.m[ply])}</span> ${esc(n.t)}`;
+  if ($('#drill').classList.contains('active') && !(drill.learning && drill.chess.turn() === userColor())) drillCg.setAutoShapes(shapesOf(n));
+}
 $('#drillChapter').onchange = () => startSession('chapter');
 $('#drillLine').onchange = () => startSession('line');
 
@@ -195,7 +313,7 @@ function nextLine() {
     Sound.play('complete'); renderDrillSelect(); return;
   }
   drill.li = drill.queue[drill.qi++]; drill.line = drill.rep.lines[drill.li].m; drill.ply = 0; drill.chess = new Chess(); drill.lineMiss = 0;
-  drillCg.cancelPremove(); drillCg.setAutoShapes([]);
+  drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = '';
   drillCg.set({ fen: drill.chess.fen(), lastMove: undefined, check: false, turnColor: 'white' }); setOrientation();
   $('#drillInfo').textContent = `${drill.rep.lines[drill.li].ch} · line ${drill.qi}/${drill.queue.length}`;
   msg(`Your move as ${userColor() === 'w' ? 'White' : 'Black'}.`);
@@ -222,13 +340,13 @@ function advance() {
       drillCg.move(m.from, m.to);
       if (m.flags.includes('e') || m.flags.includes('p')) drillCg.set({ fen: drill.chess.fen() });
       drillCg.set({ lastMove: [m.from, m.to] });
-      Sound.play(soundFor(m, drill.chess.inCheck()));
+      Sound.play(soundFor(m, drill.chess.inCheck())); drillNote(drill.ply - 1);
       advance();
     }, drill.ply === 0 ? 300 : S().delay);
   }
 }
 const cardKey = () => userCards(drill.line, userColor()).find(c => c.ply === drill.ply).key;
-function showArrow(san, brush = 'green') { const m = new Chess(drill.chess.fen()).move(san); drillCg.setAutoShapes([{ orig: m.from, dest: m.to, brush }]); }
+function showArrow(san, brush = 'green') { if (!$('#drill').classList.contains('active')) return; const m = new Chess(drill.chess.fen()).move(san); drillCg.setAutoShapes([{ orig: m.from, dest: m.to, brush }]); }
 $('#drillHint').onclick = () => {
   if (!drill.line || drill.ply >= drill.line.length || drill.chess.turn() !== userColor()) return;
   if (!drill.missed && !drill.learning) { drill.missed = true; record(false); }
@@ -259,8 +377,8 @@ function onUserMove(from, to) {
     drill.ply++; drillCg.setAutoShapes([]);
     if (m.flags.includes('e') || m.flags.includes('p') || m.flags.includes('k') || m.flags.includes('q')) drillCg.set({ fen: drill.chess.fen() });
     Sound.play(soundFor(m, drill.chess.inCheck()));
-    msg(drill.learning ? `✔ ${m.san} — learned.` : drill.missed ? `✔ ${m.san}` : `✔ ${m.san}`, 'ok');
-    return advance();
+    msg(drill.learning ? `✔ ${m.san}: learned.` : `✔ ${m.san}`, 'ok');
+    advance(); drillNote(drill.ply - 1); return;
   }
   drill.chess.undo();
   const pos = fenKey(drill.chess.fen());
@@ -312,7 +430,7 @@ $('#buildSave').onclick = () => {
   build.lines = dedupe([...build.lines, { m: h, ch: $('#buildChapter').value.trim() || 'Main' }]); build.chess = new Chess(); bmsg('Line saved.', 'ok'); buildSync();
 };
 function addPgn(text) {
-  const { lines, errors } = parsePgn(text, $('#buildChapter').value.trim() || 'Imported');
+  const { lines, errors, intros } = parsePgn(text, $('#buildChapter').value.trim() || 'Imported'); build.intros = { ...(build.intros || {}), ...intros };
   build.lines = dedupe([...build.lines, ...lines]);
   bmsg(`Added ${lines.length} line(s).` + (errors.length ? ` Skipped ${errors.length}: ` + errors.slice(0, 5).join('; ') : ''), errors.length ? 'bad' : 'ok'); buildSync();
 }
@@ -321,13 +439,15 @@ $('#pgnFile').onchange = async e => { const f = e.target.files[0]; if (f) addPgn
 $('#buildCommit').onclick = () => {
   if (!build.lines.length) return bmsg('Add at least one line.', 'bad');
   const name = $('#buildName').value.trim() || 'My repertoire';
-  if (build.editing) Object.assign(build.editing, { name, color: buildColor(), lines: build.lines });
-  else db.reps.push({ id: uid(), name, color: buildColor(), lines: build.lines });
-  save(); build.lines = []; build.editing = null; bmsg('Repertoire saved!', 'ok'); showTab('home');
+  if (build.editing) Object.assign(build.editing, { name, color: buildColor(), lines: build.lines, intros: { ...(build.editing.intros || {}), ...(build.intros || {}) } });
+  else db.reps.push({ id: uid(), name, color: buildColor(), lines: build.lines, intros: {} });
+  save(); const saved = build.editing || db.reps[db.reps.length - 1]; build.lines = []; build.editing = null; bmsg('Repertoire saved!', 'ok'); go('#/opening/' + saved.id);
 };
 function editRep(r) {
-  build.editing = r; build.lines = r.lines.map(l => ({ m: [...l.m], ch: l.ch })); build.chess = new Chess();
+  build.editing = r; build.lines = r.lines.map(l => ({ ...l, m: [...l.m] })); build.chess = new Chess();
   $('#buildName').value = r.name; document.querySelector(`input[name=color][value=${r.color}]`).checked = true;
-  showTab('build'); buildSync(); bmsg('Editing "' + r.name + '". Add/remove lines, then Save repertoire.');
+  go('#/build'); buildSync(); bmsg('Editing "' + r.name + '". Add/remove lines, then Save repertoire.');
 }
-buildSync(); renderHome(); renderSettings();
+buildSync(); renderSettings(); applyTheme();
+loadStarters().then(route);
+window.__freereps.study = study; window.__freereps.lineCg = lineCg;

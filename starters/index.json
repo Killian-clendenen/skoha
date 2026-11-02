@@ -1,7 +1,7 @@
 [
- {"id":"reti","file":"reti.pgn","name":"Réti Opening (1.Nf3)","color":"w","featured":true,"blurb":"Flexible hypermodern White system: 1...d5 2.c4 (…e6, …c6, …d4, …dxc4), King's Indian Attack vs 1...d5 2.g3, plus 1...Nf6, 1...c5 and 1...f5."},
- {"id":"italian","file":"italian.pgn","name":"Italian Game","color":"w","blurb":"Giuoco Piano and Two Knights with slow d3 plans."},
- {"id":"london","file":"london.pgn","name":"London System","color":"w","blurb":"Bf4 / e3 / c3 setup vs ...d5 and ...Nf6."},
- {"id":"carokann","file":"carokann.pgn","name":"Caro-Kann Defence","color":"b","blurb":"Classical, Advance, Exchange and Two Knights."},
- {"id":"qgd","file":"qgd.pgn","name":"Queen's Gambit Declined","color":"b","blurb":"Solid ...e6/...d5 vs 1.d4, Exchange, Catalan and London."}
+ {"id":"reti","file":"reti.pgn","name":"Réti Opening","eco":"1.Nf3","color":"w","first":"Nf3","featured":true,"blurb":"Hypermodern and flexible. Answers to 1...d5 (2.c4 and the 2.g3 KIA), 1...Nf6, 1...c5, 1...f5 and more."},
+ {"id":"italian","file":"italian.pgn","name":"Italian Game","eco":"1.e4 e5 2.Nf3 Nc6 3.Bc4","color":"w","first":"e4","blurb":"Giuoco Piano and Two Knights with the modern c3/d3 plans."},
+ {"id":"london","file":"london.pgn","name":"London System","eco":"1.d4 + Bf4","color":"w","first":"d4","blurb":"A solid Bf4/e3/c3 setup against ...d5 and King's Indian setups."},
+ {"id":"carokann","file":"carokann.pgn","name":"Caro-Kann Defence","eco":"1.e4 c6","color":"b","answers":"e4","blurb":"Classical, Advance, Exchange/Panov and Two Knights."},
+ {"id":"qgd","file":"qgd.pgn","name":"Queen's Gambit Declined","eco":"1.d4 d5 2.c4 e6","color":"b","answers":"d4","vs":["london"],"blurb":"Tartakower, Exchange, Catalan and the London, plus the Elephant Trap."}
 ]

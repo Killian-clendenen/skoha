@@ -1,15 +1,124 @@
-[Event "QGD vs 1.d4"]
+[Event "QGD: 4.Bg5 (Tartakower)"]
 
-1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 (4. Bf4 Be7 5. e3 O-O 6. Nf3 c5 7. dxc5 Bxc5) Be7 5. e3 (5. Nf3 h6 6. Bh4 O-O 7. e3 b6) 5... O-O 6. Nf3 h6 7. Bh4 b6 8. Be2 Bb7 9. Bxf6 Bxf6 10. cxd5 exd5 *
+{Black holds d5 with ...e6, castles, and frees the position with ...b6 and ...Bb7, or with ...c5.}
+1. d4 {Takes the centre.}
+1... d5 {Black matches.}
+2. c4 {[%cal Gc4d5] The Queen's Gambit.}
+2... e6 {[%cal Ge6d5] Declined. Black holds d5.}
+3. Nc3 {Pressure on d5.}
+3... Nf6 {Development.}
+4. Bg5 {[%cal Gg5f6] Pins.}
+(4. Bf4 {Development.}
+ 4... Be7 {Development.}
+ 5. e3 {Solid.}
+ 5... O-O {Castles.}
+ 6. Nf3 {Development.}
+ 6... c5 {Strikes at d4.}
+ 7. dxc5 {Captures.}
+ 7... Bxc5 {Recaptures.})
+4... Be7 {Breaks the pin.}
+5. e3 {Solid.}
+(5. Nf3 {Development.}
+ 5... h6 {Questions the bishop.}
+ 6. Bh4 {Keeps the pin.}
+ 6... O-O {Castles.}
+ 7. e3 {Solid.}
+ 7... b6 {The Tartakower.})
+5... O-O {Castles.}
+6. Nf3 {Development.}
+6... h6 {Questions the bishop.}
+7. Bh4 {Keeps the pin.}
+7... b6 {[%cal Gc8b7] The Tartakower. It prepares ...Bb7.}
+8. Be2 {Development.}
+8... Bb7 {Development.}
+9. Bxf6 {Trades.}
+9... Bxf6 {Recaptures.}
+10. cxd5 {Captures.}
+10... exd5 {[%cal Gb7d5] Recaptures. The pawn on d5 is solid.} *
 
 [Event "QGD: Exchange"]
 
-1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. cxd5 exd5 5. Bg5 c6 6. e3 Be7 7. Bd3 Nbd7 8. Qc2 O-O 9. Nge2 Re8 *
+{In the Carlsbad structure, White often plays a minority attack with b4 and b5.}
+1. d4 {Takes the centre.}
+1... d5 {Black matches.}
+2. c4 {The Queen's Gambit.}
+2... e6 {Declined.}
+3. Nc3 {Pressure on d5.}
+3... Nf6 {Development.}
+4. cxd5 {The Exchange.}
+4... exd5 {[%cal Gc8f5] Recaptures, opening the bishop.}
+5. Bg5 {Pins.}
+5... c6 {Solid.}
+6. e3 {Solid.}
+6... Be7 {Development.}
+7. Bd3 {Development.}
+7... Nbd7 {Development.}
+8. Qc2 {[%cal Gc2h7] Aims at h7.}
+8... O-O {Castles.}
+9. Nge2 {Development.}
+9... Re8 {Development.} *
 
 [Event "QGD: 3.Nf3 / Catalan"]
 
-1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. g3 (4. Nc3 Be7 5. Bf4 O-O 6. e3 c5 7. dxc5 Bxc5 8. Qc2 Nc6) 4... Be7 5. Bg2 O-O 6. O-O dxc4 7. Qc2 a6 8. Qxc4 b5 9. Qc2 Bb7 *
+{The Catalan: the g2-bishop pressures the queenside. Black often takes on c4 and holds the pawn for a while.}
+1. d4 {Takes the centre.}
+1... d5 {Black matches.}
+2. c4 {The Queen's Gambit.}
+2... e6 {Declined.}
+3. Nf3 {Development.}
+3... Nf6 {Development.}
+4. g3 {[%cal Gf1g2] The Catalan.}
+(4. Nc3 {Development.}
+ 4... Be7 {Development.}
+ 5. Bf4 {Development.}
+ 5... O-O {Castles.}
+ 6. e3 {Solid.}
+ 6... c5 {Strikes at d4.}
+ 7. dxc5 {Captures.}
+ 7... Bxc5 {Recaptures.}
+ 8. Qc2 {Development.}
+ 8... Nc6 {Development.})
+4... Be7 {Development.}
+5. Bg2 {Fianchetto.}
+5... O-O {Castles.}
+6. O-O {King safety.}
+6... dxc4 {Takes the pawn.}
+7. Qc2 {Prepares to regain c4.}
+7... a6 {Prepares ...b5.}
+8. Qxc4 {Regains the pawn.}
+8... b5 {Gains space with tempo.}
+9. Qc2 {Retreats.}
+9... Bb7 {[%cal Gb7g2] Contests the diagonal.} *
 
-[Event "QGD vs London / Nf3"]
+[Event "QGD vs London"]
 
-1. d4 d5 2. Bf4 Nf6 3. e3 e6 4. Nf3 c5 5. c3 Nc6 6. Nbd2 Bd6 7. Bg3 O-O *
+{Against the London, Black plays ...c5 and ...Nc6 to put pressure on d4 and b2.}
+1. d4 {Takes the centre.}
+1... d5 {Black matches.}
+2. Bf4 {The London.}
+2... Nf6 {Development.}
+3. e3 {Solid.}
+3... e6 {Solid.}
+4. Nf3 {Development.}
+4... c5 {Strikes at d4.}
+5. c3 {Holds d4.}
+5... Nc6 {Pressure on d4.}
+6. Nbd2 {Development.}
+6... Bd6 {[%cal Gd6f4] Challenges the f4-bishop.}
+7. Bg3 {Keeps it.}
+7... O-O {Castles.} *
+
+[Event "QGD: Elephant Trap"]
+
+{The trap: after 4...Nbd7, 5.cxd5 exd5 6.Nxd5?? loses to 6...Nxd5! 7.Bxd8 Bb4+ 8.Qd2 Bxd2+ 9.Kxd2 Kxd8, and Black is a piece up.}
+1. d4 {Takes the centre.} 1... d5 {Black matches.} 2. c4 {The Queen's Gambit.} 2... e6 {Declined.} 3. Nc3 {Pressure on d5.} 3... Nf6 {Development.} 4. Bg5 {Pins the knight.} 4... Nbd7 {[%csl Gd8] Looks like it leaves d5 loose, but it sets the trap.}
+5. cxd5 {Captures.}
+5... exd5 {Recaptures.}
+6. Nxd5?? {[%cal Gd5f6] White grabs a pawn because the f6-knight is pinned... or so it seems.}
+6... Nxd5! {[%cal Gd5d8] Gives up the queen!}
+7. Bxd8 {Takes the queen.}
+7... Bb4+ {[%cal Gb4e1] Check.}
+8. Qd2 {The only move.}
+8... Bxd2+ {Takes the queen.}
+9. Kxd2 {Recaptures.}
+9... Kxd8 {Black is a piece up.} *

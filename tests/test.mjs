@@ -1,7 +1,9 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey } from '../core.js';
+import { validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove } from '../core.js';
+import { KB } from '../kb.js';
+const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
 const idx = JSON.parse(readFileSync(new URL('../starters/', import.meta.url).pathname + 'index.json', 'utf8'));
 for (const s of idx) {
@@ -9,6 +11,18 @@ for (const s of idx) {
   ok(errors.length === 0, `${s.name}: all moves legal ${errors.join('; ')}`);
   ok(lines.length >= 5, `${s.name}: ${lines.length} lines`);
   console.log(`  ${s.name}: ${lines.length} lines, ${new Set(lines.map(l => l.ch)).size} chapters, ${new Set(lines.flatMap(l => userCards(l.m, s.color).map(c => c.key))).size} moves to learn`);
+}
+// annotations: every starter move has a hand-written comment; every arrow starts on an occupied square
+for (const s of idx) {
+  const { lines, intros } = parsePgn(readFileSync(new URL('../starters/', import.meta.url).pathname + s.file, 'utf8'));
+  let moves = 0, noted = 0, badArrow = [];
+  for (const l of lines) { const c = new Chess(); l.m.forEach((san, i) => { c.move(san); moves++; const n = l.n[i]; if (n?.t) noted++;
+    for (const [o] of n?.cal || []) if (!c.get(o)) badArrow.push(san + ':' + o);
+    for (const [o, d] of n?.cal || []) if (!validSq(o) || !validSq(d)) badArrow.push(san + ':' + o + d); }); }
+  ok(noted === moves, `${s.name}: every move annotated (${noted}/${moves})`);
+  ok(badArrow.length === 0, `${s.name}: arrows valid ${badArrow.slice(0, 5)}`);
+  ok(Object.keys(intros).length === new Set(lines.map(l => l.ch)).size, `${s.name}: every chapter has an intro`);
+  ok(KB[s.id] && KB[s.id].overview && KB[s.id].ideas.length && KB[s.id].traps.length, `${s.name}: knowledge base present`);
 }
 const reti = parsePgn(readFileSync(new URL('../starters/', import.meta.url).pathname + 'reti.pgn', 'utf8')).lines;
 const has = p => reti.some(l => l.m.join(' ').startsWith(p));
@@ -33,6 +47,17 @@ c = schedule(c, 5, 0); ok(c.interval === 6, 'SM-2 6 days');
 c = schedule(c, 5, 0); ok(c.interval >= 15, 'SM-2 grows ' + c.interval);
 c = schedule(c, 2, 0); ok(c.reps === 0 && c.lapses === 1 && c.due === 600000, 'SM-2 lapse → 10 min');
 ok(schedule(undefined, 2, 0).ease >= 1.3, 'ease floor');
+// comment parsing
+const pc = parseComment('[%cal Gf3e5,Rd8h4][%csl Yf7] Hits e5 [%clk 0:05:00] now');
+ok(pc.t === 'Hits e5 now' && pc.cal.length === 2 && pc.cal[1].join() === 'd8,h4,R' && pc.csl[0].join() === 'f7,Y', 'parseComment cal/csl/text');
+const pa = parsePgn('{Intro} 1. e4 {[%csl Gd5] Centre} e5 2. Nf3!? {Hits e5} (2. f4?! {Gambit} exf4) Nc6 *');
+ok(pa.intros.Imported === 'Intro', 'chapter intro comment');
+const main = pa.lines.find(l => l.m[2] === 'Nf3'), gam = pa.lines.find(l => l.m[2] === 'f4');
+ok(main.n[0].t === 'Centre' && main.n[0].csl[0][0] === 'd5' && main.n[2].t === 'Hits e5' && main.n[2].g === '!?' && !main.n[1], 'notes attach to correct plies + glyphs');
+ok(gam.n[0].t === 'Centre' && gam.n[2].t === 'Gambit' && gam.n[2].g === '?!', 'variation inherits prefix notes, own note');
+const rt = parsePgn(toPgn({ lines: pa.lines }));
+ok(rt.lines.find(l => l.m[2] === 'Nf3').n[0].csl[0][0] === 'd5' && rt.lines.find(l => l.m[2] === 'Nf3').n[2].t === 'Hits e5', 'toPgn keeps comments + arrows');
+const dm = new Chess(); ok(/development/.test(describeMove(dm.move('Nf3'), false)), 'auto description fallback');
 // drill sequencing
 const rep = { color: 'w', lines: [{ m: ['e4', 'e5', 'Nf3'], ch: 'X' }, { m: ['d4', 'd5', 'c4'], ch: 'Y' }, { m: ['c4', 'e5', 'Nc3'], ch: 'Y' }] };
 const k = l => userCards(rep.lines[l].m, 'w');

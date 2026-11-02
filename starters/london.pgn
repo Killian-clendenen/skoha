@@ -1,7 +1,95 @@
 [Event "London vs ...d5"]
 
-1. d4 d5 2. Bf4 Nf6 (2... c5 3. e3 Nc6 4. c3 Qb6 5. Qb3 c4 6. Qc2 Bf5 7. Qc1) (2... Bf5 3. e3 e6 4. Nd2 Nf6 5. Ngf3 Bd6 6. Bg3 O-O 7. Be2) 3. e3 e6 (3... c5 4. c3 Nc6 5. Nd2 Qb6 6. Qb3 c4 7. Qc2 Bf5 8. Qc1) 4. Nf3 c5 5. c3 Nc6 6. Nbd2 Bd6 7. Bg3 O-O 8. Bd3 b6 9. Ne5 Bb7 10. f4 *
+{White builds a pyramid of pawns on c3, d4 and e3, with the bishop on f4 outside the chain. Plans include Ne5 and f4, or a kingside attack with Bd3, Qf3 and h4.}
+1. d4 {Takes the centre.}
+1... d5 {Black matches.}
+2. Bf4 {[%cal Gf4b8] The London: the bishop develops before e3 locks it in.}
+2... Nf6 {Development.}
+(2... c5 {Black strikes at d4.}
+ 3. e3 {Solid.}
+ 3... Nc6 {Pressure on d4.}
+ 4. c3 {[%csl Gd4] Holds d4.}
+ 4... Qb6 {[%cal Gb6b2] Hits b2, the classic London weakness.}
+ 5. Qb3 {Offers a queen trade, which would double Black's pawns.}
+ 5... c4 {Gains queenside space.}
+ 6. Qc2 {Retreats.}
+ 6... Bf5 {Challenges the queen.}
+ 7. Qc1 {[%csl Gb2] Defends b2.})
+(2... Bf5 {Black mirrors.}
+ 3. e3 {Solid.}
+ 3... e6 {Solid.}
+ 4. Nd2 {Supports Ngf3 and keeps the c-pawn flexible.}
+ 4... Nf6 {Development.}
+ 5. Ngf3 {Development.}
+ 5... Bd6 {[%cal Gd6f4] Challenges the f4-bishop.}
+ 6. Bg3 {Avoids the exchange.}
+ 6... O-O {Castles.}
+ 7. Be2 {Solid.})
+3. e3 {Solid.}
+3... e6 {Solid.}
+(3... c5 {Strikes at d4.}
+ 4. c3 {Holds d4.}
+ 4... Nc6 {Pressure.}
+ 5. Nd2 {Development.}
+ 5... Qb6 {Hits b2.}
+ 6. Qb3 {Offers the trade.}
+ 6... c4 {Space.}
+ 7. Qc2 {Retreats.}
+ 7... Bf5 {Tempo on the queen.}
+ 8. Qc1 {Defends.})
+4. Nf3 {Development.}
+4... c5 {Strikes at d4.}
+5. c3 {Holds d4.}
+5... Nc6 {Development.}
+6. Nbd2 {[%cal Gd2e4] Supports e4 and f3.}
+6... Bd6 {Challenges the f4-bishop.}
+7. Bg3 {[%csl Gh2] Keeps the bishop. If ...Bxg3, hxg3 opens the h-file.}
+7... O-O {Castles.}
+8. Bd3 {[%cal Gd3h7] Aims at h7.}
+8... b6 {Prepares ...Bb7.}
+9. Ne5 {[%csl Ge5] The London outpost.}
+9... Bb7 {Development.}
+10. f4 {[%cal Gf4f5] Supports e5 and prepares a kingside attack.} *
 
-[Event "London vs ...Nf6 g6"]
+[Event "London vs ...Nf6/...g6"]
 
-1. d4 Nf6 2. Bf4 g6 (2... e6 3. e3 c5 4. c3 Nc6 5. Nd2 d5 6. Ngf3 Bd6 7. Bg3 O-O 8. Bd3) (2... d6 3. e3 g6 4. Nc3 Bg7 5. Nf3 O-O 6. Be2 c5 7. O-O) 3. e3 Bg7 4. Nf3 O-O 5. Be2 d6 6. h3 c5 7. c3 Nc6 8. O-O b6 9. a4 *
+{Against King's Indian setups, White keeps the structure solid and plays h3, Be2 and O-O, sometimes with a4 or c4.}
+1. d4 {Takes the centre.}
+1... Nf6 {Development.}
+2. Bf4 {The London.}
+2... g6 {A King's Indian setup.}
+(2... e6 {Solid.}
+ 3. e3 {Solid.}
+ 3... c5 {Strikes at d4.}
+ 4. c3 {Holds d4.}
+ 4... Nc6 {Development.}
+ 5. Nd2 {Development.}
+ 5... d5 {The centre.}
+ 6. Ngf3 {Development.}
+ 6... Bd6 {Challenges the bishop.}
+ 7. Bg3 {Keeps it.}
+ 7... O-O {Castles.}
+ 8. Bd3 {[%cal Gd3h7] Aims at h7.})
+(2... d6 {Prepares ...e5.}
+ 3. e3 {Solid.}
+ 3... g6 {Fianchetto.}
+ 4. Nc3 {Watches e4.}
+ 4... Bg7 {Development.}
+ 5. Nf3 {Development.}
+ 5... O-O {Castles.}
+ 6. Be2 {Development.}
+ 6... c5 {Strikes at d4.}
+ 7. O-O {King safety.})
+3. e3 {Solid.}
+3... Bg7 {Fianchetto.}
+4. Nf3 {Development.}
+4... O-O {Castles.}
+5. Be2 {Development.}
+5... d6 {Prepares ...e5 or ...c5.}
+6. h3 {[%csl Gh2] Makes a retreat on h2 for the f4-bishop.}
+6... c5 {Strikes at d4.}
+7. c3 {Holds d4.}
+7... Nc6 {Development.}
+8. O-O {King safety.}
+8... b6 {Prepares ...Bb7.}
+9. a4 {Gains queenside space.} *

@@ -13,35 +13,65 @@ export function validateLine(moves) {
   return out;
 }
 
-// Parse PGN text (many games, nested variations). Each game = a chapter (Event/Chapter header).
-// Returns { lines: [{m:[san...], ch}], errors: [] }
+// Parse a PGN comment: returns { t: text, cal: [[from,to,color]], csl: [[sq,color]] }
+export function parseComment(raw) {
+  const cal = [], csl = [];
+  let t = raw.replace(/\[%cal\s+([^\]]*)\]/g, (_, v) => { v.split(',').forEach(x => { const m = x.trim().match(/^([GRYB])([a-h][1-8])([a-h][1-8])$/); if (m) cal.push([m[2], m[3], m[1]]); }); return ''; })
+             .replace(/\[%csl\s+([^\]]*)\]/g, (_, v) => { v.split(',').forEach(x => { const m = x.trim().match(/^([GRYB])([a-h][1-8])$/); if (m) csl.push([m[2], m[1]]); }); return ''; })
+             .replace(/\[%[^\]]*\]/g, '').replace(/\s+/g, ' ').trim();
+  return { t, cal, csl };
+}
+const mergeNote = (a, b) => !a ? b : { t: [a.t, b.t].filter(Boolean).join(' '), cal: [...a.cal, ...b.cal], csl: [...a.csl, ...b.csl], g: a.g || b.g };
+
+// Parse PGN text (many games, nested variations, comments). Each game = a chapter (Event/Chapter header).
+// Returns { lines: [{m:[san...], ch, n:[note|null per ply]}], errors: [], intros: {chapter: text} }
 export function parsePgn(text, defaultChapter = 'Imported') {
   const games = text.replace(/\r/g, '').split(/\n\s*\n(?=\s*\[)/);
-  const raw = [];
+  const raw = [], intros = {};
   for (let g of games) {
     const hdr = {}; g.replace(/^\s*\[(\w+)\s+"([^"]*)"\]\s*$/gm, (_, k, v) => { hdr[k] = v; });
     const ch = hdr.Chapter || (hdr.Event && hdr.Event !== '?' ? hdr.Event : '') || defaultChapter;
-    g = g.replace(/^\s*\[[^\]]*\]\s*$/gm, '').replace(/\{[^}]*\}/g, ' ').replace(/;[^\n]*/g, ' ')
-         .replace(/\$\d+/g, ' ').replace(/\(/g, ' ( ').replace(/\)/g, ' ) ');
-    const toks = g.split(/\s+/).filter(Boolean)
-      .map(t => t.replace(/^\d+\.(\.\.)?/, '').replace(/[!?]+$/, ''))
-      .filter(t => t && !/^(1-0|0-1|1\/2-1\/2|\*)$/.test(t) && !/^\d+\.*$/.test(t));
+    g = g.replace(/^\s*\[[^\]]*\]\s*$/gm, '');
+    const toks = (g.match(/\{[^}]*\}|;[^\n]*|\(|\)|[^\s(){};]+/g) || []);
     let i = 0;
-    const walk = prefix => {
-      const cur = [...prefix]; const slot = raw.push(null) - 1;
+    const walk = (prefix, pnotes) => {
+      const cur = [...prefix], notes = [...pnotes]; const slot = raw.push(null) - 1;
       while (i < toks.length) {
-        const t = toks[i++];
-        if (t === '(') { walk(cur.slice(0, -1)); continue; }
+        let t = toks[i++];
+        if (t === '(') { walk(cur.slice(0, -1), notes.slice(0, -1)); continue; }
         if (t === ')') break;
-        cur.push(t);
+        if (t[0] === '{' || t[0] === ';') {
+          const c = parseComment(t[0] === '{' ? t.slice(1, -1) : t.slice(1));
+          if (!cur.length) { if (c.t) intros[ch] = (intros[ch] ? intros[ch] + ' ' : '') + c.t; }
+          else if (cur.length > prefix.length) notes[cur.length - 1] = mergeNote(notes[cur.length - 1], c);
+          continue;
+        }
+        if (/^\$\d+$/.test(t) || /^(1-0|0-1|1\/2-1\/2|\*)$/.test(t)) continue;
+        t = t.replace(/^\d+\.(\.\.)?/, ''); if (!t || /^\d+\.*$/.test(t)) continue;
+        const gl = (t.match(/[!?]+$/) || [''])[0]; t = t.slice(0, t.length - gl.length);
+        cur.push(t); notes.push(gl ? { t: '', cal: [], csl: [], g: gl } : null);
       }
-      if (cur.length > prefix.length) raw[slot] = { m: cur, ch };
+      if (cur.length > prefix.length) raw[slot] = { m: cur, ch, n: notes };
     };
-    walk([]);
+    walk([], []);
   }
   const ok = [], errors = [];
-  for (const l of raw.filter(Boolean)) { try { ok.push({ m: validateLine(l.m), ch: l.ch }); } catch (e) { errors.push(`[${l.ch}] ${e.message}`); } }
-  return { lines: dedupe(ok), errors };
+  for (const l of raw.filter(Boolean)) { try { ok.push({ m: validateLine(l.m), ch: l.ch, n: l.n }); } catch (e) { errors.push(`[${l.ch}] ${e.message}`); } }
+  // a move repeated in several variations shares its annotation (write it once, shown everywhere)
+  const byPrefix = new Map();
+  ok.forEach(l => l.m.forEach((_, i) => { const n = l.n[i]; if (n?.t || n?.cal?.length || n?.csl?.length) { const k = l.m.slice(0, i + 1).join(' '); if (!byPrefix.has(k)) byPrefix.set(k, n); } }));
+  ok.forEach(l => l.m.forEach((_, i) => { const n = l.n[i]; if (!n?.t) { const f = byPrefix.get(l.m.slice(0, i + 1).join(' ')); if (f) l.n[i] = { ...f, g: n?.g || f.g }; } }));
+  return { lines: dedupe(ok), errors, intros };
+}
+
+// Plain-language fallback when a move has no annotation.
+const PIECE = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
+export function describeMove(m, inCheck) {
+  if (m.flags.includes('k')) return 'Castles kingside: the king gets safe and the rook comes toward the centre.';
+  if (m.flags.includes('q')) return 'Castles queenside: the king is tucked away and the rook lands on the d-file at once.';
+  let s = m.captured ? `The ${PIECE[m.piece]} captures on ${m.to}.` : m.piece === 'p' ? `Pawn to ${m.to}${'de'.includes(m.to[0]) ? ', fighting for the centre' : ''}.` : `The ${PIECE[m.piece]} goes to ${m.to}${'nb'.includes(m.piece) && '18'.includes(m.from[1]) ? ' (development)' : ''}.`;
+  if (inCheck) s += ' Check!';
+  return s;
 }
 
 // Accepts lines as arrays (v1) or {m,ch}; drops duplicates and strict prefixes.
@@ -52,9 +82,11 @@ export function dedupe(lines) {
 }
 
 export function toPgn(rep) {
-  const byCh = {}; rep.lines.forEach(l => (byCh[l.ch] ||= []).push(l.m));
-  return Object.entries(byCh).map(([ch, ls]) => ls.map(m =>
-    `[Event "${ch.replace(/"/g, "'")}"]\n\n${m.map((s, i) => (i % 2 ? '' : (i / 2 + 1) + '. ') + s).join(' ')} *`).join('\n\n')).join('\n\n') + '\n';
+  const byCh = {}; rep.lines.forEach(l => (byCh[l.ch] ||= []).push(l));
+  const note = n => { if (!n) return ''; const tags = (n.cal?.length ? `[%cal ${n.cal.map(([a, b, c]) => c + a + b).join(',')}]` : '') + (n.csl?.length ? `[%csl ${n.csl.map(([a, c]) => c + a).join(',')}]` : '');
+    return (n.g || '') + (n.t || tags ? ` {${tags}${tags && n.t ? ' ' : ''}${(n.t || '').replace(/[{}]/g, '')}}` : ''); };
+  return Object.entries(byCh).map(([ch, ls]) => ls.map(l =>
+    `[Event "${ch.replace(/"/g, "'")}"]\n\n${l.m.map((s, i) => (i % 2 ? '' : (i / 2 + 1) + '. ') + s + note(l.n?.[i])).join(' ')} *`).join('\n\n')).join('\n\n') + '\n';
 }
 
 // Cards = (position before user's move, user's move).

@@ -7,12 +7,28 @@ let fail = 0; const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); i
 const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
 const pg = await b.newPage({ viewport: { width: 1200, height: 820 } });
 const errs = []; pg.on('pageerror', e => errs.push(e.message)); pg.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
-await pg.goto('http://localhost:8765/'); await pg.waitForSelector('#starters .featured');
-ok(await pg.textContent('#starters .card:first-child b').then(t => t.includes('Réti')), 'Réti featured first');
-await pg.click('#starters .featured button'); await pg.waitForSelector('#replist .card');
-ok((await pg.textContent('#replist')).includes('43 lines'), 'Réti added with 43 lines');
+await pg.goto('http://localhost:8765/'); await pg.waitForSelector('#whiteList .ocard.featured');
+ok((await pg.textContent('#whiteList .ocard:first-child h3')).includes('Réti'), 'Réti featured first in White openings');
+ok((await pg.locator('#blackList .ocard').count()) === 2 && (await pg.textContent('#blackList')).includes('London System'), 'Black defences listed, QGD tied to London');
+ok((await pg.textContent('#whiteList')).includes('vs 1...f5'), 'Réti card shows defences (chapters)');
+await pg.screenshot({ path: root + '/screenshot-home.png', fullPage: false });
+// Home -> Opening -> Line
+await pg.click('#whiteList .ocard.featured h3'); await pg.waitForSelector('#opening.active .chapter');
+ok((await pg.locator('#opening .lineitem').count()) === 46, 'opening page lists 46 lines');
+await pg.click('.otabs [data-t=kb]'); ok((await pg.textContent('#oBody')).includes('Capablanca'), 'knowledge base renders');
+await pg.click('.otabs [data-t=lines]');
+await pg.click('#opening .lineitem >> nth=0'); await pg.waitForSelector('#line.active');
+ok((await pg.textContent('#lnNote')).length > 40, 'line intro shown');
+await pg.click('#lnNext'); await pg.waitForTimeout(250);
+ok((await pg.textContent('#lnNote')).includes('Réti starts flexibly'), 'annotation for 1.Nf3 renders');
+ok((await pg.locator('#lineBoard svg circle, #lineBoard cg-auto-pieces, #lineBoard svg g').count()) > 0, 'highlight shapes drawn');
+for (let i = 0; i < 2; i++) { await pg.keyboard.press('ArrowRight'); await pg.waitForTimeout(220); }
+ok((await pg.textContent('#lnNote')).includes('signature Réti move'), 'keyboard → steps to 2.c4 note');
+ok((await pg.locator('#lineBoard svg line, #lineBoard svg path').count()) > 0, 'arrow drawn for 2.c4');
+await pg.screenshot({ path: root + '/screenshot-line.png' });
+await pg.goto('http://localhost:8765/#/'); await pg.waitForSelector('#whiteList .ocard');
 await pg.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.anim = 120; s.autoNext = false; });
-await pg.click('#replist .card button.primary'); await pg.waitForTimeout(400);
+await pg.goto('http://localhost:8765/#/opening/reti'); await pg.waitForSelector('#opening.active [data-act=due]'); await pg.click('[data-act=due]'); await pg.waitForTimeout(500);
 // click squares on the board helper (white orientation)
 const sq = async s => { const bb = await pg.locator('#drillBoard cg-board').boundingBox(); const f = s.charCodeAt(0) - 97, r = +s[1] - 1; const w = bb.width / 8;
   await pg.mouse.click(bb.x + (f + .5) * w, bb.y + (7 - r + .5) * w); };
@@ -52,11 +68,11 @@ ok(cards.some(c => c.lapses === 1), 'review mistake recorded as SM-2 lapse');
 await pg.click('#modes [data-mode=mistakes]'); await pg.waitForTimeout(400);
 ok((await pg.textContent('#drillInfo')).match(/line 1\/\d+/), 'mistakes-only mode queues lines containing the missed move');
 await mv('g1', 'f3'); await pg.waitForTimeout(300);
-await pg.screenshot({ path: root + '/screenshot.png' });
-await pg.click('nav [data-tab=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400);
+ok((await pg.textContent('#drillNote')).length > 10, 'annotation shown during drill');
+await pg.click('nav [data-nav=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400); await pg.selectOption('#sTheme', 'aurora'); ok(await pg.evaluate(() => document.body.classList.contains('bt-aurora')), 'board theme switch');
 ok(errs.length === 0, 'no page errors ' + errs.join(' | '));
 // mobile
 const mp = await b.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); await mp.goto('http://localhost:8765/');
-await mp.waitForSelector('#starters .featured'); const bw = await mp.evaluate(() => document.documentElement.scrollWidth);
+await mp.waitForSelector('#whiteList .ocard'); const bw = await mp.evaluate(() => document.documentElement.scrollWidth);
 ok(bw <= 390, 'mobile no horizontal overflow (' + bw + ')');
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
