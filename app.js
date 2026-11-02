@@ -239,12 +239,12 @@ $('#sTheme').onchange = e => { S().theme = e.target.value; save(); applyTheme();
 function applyTheme() { document.body.className = document.body.className.replace(/\bbt-\S+/g, '').trim() + (S().theme && S().theme !== 'brown' ? ' bt-' + S().theme : ''); }
 function applyBoardSettings() { drillCg.set(boardOpts()); buildCg.set({ ...boardOpts(), premovable: { enabled: false } }); setOrientation(); drillCg.redrawAll(); buildCg.redrawAll(); }
 $('#testSounds').onclick = () => { Sound.init(); ['move', 'capture', 'castle', 'check', 'error', 'complete'].forEach((n, i) => setTimeout(() => Sound.play(n), 60 + i * 450)); };
-$('#exportBtn').onclick = () => download('freereps-backup-' + new Date().toISOString().slice(0, 10) + '.json',
-  JSON.stringify({ app: 'FreeReps', version: 2, exported: new Date().toISOString(), ...db }, null, 1), 'application/json');
+$('#exportBtn').onclick = () => download('skoha-backup-' + new Date().toISOString().slice(0, 10) + '.json',
+  JSON.stringify({ app: 'Skoha', version: 2, exported: new Date().toISOString(), ...db }, null, 1), 'application/json');
 $('#importFile').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   try {
-    const d = migrate(JSON.parse(await f.text())); if (!Array.isArray(d.reps)) throw new Error('not a FreeReps backup');
+    const d = migrate(JSON.parse(await f.text())); if (!Array.isArray(d.reps)) throw new Error('not a Skoha backup');
     d.reps.forEach(r => r.lines.forEach(l => l.m = validateLine(l.m)));
     if (!confirm('Replace current data with this backup?')) return;
     db = { reps: d.reps, cards: d.cards || {}, stats: d.stats, streak: d.streak, settings: { ...DEF, ...d.settings } }; save(); renderHome(); alert('Backup restored.');

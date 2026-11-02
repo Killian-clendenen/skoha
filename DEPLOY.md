@@ -1,4 +1,4 @@
-# Deploy FreeReps to Cloudflare Pages (your own domain)
+# Deploy Skoha to Cloudflare Pages (your own domain)
 
 The site is pure static files. There's no build step, and the output directory is the folder root.
 
@@ -12,7 +12,7 @@ The site is pure static files. There's no build step, and the output directory i
 
 ## Option B: Git-connected (auto-deploys on every push)
 1. Create a **public** GitHub repo, e.g. `freereps`. It must be public because of the GPL (see below). Push the folder contents to it:
-   `git init && git add . && git commit -m "FreeReps v2" && git branch -M main && git remote add origin https://github.com/<you>/freereps.git && git push -u origin main`
+   `git init && git add . && git commit -m "Skoha v2" && git branch -M main && git remote add origin https://github.com/<you>/freereps.git && git push -u origin main`
 2. In Cloudflare go to **Workers & Pages** → **Create** → **Pages** → **Connect to Git**, then authorise GitHub and choose the repo.
 3. Use these build settings:
    - Framework preset: **None**

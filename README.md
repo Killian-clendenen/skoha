@@ -1,4 +1,4 @@
-# FreeReps v3: the fountain of youth for your chess
+# Skoha v3: the fountain of youth for your chess
 
 A static site using chessground and chess.js. There's no framework and no build step. All data stays in the browser (localStorage), with JSON backup.
 
