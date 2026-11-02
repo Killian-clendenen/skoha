@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FreeReps — free chess opening trainer</title>
+<meta name="description" content="Free, no-signup chess opening trainer: spaced repetition, PGN import with variations, premoves, custom sounds.">
+<meta name="theme-color" content="#0f1218">
+<link rel="stylesheet" href="vendor/chessground.base.css">
+<link rel="stylesheet" href="vendor/chessground.brown.css">
+<link rel="stylesheet" href="vendor/chessground.cburnett.css">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♞</text></svg>">
+</head><body>
+<header>
+  <div class="brand">♞ FreeReps</div>
+  <nav>
+    <button data-tab="home" class="active">Repertoires</button>
+    <button data-tab="drill">Train</button>
+    <button data-tab="build">Build / Import</button>
+    <button data-tab="settings">Settings</button>
+  </nav>
+</header>
+<main>
+  <section id="home" class="tab active">
+    <div class="stats" id="stats"></div>
+    <h2>Your repertoires</h2>
+    <div id="replist" class="cards"></div>
+    <h2>Starter repertoires</h2>
+    <div id="starters" class="cards"></div>
+  </section>
+
+  <section id="drill" class="tab">
+    <div class="split">
+      <div class="boardwrap"><div id="drillBoard" class="board"></div></div>
+      <aside>
+        <select id="drillRep" aria-label="Repertoire"></select>
+        <div class="modes" id="modes">
+          <button data-mode="due" class="primary">Due reviews</button>
+          <button data-mode="random">Random lines</button>
+          <button data-mode="mistakes">Mistakes only</button>
+          <button data-mode="chapter">Chapter</button>
+          <button data-mode="line">Pick a line</button>
+        </div>
+        <select id="drillChapter" hidden aria-label="Chapter"></select>
+        <select id="drillLine" hidden aria-label="Line"></select>
+        <div id="drillInfo" class="muted"></div>
+        <div id="drillMsg" class="msg">Pick a repertoire and a mode.</div>
+        <div id="drillMoves" class="moves"></div>
+        <div class="row"><button id="drillHint">Hint</button><button id="drillFlip">Flip</button><button id="drillNext" class="primary" hidden>Next line →</button></div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="build" class="tab">
+    <div class="split">
+      <div class="boardwrap"><div id="buildBoard" class="board"></div></div>
+      <aside>
+        <input id="buildName" placeholder="Repertoire name" value="My repertoire">
+        <div class="row">
+          <label><input type="radio" name="color" value="w" checked> I play White</label>
+          <label><input type="radio" name="color" value="b"> I play Black</label>
+        </div>
+        <input id="buildChapter" placeholder="Chapter for new lines" value="Main">
+        <p class="muted">Play moves for both sides, then “Save line”. Or paste PGN — every game becomes a chapter, every variation a line.</p>
+        <div id="buildMoves" class="moves"></div>
+        <div class="row"><button id="buildUndo">Undo</button><button id="buildReset">Clear board</button><button id="buildSave" class="primary">Save line</button></div>
+        <div id="buildLines" class="linelist"></div>
+        <textarea id="pgn" rows="6" placeholder='[Event "Chapter name"]&#10;1. e4 e5 2. Nf3 Nc6 (2... d6 3. d4) 3. Bc4'></textarea>
+        <div class="row"><button id="pgnAdd">Add PGN</button><label class="btn">Load .pgn file<input type="file" id="pgnFile" accept=".pgn,text/plain" hidden></label></div>
+        <div id="buildMsg" class="msg"></div>
+        <div class="row"><button id="buildCommit" class="primary">Save repertoire</button></div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="settings" class="tab">
+    <div class="settings">
+      <label><input type="checkbox" id="sSound"> Sounds</label>
+      <label>Volume <input type="range" id="sVolume" min="0" max="1" step="0.05"></label>
+      <label>Animation speed <select id="sAnim"><option value="0">Off</option><option value="120">Fast</option><option value="200">Normal</option><option value="320">Slow</option></select></label>
+      <label>Opponent reply delay <select id="sDelay"><option value="150">Instant</option><option value="400">Normal</option><option value="800">Relaxed</option></select></label>
+      <label><input type="checkbox" id="sPremove"> Premoves</label>
+      <label><input type="checkbox" id="sDests"> Show legal-move dots</label>
+      <label><input type="checkbox" id="sCoords"> Board coordinates</label>
+      <label><input type="checkbox" id="sAutoNext"> Auto-advance to next line</label>
+      <label><input type="checkbox" id="sFlip"> Flip board (play from the other side)</label>
+      <label>New lines per session <input type="number" id="sNew" min="0" max="100"></label>
+      <div class="row"><button id="testSounds">Test sounds</button></div>
+      <p class="muted">Custom sounds: replace the files in <code>/sounds/</code> (move.wav, capture.wav, castle.wav, check.wav, error.wav, complete.wav) and redeploy.</p>
+      <h2>Backup</h2>
+      <div class="row">
+        <button id="exportBtn">Export backup (JSON)</button>
+        <label class="btn">Import backup<input type="file" id="importFile" accept=".json,application/json" hidden></label>
+        <button id="resetBtn" class="danger">Reset all data</button>
+      </div>
+      <p class="muted">Everything is stored in this browser only. No account, no server, no ads.</p>
+    </div>
+  </section>
+</main>
+<footer>FreeReps — free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/YOUR-USERNAME/freereps">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2).</footer>
+<script type="module" src="app.js"></script>
+</body></html>

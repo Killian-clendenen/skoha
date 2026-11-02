@@ -1,0 +1,7 @@
+[Event "Italian: Giuoco Piano"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 (4... d6 5. d4 exd4 6. cxd4 Bb6 7. Nc3 Nf6 8. O-O) (4... Qe7 5. d4 Bb6 6. O-O d6 7. a4 a6 8. h3) 5. d3 d6 (5... a6 6. O-O d6 7. a4 h6 8. Re1 O-O 9. h3) (5... O-O 6. O-O d5 7. exd5 Nxd5 8. a4 a6 9. Re1) 6. O-O O-O 7. Re1 a6 8. a4 Ba7 9. h3 h6 10. Nbd2 Be6 11. Bxe6 fxe6 *
+
+[Event "Italian: Two Knights"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. d3 Be7 (4... h6 5. O-O d6 6. c3 g6 7. Re1 Bg7 8. h3) (4... d5 5. exd5 Nxd5 6. O-O Be7 7. Re1 Bg4 8. h3 Bh5 9. Nbd2) 5. O-O O-O 6. Re1 d6 7. c3 Na5 8. Bb5 a6 9. Ba4 b5 10. Bc2 c5 11. Nbd2 *
