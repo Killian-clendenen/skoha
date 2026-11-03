@@ -142,3 +142,14 @@ cg-board square.last-move{background-color:rgba(62,240,208,.32)}
 .tnav button{font-size:16px;font-weight:700}.tnav #navFwd.primary{box-shadow:0 0 0 0 rgba(62,240,208,.6);animation:nudge 1.8s ease-in-out infinite}
 @keyframes nudge{50%{box-shadow:0 0 0 6px rgba(62,240,208,.0),0 0 24px -2px rgba(62,240,208,.7)}}
 @media(max-width:600px){.bnote{left:2%;right:2%}.bnote .coach-card{padding:8px 10px;border-radius:12px}.bnote .coach-san{font-size:16px}.bnote p{font-size:13px}}
+/* ---------- v6: explanation text is the hero of the bubble ---------- */
+.bstage{container-type:inline-size}
+.bnote .coach-card{background:linear-gradient(140deg,rgba(8,11,24,.93),rgba(20,17,50,.91));padding:clamp(10px,2.6cqw,18px) clamp(12px,3.2cqw,22px);max-height:58%;max-height:58cqw;border-radius:clamp(12px,2.4cqw,18px)}
+.bnote .coach-head{gap:6px;margin-bottom:clamp(2px,.8cqw,6px);opacity:.78}
+.bnote .coach-san{font-size:clamp(11px,2.1cqw,13px);font-weight:700;letter-spacing:.06em;color:var(--muted);font-variant:small-caps}
+.bnote .who{font-size:clamp(9px,1.7cqw,10.5px);padding:1px 7px;letter-spacing:.1em}
+.bnote .who.you{background:rgba(62,240,208,.16);color:var(--a1);border:1px solid rgba(62,240,208,.4)}
+.bnote .who.opp{background:rgba(123,108,255,.14)}.bnote.up .who{background:rgba(80,130,255,.18);color:#b9d0ff;border:1px solid rgba(80,130,255,.45)}
+.bnote p{margin:0;font-size:clamp(16px,3.7cqw,23px);line-height:1.42;font-weight:600;color:#fff;letter-spacing:-.005em;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.bnote p.auto{color:#dfe3f7;font-style:normal}
+@media(max-width:600px){.bnote .coach-card{padding:10px 12px}.bnote .coach-san{font-size:11px}.bnote p{font-size:clamp(15px,4.3cqw,18px)}}

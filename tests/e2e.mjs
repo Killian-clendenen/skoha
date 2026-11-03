@@ -116,7 +116,7 @@ await pg.click('#modes [data-mode=line]'); await pg.selectOption('#drillLine', '
   await mv('a2', 'a3'); await pg.waitForTimeout(150); ok((await st()).ply === 6, 'board read-only while browsing');
   await pg.click('#navFwd'); await pg.keyboard.press('ArrowRight'); await pg.waitForTimeout(150);
   ok((await pg.textContent('#navPos')).includes('Move 6 of 6') && !(await pg.evaluate(() => document.querySelector('#drill').classList.contains('browsing'))), 'Next returns to live');
-  await play(6); await pg.screenshot({ path: '/workspace/skoha-train-overlay.png' });
+  await play(6); await pg.screenshot({ path: '/workspace/skoha-annot.png' });
   ok((await st()).ply === 7, 'live board playable again after browsing'); }
 await pg.click('nav [data-nav=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400); await pg.selectOption('#sTheme', 'aurora'); ok(await pg.evaluate(() => document.body.classList.contains('bt-aurora')), 'board theme switch');
 ok(errs.length === 0, 'no page errors ' + errs.join(' | '));
@@ -130,5 +130,5 @@ const mg = await mp.evaluate(() => { const b = document.querySelector('#drillBoa
 ok(mg.inside && mg.w <= 390 && mg.bw > 300, `mobile train: annotation overlaid inside board, no overflow (${JSON.stringify(mg)})`);
 ok((await mp.textContent('#drillNote')).length > 10, 'mobile: coach explains opponent move');
 const tb = await mp.locator('#navBack').boundingBox(); ok(tb.height >= 48 && tb.width >= 100 && tb.y > mg.bb - 1, 'mobile: large Back/Next tap targets under board ' + JSON.stringify(tb));
-await mp.screenshot({ path: '/workspace/skoha-train-overlay-mobile.png' });
+await mp.screenshot({ path: '/workspace/skoha-annot-mobile.png' });
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
