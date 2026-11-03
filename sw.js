@@ -2,7 +2,7 @@
 // App code/content (html, js, css, json, pgn) is NETWORK-FIRST, so a new deploy shows up on the next load whenever
 // the device is online; the cache is only a fallback for offline. Big immutable assets (vendor, sounds, icons) are
 // cache-first. Bump VERSION to drop old caches; skipWaiting + clients.claim activate a new worker immediately.
-const VERSION = 'skoha-20261103a';
+const VERSION = 'skoha-20261103b';
 const SHELL = ['./', 'index.html', 'app.js', 'core.js', 'kb.js', 'narrator.js', 'engine.js', 'style.css', 'manifest.webmanifest',
   'vendor/chess.js', 'vendor/chessground.min.js', 'vendor/chessground.base.css', 'vendor/chessground.brown.css', 'vendor/chessground.cburnett.css',
   'vendor/stockfish/stockfish-19-lite-single.js', 'vendor/stockfish/stockfish-19-lite-single.wasm',

@@ -15,31 +15,31 @@
  (6. Bg5 {The old main line, pinning the knight. Develops the bishop to g5, where it controls f4 and eyes the knight on f6.}
 6... e6 {Solid: blunts the pin and keeps d5 covered. Supports the centre: the pawn on e6 controls d5 and f5.}
 7. f4 {Prepares e5 or f5. Supports the centre: the pawn on f4 controls e5 and supports the bishop on g5.}
-7... Be7 {Breaks the pin. Develops the bishop to e7, where it supports the knight on f6 and the pawn on d6. That clears the way to castle kingside.}
+7... Be7 {Breaks the pin. That clears the way to castle kingside.}
 8. Qf3 {Supports e4 and prepares O-O-O. The queen goes to f3 and supports the pawn on e4.}
 8... Qc7 {Covers e5 and the c-file. The queen goes to c7.}
 9. O-O-O {Opposite-side castling: a race begins. The king is safe and the rook comes into play.}
 9... Nbd7 {Covers e5 and f6; ...b5 is next. Develops the knight to d7, where it controls e5.}
 )
- (6. Be2 {The quiet Opocensky. Develops the bishop to e2, where it controls f3 and d3. That clears the way to castle kingside.}
+ (6. Be2 {The quiet Opocensky. That clears the way to castle kingside.}
 6... e5 {[%cal Ge5d4] Kicks the knight and claims d4. Claims the centre: the pawn on e5 controls f4 and eyes the knight on d4.}
 7. Nb3 {Moves the knight out of attack to b3 and controls d4.}
-7... Be7 {Develops the bishop to e7, where it supports the knight on f6 and the pawn on d6. That clears the way to castle kingside.}
+7... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
 8. O-O {Castles. The king is safe and the rook comes into play.}
 8... O-O {Castles; Black has a comfortable game. The king is safe and the rook comes into play.}
 )
- (6. Bc4 {The Fischer–Sozin bishop. Develops the bishop to c4, where it controls d5. That clears the way to castle kingside.}
+ (6. Bc4 {The Fischer–Sozin bishop. That clears the way to castle kingside.}
 6... e6 {Blunts the bishop. Supports the centre: the pawn on e6 controls d5 and f5.}
-7. Bb3 {Avoids ...d5 and ...b5 tempos. Regroups the bishop to b3 and controls d5. Black's last move put a pawn on e6, which this now pressures.}
+7. Bb3 {b5 tempos. Regroups the bishop to b3 and controls d5.}
 7... b5 {Gains queenside space. The pawn on b5 takes a4 and c4 away from the opponent.}
 8. O-O {Castles. The king is safe and the rook comes into play.}
-8... Be7 {Develops the bishop to e7, where it supports the knight on f6 and the pawn on d6. That clears the way to castle kingside.}
+8... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
 )
 6... e5 {[%cal Ge5d4] Kicks the knight and claims space, leaving a backward d6 pawn as the price.}
 7. Nb3 {Moves the knight out of attack to b3 and controls d4.}
 7... Be6 {[%csl Gd5] Controls d5, the key square. Develops the bishop to e6, where it controls d5. White's last move put a knight on b3, which this now pressures.}
 8. f3 {Supports e4 and prepares g4. Supports the centre: the pawn on f3 controls g4 and supports the pawn on e4.}
-8... Be7 {Develops the bishop to e7, where it supports the knight on f6 and the pawn on d6. That clears the way to castle kingside.}
+8... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
 9. Qd2 {Connects for O-O-O. The queen goes to d2 and controls d4 and d5.}
 9... O-O {Castles. The king is safe and the rook comes into play.}
 10. O-O-O {Opposite castling. The king is safe and the rook comes into play.}
@@ -48,32 +48,32 @@
 [Event "Sicilian: Dragon"]
 
 {In the Dragon (5...g6), Black's bishop on g7 is the best piece in the position. White usually attacks on the kingside with the Yugoslav Attack.}
-1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1. e4 {White claims the centre and opens lines for the queen and f1-bishop. The most popular first move.}
 1... c5 {Sicilian. Supports the centre: the pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
-2. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
+2. Nf3 {White develops and prepares d4 to open the Sicilian.}
 2... d6 {Prepares ...Nf6. Supports the centre: the pawn on d6 controls e5 and supports the pawn on c5. It also opens a line for the bishop on c8.}
 3. d4 {Opens. Claims the centre: the pawn on d4 controls e5 and eyes the pawn on c5. It also opens a line for the bishop on c1 and the queen on d1.}
-3... cxd4 {Takes the pawn on d4; White will want to recapture.}
-4. Nxd4 {Recaptures on d4, restoring the material balance.}
+3... cxd4 {Black trades the c-pawn for White's d-pawn: the Sicilian bargain. Black gets an extra central pawn and the half-open c-file.}
+4. Nxd4 {White recaptures with the knight.}
 4... Nf6 {Hits e4. Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That pawn is currently undefended.}
-5. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
+5. Nc3 {White defends e4 and develops. Now Black chooses the variation: ...a6 (Najdorf), ...g6 (Dragon), ...e6 or ...Nc6.}
 5... g6 {[%cal Gg6g7] The Dragon: the bishop goes to g7. The pawn on g6 controls f5 and h5.}
 6. Be3 {The Yugoslav Attack. Develops the bishop to e3, where it supports the knight on d4.}
-6... Bg7 {[%cal Gg7a1] The Dragon bishop rakes the long diagonal. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+6... Bg7 {[%cal Gg7a1] The Dragon bishop rakes the long diagonal. That clears the way to castle kingside.}
 7. f3 {Supports e4 and g4. Supports the centre: the pawn on f3 controls g4 and supports the pawn on e4.}
 7... O-O {Castles. The king is safe and the rook comes into play.}
 8. Qd2 {Prepares Bh6 and O-O-O. The queen goes to d2 and supports the knight on d4.}
-8... Nc6 {Develops the knight to c6, where it controls e5 and eyes the knight on d4.}
+8... Nc6 {Black develops the last minor piece and puts pressure on d4. White now chooses O-O-O or Bc4.}
 9. Bc4 {[%cal Gc4f7] Stops ...d5. Develops the bishop to c4, where it controls d5. That clears the way to castle kingside.}
  (9. O-O-O {Allows the central break. The king is safe and the rook comes into play.}
 9... d5 {[%cal Gd5e4] The thematic break. Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4.}
-10. exd5 {Takes the pawn on d5; Black will want to recapture.}
-10... Nxd5 {Recaptures on d5, restoring the material balance.}
-11. Nxc6 {Takes the knight on c6; Black will want to recapture.}
+10. exd5 {White takes.}
+10... Nxd5 {Black recaptures; the d5-knight is central. White's Nxc6 next opens the b-file for Black.}
+11. Nxc6 {White takes on c6. Black must recapture with the b-pawn, opening the b-file toward White's king.}
 11... bxc6 {Recaptures towards the centre. Recaptures on c6, restoring the material balance.}
 12. Bd4 {Fights the Dragon bishop. The bishop goes to d4 and controls e5.}
 )
-9... Bd7 {Develops the bishop to d7, where it controls e6 and f5.}
+9... Bd7 {Black develops and connects rooks. Plans: ...Rc8 and ...Ne5 to fight for c4.}
 10. O-O-O {Castles long. The king is safe and the rook comes into play.}
 10... Rc8 {[%cal Gc8c3] The c-file. The rook goes to c8.}
 11. Bb3 {Removes the bishop from ...Ne5 threats. Regroups the bishop to b3 and controls d5.}
@@ -82,15 +82,15 @@
 [Event "Sicilian: Sveshnikov"]
 
 {The Sveshnikov (5...e5) gives up d5 and accepts a backward d-pawn for activity and the bishop pair.}
-1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1. e4 {White claims the centre and opens lines for the queen and f1-bishop. The most popular first move.}
 1... c5 {Sicilian. Supports the centre: the pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
-2. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
-2... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+2. Nf3 {White develops and prepares d4 to open the Sicilian.}
+2... Nc6 {Black develops and controls d4. Black keeps flexible between ...e5, ...g6 or ...e6.}
 3. d4 {Opens. Claims the centre: the pawn on d4 controls e5 and eyes the pawn on c5. It also opens a line for the bishop on c1 and the queen on d1.}
-3... cxd4 {Takes the pawn on d4; White will want to recapture.}
-4. Nxd4 {Recaptures on d4, restoring the material balance.}
+3... cxd4 {Black trades the c-pawn for White's d-pawn: the Sicilian bargain.}
+4. Nxd4 {White recaptures with the knight.}
 4... Nf6 {Hits e4. Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That pawn is currently undefended.}
-5. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
+5. Nc3 {White defends e4 and develops. Black's ...e5 next is the Sveshnikov.}
 5... e5 {[%cal Ge5d4] The Sveshnikov: kicks the knight. Claims the centre: the pawn on e5 controls f4 and eyes the knight on d4. It also opens a line for the bishop on f8.}
 6. Ndb5 {Heads for d6 and d5. Moves the knight out of attack to b5 and controls d4.}
 6... d6 {Covers d6. Supports the centre: the pawn on d6 controls c5 and supports the pawn on e5. It also opens a line for the bishop on c8.}
@@ -100,8 +100,8 @@
 8... b5 {[%cal Gb5b4] Cuts off the a3 knight. Gains space on the queenside; the pawn on b5 takes a4 and c4 away from the opponent.}
 9. Bxf6 {Removes the defender. Takes the knight on f6; Black will want to recapture.}
  (9. Nd5 {Occupies d5. The knight goes to d5.}
-9... Be7 {Develops the bishop to e7, where it supports the knight on f6 and the pawn on d6. That clears the way to castle kingside.}
-10. Bxf6 {Takes the knight on f6; Black will want to recapture.}
+9... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
+10. Bxf6 {White gives up the bishop to gain control of d5. Black must recapture, damaging his kingside or losing the bishop pair.}
 10... Bxf6 {Recaptures with the bishop pair. Recaptures on f6, restoring the material balance.}
 11. c3 {Brings the a3 knight back. Supports the centre: the pawn on c3 controls b4 and d4. It also opens a line for the queen on d1.}
 )
@@ -112,60 +112,60 @@
 [Event "Sicilian: Accelerated Dragon"]
 
 {The Accelerated Dragon (4...g6) skips ...d6 to keep ...d5 in one move.}
-1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1. e4 {White claims the centre and opens lines for the queen and f1-bishop. The most popular first move.}
 1... c5 {Sicilian. Supports the centre: the pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
-2. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
-2... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+2. Nf3 {White develops and prepares d4 to open the Sicilian.}
+2... Nc6 {Black develops and controls d4. Black keeps flexible between ...e5, ...g6 or ...e6.}
 3. d4 {Opens. Claims the centre: the pawn on d4 controls e5 and eyes the pawn on c5. It also opens a line for the bishop on c1 and the queen on d1.}
-3... cxd4 {Takes the pawn on d4; White will want to recapture.}
-4. Nxd4 {Recaptures on d4, restoring the material balance.}
+3... cxd4 {Black trades the c-pawn for White's d-pawn: the Sicilian bargain.}
+4. Nxd4 {White recaptures with the knight. Black's ...g6 next is the Accelerated Dragon.}
 4... g6 {The Accelerated Dragon. The pawn on g6 controls f5 and h5.}
 5. c4 {The Maroczy Bind. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
- (5. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
-5... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6, e5 and d4.}
-6. Be3 {Develops the bishop to e3, where it supports the knight on d4.}
-6... Nf6 {Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That clears the way to castle kingside.}
-7. Bc4 {Aims at f7. Develops the bishop to c4, where it controls d5. That clears the way to castle kingside.}
+ (5. Nc3 {White develops and supports e4. Black's ...Bg7 next completes the fianchetto.}
+5... Bg7 {Black fianchettoes. The g7-bishop points at d4 and the long diagonal: that's the Dragon's main weapon.}
+6. Be3 {White develops and supports d4. Black's ...Nf6 next.}
+6... Nf6 {The knight develops with pressure on e4 and Black is ready to castle. Typical mistake: delaying this for pawn moves and getting caught in the centre.}
+7. Bc4 {Aims at f7. That clears the way to castle kingside.}
 7... Qa5 {Pins the c3 knight. The queen goes to a5 and controls d5 and e5.}
 8. O-O {Castles. The king is safe and the rook comes into play.}
 8... O-O {Castles. The king is safe and the rook comes into play.}
 9. Bb3 {Regroups the bishop to b3 and controls d5.}
-9... d6 {Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
+9... d6 {Black supports ...e5 and opens the c8-bishop. White's plan: f3 or h3.}
 )
-5... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6, e5 and d4.}
-6. Be3 {Develops the bishop to e3, where it supports the knight on d4.}
-6... Nf6 {Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That clears the way to castle kingside.}
-7. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
+5... Bg7 {Black fianchettoes. The g7-bishop points at d4 and the long diagonal.}
+6. Be3 {White develops and supports d4. Black's ...Nf6 next.}
+6... Nf6 {The knight develops with pressure on e4 and Black is ready to castle. Typical mistake: delaying this for pawn moves and getting caught in the centre.}
+7. Nc3 {White develops and supports e4.}
 7... O-O {Castles. The king is safe and the rook comes into play.}
-8. Be2 {Develops the bishop to e2, where it controls f3 and d3. That clears the way to castle kingside.}
-8... d6 {Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
+8. Be2 {Quiet and solid. The bishop backs up the f3-knight (no annoying ...Bg4 pin pressure) and White is one move from castling.}
+8... d6 {Black supports ...e5 and opens the c8-bishop.}
 9. O-O {Castles. The king is safe and the rook comes into play.}
-9... Bd7 {Develops the bishop to d7, where it controls e6 and f5.} *
+9... Bd7 {Black develops and connects rooks. Plans: ...a6 and ...b5 or ...Qa5.} *
 
 [Event "Sicilian: Anti-Sicilians"]
 
 {2.c3 and 3.Bb5+.}
-1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1. e4 {White claims the centre and opens lines for the queen and f1-bishop.}
 1... c5 {Sicilian. Supports the centre: the pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
 2. c3 {The Alapin. Supports the centre: the pawn on c3 controls b4 and d4. It also opens a line for the queen on d1.}
- (2. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
+ (2. Nf3 {White develops and prepares d4 or Bb5.}
 2... d6 {Najdorf move order. Supports the centre: the pawn on d6 controls e5 and supports the pawn on c5. It also opens a line for the bishop on c8.}
 3. Bb5+ {The Moscow. It is check, so the reply is forced.}
 3... Bd7 {Blocks. Develops the bishop to d7, where it controls e6 and f5. It attacks the bishop on b5, which is undefended.}
-4. Bxd7+ {Trades. It is check, so the reply is forced. Takes the bishop on d7; Black will want to recapture. It gives check.}
-4... Qxd7 {Recaptures on d7, restoring the material balance.}
+4. Bxd7+ {Trades. It is check, so the reply is forced. It gives check.}
+4... Qxd7 {Black recaptures with the queen. Black's queen is active but can be hit by Nc3 or c4.}
 5. O-O {Castles. The king is safe and the rook comes into play.}
-5... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+5... Nc6 {Black develops and controls d4.}
 6. c3 {Prepares d4. Supports the centre: the pawn on c3 controls b4 and d4. It also opens a line for the queen on d1.}
-6... Nf6 {Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That pawn is currently undefended.}
+6... Nf6 {Black develops and pressures e4. White's Re1 or Qe2 defends it.}
 7. Re1 {Supports e4. The rook goes to e1 and supports the pawn on e4.}
 )
 2... Nf6 {[%cal Gf6e4] Hits e4. Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That pawn is currently undefended.}
 3. e5 {Kicks the knight. Claims the centre: the pawn on e5 controls d6 and eyes the knight on f6.}
 3... Nd5 {Central knight. Moves the knight out of attack to d5.}
-4. d4 {Claims the centre: the pawn on d4 supports the pawn on e5 and eyes the pawn on c5. It also opens a line for the bishop on c1 and the queen on d1.}
-4... cxd4 {Takes the pawn on d4; White will want to recapture.}
-5. Nf3 {Develops the knight to f3, where it supports the pawn on e5 and eyes the pawn on d4. That pawn is currently undefended.}
-5... Nc6 {Develops the knight to c6, where it supports the pawn on d4 and eyes the pawn on e5.}
-6. cxd4 {Takes the pawn on d4; Black will want to recapture.}
+4. d4 {White builds a big centre. Black's ...cxd4 next opens lines.}
+4... cxd4 {Black takes the pawn. White recaptures with cxd4 or Nf3.}
+5. Nf3 {White develops toward e5. The d4-pawn is not yet recaptured.}
+5... Nc6 {Black develops and pressures e5 and d4. White's cxd4 next.}
+6. cxd4 {White recaptures and rebuilds the centre. Black's plan: ...d6 or ...e6.}
 6... d6 {Challenges e5. Supports the centre: the pawn on d6 controls c5 and eyes the pawn on e5. It also opens a line for the bishop on c8.} *

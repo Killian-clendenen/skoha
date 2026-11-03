@@ -9,6 +9,7 @@ const idx = JSON.parse(readFileSync(new URL('../starters/', import.meta.url).pat
 for (const s of idx) {
   const { lines, errors } = parsePgn(readFileSync(new URL('../starters/', import.meta.url).pathname + '' + s.file, 'utf8'));
   ok(errors.length === 0, `${s.name}: all moves legal ${errors.join('; ')}`);
+  if (['reti','italian','london','sicilian','ruy','qg','carokann','french','kid'].includes(s.id)) { const tpl = lines.flatMap(l => l.n).filter(n => n && /^(Castles (king|queen)side: the king is safe|Develops the \w+ to [a-h][1-8], where|Recaptures on [a-h][1-8], restoring|Claims the centre: the pawn on|Supports the centre: the pawn on)/.test(n.t || '')); ok(!tpl.length, `${s.name}: no machine-template-only notes (${tpl.length})`); }
   ok(lines.length >= 5, `${s.name}: ${lines.length} lines`);
   console.log(`  ${s.name}: ${lines.length} lines, ${new Set(lines.map(l => l.ch)).size} chapters, ${new Set(lines.flatMap(l => userCards(l.m, s.color).map(c => c.key))).size} moves to learn`);
 }

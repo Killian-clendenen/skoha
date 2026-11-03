@@ -25,7 +25,7 @@
  4... Nd7 {Supports ...e5. Leaving f6 free keeps the f7-pawn mobile too.}
  5. g3 {Fianchetto. The g2-bishop will bear down on d5.}
  5... Ngf6 {Develops and guards e4. The knight on f6 controls e4 and supports the pawn on d5.}
- 6. Bg2 {The long diagonal is now loaded. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
+ 6. Bg2 {The long diagonal is now loaded. That clears the way to castle kingside.}
  6... e6 {Solid. Black builds a pawn triangle and develops the f8-bishop next.}
  7. O-O {White castles and prepares d3 and h3, asking the g4-bishop to commit.}
  7... Bd6 {[%cal Gd6h2] The bishop aims at h2, and it also supports a ...e5 push.}
@@ -39,7 +39,7 @@
  5. d3 {[%csl Ge4] Fixes e4 as White's square and prepares e3 or b4 to undermine the d4-pawn.}
  5... Nf6 {Develops and keeps an eye on e4. The knight on f6 controls e4 and d5.}
  6. O-O {King safety. Now e3 is the main lever. Castles kingside: the king is safe and the rook on f1 joins the game.}
- 6... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+ 6... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
  7. e3 {[%cal Ge3d4] Hits d4 straight away. The tension forces Black to choose how to keep the centre.}
  7... O-O {Black allows exchanges on d4. Castles kingside: the king is safe and the rook on f8 joins the game.}
  8. exd4 {Opens the e-file so a rook can attack the e-pawn or the d-pawn.}
@@ -82,9 +82,9 @@
  3... Nxd5 {Recaptures, but the knight in the centre can be kicked.}
  4. g3 {Fianchetto aiming at the d5-knight and the long diagonal.}
  4... g6 {Black mirrors White with a fianchetto. The pawn on g6 controls f5 and h5.}
- 5. Bg2 {Pressure on d5 and b7. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
- 5... Bg7 {Black contests the long diagonal. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6, e5 and d4. That clears the way to castle kingside.}
- 6. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 5. Bg2 {Pressure on d5 and b7. That clears the way to castle kingside.}
+ 5... Bg7 {Black contests the long diagonal. That clears the way to castle kingside.}
+ 6. O-O {White castles before deciding the centre.}
  6... O-O {Symmetrical, but it's White to move. Castles kingside: the king is safe and the rook on f8 joins the game.}
  7. Nc3 {Develops with tempo on the d5-knight. The knight on c3 controls e4 and eyes the knight on d5.}
  7... Nb6 {Steps away from exchanges. The knight eyes c4.}
@@ -94,16 +94,16 @@
 (3... d4 {[%csl Gd4] Black gains space and cramps White's queenside knight.}
  4. d3 {[%csl Ge4] Fixes e4 for White and prepares e3 or b4 to undermine d4.}
  4... Nc6 {Defends d4 and eyes b4 and e5. Develops the knight to c6, where it controls e5 and supports the pawn on d4.}
- 5. Bg2 {[%cal Gg2b7] The bishop aims at b7 and the queenside. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
+ 5. Bg2 {[%cal Gg2b7] The bishop aims at b7 and the queenside. That clears the way to castle kingside.}
  5... Nf6 {Develops and covers e4. The knight on f6 controls e4 and d5.}
  6. O-O {King safety. e3 is the lever. Castles kingside: the king is safe and the rook on f1 joins the game.}
  6... e5 {Black builds a broad centre: space, but also targets.}
  7. e3 {[%cal Ge3d4] Attacks the d4-pawn immediately. Supports the centre: the pawn on e3 controls f4 and eyes the pawn on d4.}
- 7... Be7 {Calm. Black allows the exchange. Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+ 7... Be7 {Calm. Black allows the exchange. That clears the way to castle kingside.}
  8. exd4 {Opens the e-file. Takes the pawn on d4; Black will want to recapture.}
  8... exd4 {[%csl Rd4] Black keeps a wedge on d4, but it's isolated. Re1, Bf4 and b4 will target it.})
 4. Bg2 {Completes the fianchetto: steady pressure on d5 and the long diagonal.}
-4... Be7 {Solid, preparing to castle. Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+4... Be7 {Solid, preparing to castle. That clears the way to castle kingside.}
 (4... dxc4 {Black grabs the c4-pawn while it's undefended. In the Réti this is usually temporary.}
  5. Qa4+ {[%cal Ga4c4,Ga4e8] The point: a check that also attacks c4, so White wins the pawn back with tempo.}
  5... Nbd7 {Blocks the check and develops. The knight on d7 controls e5.}
@@ -150,36 +150,36 @@
  4. O-O {King safety, then d3/Nbd2 and e4. Castles kingside: the king is safe and the rook on f1 joins the game.}
  4... Nd7 {Supports ...e5 to build a big centre. Develops the knight to d7, where it controls e5.}
  5. d3 {[%csl Ge4] Prepares e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
- 5... Ngf6 {Develops the knight to f6, where it controls e4 and supports the pawn on d5.}
+ 5... Ngf6 {Black's knight goes to f6 rather than d7 so it guards e4 and d5. With the g4-bishop pinning f3, Black hopes to meet e4 with ...dxe4 and easy play.}
  6. Nbd2 {[%cal Gd2e4] Supports e4. Develops the knight to d2, where it controls e4.}
  6... e5 {Black has the ideal centre with pawns on c6, d5 and e5.}
  7. e4 {[%cal Ge4d5] White's thematic break, challenging d5. Claims the centre: the pawn on e4 controls f5 and eyes the pawn on d5.}
- 7... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+ 7... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
  8. h3 {Asks the bishop to decide: exchange on f3 or retreat.}
  8... Bh5 {Keeps the pin, but the bishop could get stranded after g4.}
  9. Re1 {[%cal Ge1e5] The rook backs up e4 and puts indirect pressure on e5.})
 (2... Bg4 {[%cal Gg4f3] Black develops the bishop early, before ...e6.}
  3. Bg2 {Fianchetto. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
  3... Nd7 {Prepares ...e5 and ...Ngf6. Develops the knight to d7, where it controls e5.}
- 4. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 4. O-O {White castles first and keeps d3/d4 in reserve. Don't rush h3: the g4-bishop isn't doing much yet, and kicking it now only helps Black decide where it belongs.}
  4... c6 {Supports d5. Supports the centre: the pawn on c6 controls b5 and supports the pawn on d5. It also opens a line for the queen on d8.}
  5. d3 {Prepares e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
  5... e5 {Black's centre is impressive, but White aims to undermine it.}
  6. Nbd2 {Supports e4. Develops the knight to d2, where it controls e4.}
- 6... Ngf6 {Develops the knight to f6, where it controls e4 and supports the pawn on d5.}
+ 6... Ngf6 {The knight comes to f6 to hold e4 once White pushes it. Black has the classical centre; White's job is to break it up with e4 and a timely exf5 or exd5.}
  7. e4 {[%cal Ge4d5] Challenges d5 and opens lines for the g2-bishop.}
- 7... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+ 7... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
  8. h3 {Asks the g4-bishop to commit. The pawn on h3 eyes the bishop on g4.}
  8... Bh5 {Keeps the pin. Moves the bishop out of attack to h5.})
 (2... c5 {A reversed King's Indian: Black plays in the centre aggressively.}
  3. Bg2 {Fianchetto. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
  3... Nc6 {Develops and supports ...e5. The knight on c6 controls d4 and e5.}
- 4. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 4. O-O {Castling first keeps every option open: c4 to hit d5, or d3 and e4 to take on Black's big centre later.}
  4... e5 {[%csl Gd4] Black has a big centre. White aims to undermine it with c3, e4 and Re1.}
  5. d3 {Prepares e4 and keeps the d3-pawn compact. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
- 5... Nf6 {Develops the knight to f6, where it controls e4 and supports the pawn on d5.}
+ 5... Nf6 {Black develops naturally behind the c5-d5-e5 centre. White should not fight it head-on but prepare e4 (after Nbd2) and Re1 to make the centre a target.}
  6. Nbd2 {Supports e4. Develops the knight to d2, where it controls e4.}
- 6... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+ 6... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
  7. e4 {[%cal Ge4d5] The break that challenges Black's centre. The pawn on e4 controls f5 and eyes the pawn on d5.}
  7... O-O {Black. Castles kingside: the king is safe and the rook on f8 joins the game.}
  8. Re1 {Pressure on e5 and support for e4. The rook goes to e1 and supports the pawn on e4.}
@@ -187,18 +187,18 @@
 (2... g6 {A symmetrical setup. The pawn on g6 controls f5 and h5.}
  3. Bg2 {Fianchetto. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
  3... Bg7 {Black contests the long diagonal. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6, e5 and d4.}
- 4. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 4. O-O {In this mirror position White is a full move ahead. White castles and will choose between d3/e4 and c4 depending on how Black sets up.}
  4... e5 {Black takes space. Claims the centre: the pawn on e5 controls d4 and f4. It also opens a line for the queen on d8.}
  5. d3 {Prepares e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
  5... Ne7 {Keeps the f-pawn free for ...f5. Develops the knight to e7, where it supports the pawn on d5. That clears the way to castle kingside.}
  6. Nbd2 {Supports e4. Develops the knight to d2, where it controls e4.}
- 6... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+ 6... O-O {Black castles behind ...e5 and ...Ne7, a setup that keeps ...f5 possible. White answers with e4 to stop ...f5 grabbing even more space.}
  7. e4 {[%cal Ge4d5] Challenges the centre. The pawn on e4 controls f5 and eyes the pawn on d5.}
  7... c5 {Black grabs more space. Supports the centre: the pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.})
 3. Bg2 {Fianchetto, the backbone of the KIA. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
 3... e6 {A French-style setup, the most common way to meet the KIA.}
 (3... c6 {Solid. Black prepares ...Bg4. Supports the centre: the pawn on c6 controls b5 and supports the pawn on d5. It also opens a line for the queen on d8.}
- 4. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 4. O-O {White castles and asks Black to commit. Against ...c6 the plan is d3 and Nbd2 for e4, or b3 and c4 to hit d5 from the side.}
  4... Bg4 {[%cal Gg4f3] Active development. The bishop on g4 controls f5 and e6.}
  5. d3 {Prepares e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
  5... Nbd7 {Supports ...e5. Develops the knight to d7, where it controls e5.}
@@ -207,27 +207,27 @@
  7. e4 {[%cal Ge4d5] Challenges it immediately. Claims the centre: the pawn on e4 controls f5 and eyes the pawn on d5.}
  7... dxe4 {Black releases the tension and opens the d-file.}
  8. dxe4 {[%csl Gd5] Recaptures. White's knight can later use c4 or f1-e3 to reach d5 or f5.}
- 8... Bc5 {[%cal Gc5f2] An active bishop aiming at f2. Develops the bishop to c5, where it controls d4. That clears the way to castle kingside.}
+ 8... Bc5 {[%cal Gc5f2] An active bishop aiming at f2. That clears the way to castle kingside.}
  9. h3 {Questions the g4-bishop before it pins anything.})
 (3... Bf5 {The bishop comes out before ...e6. Develops the bishop to f5, where it controls e4.}
- 4. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 4. O-O {White castles. The f5-bishop is Black's best piece, so look for d3 and Nbd2 followed by e4 to blunt it, or Nh4 to chase it.}
  4... e6 {Black has a London-style setup. Supports the centre: the pawn on e6 supports the pawn on d5 and the bishop on f5. It also opens a line for the bishop on f8.}
  5. d3 {[%csl Ge4] Prepares Nbd2 and e4, hitting the f5-bishop. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
  5... h6 {Makes a retreat square on h7. The pawn on h6 controls g5.}
  6. Nbd2 {Supports e4. Develops the knight to d2, where it controls e4.}
- 6... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+ 6... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
  7. Qe1 {[%cal Ge1e4] A typical KIA idea: the queen backs up e4 from e1.}
  7... O-O {Black. Castles kingside: the king is safe and the rook on f8 joins the game.}
  8. e4 {Gains time on the f5-bishop. Claims the centre: the pawn on e4 eyes the pawn on d5 and the bishop on f5. It also opens a line for the queen on e1.}
- 8... Bh7 {The bishop retreats but still eyes e4. The bishop goes to h7 and eyes the pawn on e4. White's last move put a pawn on e4, which this now pressures.})
+ 8... Bh7 {The bishop retreats but still eyes e4. The bishop goes to h7 and eyes the pawn on e4.})
 4. O-O {King safety first. Castles kingside: the king is safe and the rook on f1 joins the game.}
-4... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+4... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
 5. d3 {[%csl Ge4] Prepares e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
-5... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+5... O-O {Black castles into a solid Queen's-Gambit-like shell. White's standard plan is Nbd2 and e4, asking whether Black takes, pushes or keeps the tension.}
 6. Nbd2 {[%cal Gd2e4] Supports the e4 break. Develops the knight to d2, where it controls e4.}
 6... c5 {[%csl Gc5] Black gains queenside space. In the KIA, Black attacks on the queenside and White on the kingside.}
 7. e4 {[%cal Ge4d5] The thematic break. Claims the centre: the pawn on e4 controls f5 and eyes the pawn on d5.}
-7... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+7... Nc6 {Black brings the knight to c6 to add weight to d4 and e5. Now e5 by White would gain space and drive the f6-knight away; watch for that.}
 8. Re1 {[%cal Ge1e5] Backs up e4 and prepares e5. The rook goes to e1 and supports the pawn on e4.}
 8... b5 {Black races on the queenside. Gains space on the queenside; the pawn on b5 takes a4 and c4 away from the opponent.}
 (8... dxe4 {Black releases the central tension. Takes the pawn on e4; White will want to recapture.}
@@ -237,10 +237,10 @@
  10... Qc7 {The queen goes to c7 and supports the pawn on e5.}
  11. Qe2 {Supports e4 and connects the rooks. The queen goes to e2 and supports the pawn on e4.})
 9. e5 {[%csl Gd6,Gf6] The classic KIA wedge: it grabs space and drives the f6-knight away from the kingside.}
-9... Nd7 {The knight retreats and eyes e5. The knight goes to d7 and eyes the pawn on e5. White's last move put a pawn on e5, which this now pressures.}
+9... Nd7 {The knight retreats and eyes e5. The knight goes to d7 and eyes the pawn on e5.}
 10. Nf1 {[%cal Gf1h2] The standard regroup: Nf1-h2-g4 or Ne3, joining the kingside attack.}
 10... a5 {Black continues the queenside pawn storm. Gains space on the queenside; the pawn on a5 takes b4 away from the opponent.}
-11. h4 {[%cal Gh4h5] Gains space on the kingside and prepares Bf4, N1h2 and Ng5 or h5.}
+11. h4 {[%cal Gh4h5] White's kingside attack starts. h4 supports Bf4 and N1h2–g4, or Ng5. Black must hurry on the queenside: speed matters more than material here.}
 11... b4 {Black gains space and prepares ...a4. The pawn on b4 controls a3 and c3.}
 12. Bf4 {[%cal Gf4e5] Defends the e5 wedge and supports the attack.} *
 
@@ -253,20 +253,20 @@
 (2. g3 {[%cal Gf1g2] The KIA route. The pawn on g3 controls f4 and h4.}
  2... g6 {Symmetrical setup. The pawn on g6 controls f5 and h5.}
  3. Bg2 {Fianchetto. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
- 3... Bg7 {Black contests the long diagonal. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
- 4. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
- 4... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+ 3... Bg7 {Black contests the long diagonal. That clears the way to castle kingside.}
+ 4. O-O {White castles and waits. In double-fianchetto positions the first side to strike the centre with a pawn (d4 or c4 here) usually gets the better version.}
+ 4... O-O {Black castles too. Now White chooses: c4 and d4 for space, or d3 and e4 to aim for a King's Indian Attack type game.}
  5. d3 {Prepares e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
  5... d6 {A King's Indian-style setup. Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
  6. e4 {Takes space in the centre. The pawn on e4 controls d5 and f5.}
- 6... e5 {Claims the centre: the pawn on e5 controls d4 and f4.}
- 7. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
- 7... Nc6 {Develops the knight to c6, where it controls d4 and supports the pawn on e5.}
+ 6... e5 {Black stakes out e5 to meet White's e4. With pawns locked on e4/e5, the game will be decided by f-pawn and piece play, so plan ...Nc6 and ...Nh5 or ...Nd7 with ...f5.}
+ 7. Nc3 {The knight supports e4 and eyes d5. A common mistake is to play c3 here; the knight is better placed on c3 before deciding on Nh4 and f4.}
+ 7... Nc6 {Black develops and keeps d4 under control. Both sides now play for an f-pawn break: f4 for White, ...f5 for Black.}
  8. h3 {[%csl Gg4] Takes away g4 from Black's pieces and prepares Be3.})
 (2. g3 d5 {Black occupies the centre. The pawn on d5 controls c4 and e4. It also opens a line for the bishop on c8 and the queen on d8.}
  3. Bg2 {Fianchetto. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
  3... c6 {Supports d5. Supports the centre: the pawn on c6 controls b5 and supports the pawn on d5. It also opens a line for the queen on d8.}
- 4. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 4. O-O {White castles before committing. Against ...c6/...d5 the useful plans are d3 with Nbd2 and e4, or c4 to fight for d5.}
  4... Bg4 {Active development. The bishop on g4 controls f5 and e6.}
  5. d3 {Prepares e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
  5... Nbd7 {Supports ...e5. Develops the knight to d7, where it controls e5.}
@@ -282,35 +282,35 @@
  4. e4 {[%csl Gd5] White takes the full centre against the King's Indian.}
  4... d6 {The KID: Black allows a big centre so it can be attacked later.}
  5. d4 {Transposes into a main-line King's Indian. Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
- 5... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
- 6. Be2 {The Classical setup. Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
+ 5... O-O {Black castles and waits for White to commit in the centre. The main idea is ...e5 or ...c5 at the right moment to challenge d4.}
+ 6. Be2 {The Classical setup. That clears the way to castle kingside.}
  6... e5 {[%cal Ge5d4] The thematic King's Indian break. Claims the centre: the pawn on e5 controls f4 and eyes the pawn on d4.}
- 7. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 7. O-O {White castles; now d5 or dxe5 decides the structure. Don't leave the tension too long: ...exd4 Nxd4 frees Black's g7-bishop.}
  7... Nc6 {Pressure on d4. Develops the knight to c6, where it supports the pawn on e5 and eyes the pawn on d4.}
  8. d5 {[%csl Gc5,Ge6] Closes the centre with gain of tempo. White attacks on the queenside (c5/b4) and Black on the kingside with ...f5.}
- 8... Ne7 {The knight reroutes to support ...f5. Moves the knight out of attack to e7 and eyes the pawn on d5. White's last move put a pawn on d5, which this now pressures.})
+ 8... Ne7 {f5. Moves the knight out of attack to e7 and eyes the pawn on d5.})
 (2... c5 {Symmetrical English. Supports the centre: the pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
- 3. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
- 3... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+ 3. Nc3 {The knight goes to c3 to contest d5 and support a later e4. White keeps d4 as an option to transpose to an Open Sicilian-type structure.}
+ 3... Nc6 {Symmetry. Black copies White's development and waits; the side that breaks with d4/...d5 under the best circumstances will get the edge.}
  4. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
  4... d5 {Black strikes in the centre. The pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the bishop on c8 and the queen on d8.}
  5. cxd5 {Opens the long diagonal. Takes the pawn on d5; Black will want to recapture.}
- 5... Nxd5 {Recaptures on d5, restoring the material balance.}
+ 5... Nxd5 {Black recaptures and has a strong knight on d5 for now.}
  6. Bg2 {[%cal Gg2d5] Pressure on the d5-knight and the long diagonal.}
  6... Nc7 {Retreats to a safe square that also covers e6 and b5.}
- 7. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 7. O-O {White castles. The c7-knight covers d5 and e6 but sits passively; White aims for d3, a3 and b4 to attack c5.}
  7... e5 {[%csl Rd5,Rd6] Black takes space with a Maróczy-like bind, but the d5 square and the d6-pawn can become weak.}
  8. d3 {Prepares Nd2-c4 or Be3, aiming at Black's weakened dark squares.}
- 8... Be7 {Develops the bishop to e7, where it controls f6 and d6. That clears the way to castle kingside.})
+ 8... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.})
 (2... b6 {Queen's Indian style. The pawn on b6 controls a5 and c5.}
  3. g3 {Fianchetto to contest the long diagonal. The pawn on g3 controls f4 and h4.}
  3... Bb7 {Black fights for e4 and the long diagonal. Fianchettoes the bishop on b7, where it rakes the long diagonal through c6, d5 and e4.}
- 4. Bg2 {Contests the long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
- 4... e6 {Supports the centre: the pawn on e6 controls d5 and f5. It also opens a line for the bishop on f8.}
- 5. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
- 5... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+ 4. Bg2 {Contests the long diagonal. That clears the way to castle kingside.}
+ 4... e6 {Black closes the bishop's diagonal partly but keeps d5 and f5 under control. Typical Hedgehog play follows: ...Be7, ...O-O and ...d6.}
+ 5. O-O {White castles. Against the b6/e6 setup, Nc3 and d4 grab the centre; the b7-bishop then faces a pawn wall.}
+ 5... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
  6. Nc3 {Prepares d4. Develops the knight to c3, where it controls d5 and e4.}
- 6... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+ 6... O-O {Black castles. The position is a quiet Queen's Indian type; White can push d4 or keep pieces flexible with b3, Bb2 and e3.}
  7. Re1 {[%cal Ge1e4] Prepares e4. The rook goes to e1.}
  7... d5 {Black stops e4. Claims the centre: the pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the queen on d8.}
  8. cxd5 {Releases the tension. Takes the pawn on d5; Black will want to recapture.}
@@ -318,39 +318,39 @@
  9. d4 {Takes the centre. The pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.})
 (2... d5 {Black occupies the centre. The pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the bishop on c8 and the queen on d8.}
  3. cxd5 {Trades the flank pawn for the centre pawn. Takes the pawn on d5; Black will want to recapture.}
- 3... Nxd5 {Recaptures on d5, restoring the material balance.}
+ 3... Nxd5 {Black recaptures and the knight sits well in the centre. White's plan is g3, Bg2 and d4 or e4 to kick it with tempo.}
  4. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
  4... g6 {Black mirrors White. The pawn on g6 controls f5 and h5.}
- 5. Bg2 {Pressure on d5. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
- 5... Bg7 {Black contests the diagonal. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6, e5 and d4. That clears the way to castle kingside.}
- 6. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
- 6... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+ 5. Bg2 {Pressure on d5. That clears the way to castle kingside.}
+ 5... Bg7 {Black contests the diagonal. That clears the way to castle kingside.}
+ 6. O-O {White castles. The knight on d5 is a target: Nc3, d4 or e4 later gain time against it.}
+ 6... O-O {Black castles too. Now d4 builds a centre while the g7-bishop presses it; Black's counter is ...c5 or ...Nc6 to hit d4.}
  7. Nc3 {Development with tempo on the d5-knight. The knight on c3 controls e4 and eyes the knight on d5.}
  7... Nb6 {Regroups the knight to b6 and controls d5.}
  8. d3 {Flexible central control. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.})
 3. g3 {[%cal Gf1g2] Fianchetto. The pawn on g3 controls f4 and h4.}
 3... d5 {A Catalan-style position arises. Claims the centre: the pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the queen on d8.}
 (3... b6 {Queen's Indian style. The pawn on b6 controls a5 and c5.}
- 4. Bg2 {Contests the long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
- 4... Bb7 {Fianchettoes the bishop on b7, where it rakes the long diagonal through c6, d5 and e4.}
- 5. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
- 5... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+ 4. Bg2 {Contests the long diagonal. That clears the way to castle kingside.}
+ 4... Bb7 {Black fianchettoes to fight for e4 and the long diagonal. White's fianchetto bishop on g2 meets it head-on; Nc3 and d4 are typical.}
+ 5. O-O {White castles. The battle is for e4: Nc3, then d4 or d3 and e4. Black wants ...Ne4 or ...d5.}
+ 5... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
  6. Nc3 {Prepares d4. Develops the knight to c3, where it controls d5 and e4.}
- 6... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+ 6... O-O {Black castles. White can play d4 to reach a Queen's Indian or Re1 and e4 for a more open game.}
  7. d4 {Takes the centre. The pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
  7... Ne4 {[%csl Ge4] Black stops e4 and offers exchanges. The knight goes to e4.}
- 8. Qc2 {[%cal Gc2e4] Challenges the e4-knight. The queen goes to c2 and eyes the knight on e4. Black's last move put a knight on e4, which this now pressures.})
+ 8. Qc2 {[%cal Gc2e4] Challenges the e4-knight. The queen goes to c2 and eyes the knight on e4.})
 4. Bg2 {Fianchetto. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
-4... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
-5. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
-5... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+4... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
+5. O-O {White castles. Against this Queen's Gambit setup, b3 and Bb2 (or d4) are standard; Black should develop before picking ...c5 or ...dxc4.}
+5... O-O {Black castles. White's main plans are b3/Bb2 or d4, and in both cases cxd5 at the right moment can create a target on d5.}
 6. b3 {Prepares Bb2. The pawn on b3 controls a4 and supports the pawn on c4.}
 6... c5 {Space in the centre. The pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
 7. Bb2 {The long diagonal. Fianchettoes the bishop on b2, where it rakes the long diagonal through c3, d4 and e5.}
-7... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+7... Nc6 {The knight lands on c6 to support ...d4 or ...e5. White replies with e3 to keep the knight off d4.}
 8. e3 {Holds d4. Supports the centre: the pawn on e3 controls d4 and f4.}
 8... b6 {Prepares ...Bb7. The pawn on b6 controls a5 and supports the pawn on c5.}
-9. Nc3 {Develops the knight to c3, where it controls e4 and eyes the pawn on d5.}
+9. Nc3 {White develops the last minor piece and puts pressure on d5. The cxd5 exchange will ask Black whether to recapture with the pawn (isolated pawn) or a piece.}
 9... Bb7 {Contests the long diagonal. Fianchettoes the bishop on b7, where it rakes the long diagonal through c6.}
 10. cxd5 {Releases the tension. Takes the pawn on d5; Black will want to recapture.}
 10... exd5 {Black gets hanging pawns on c5 and d5. Recaptures on d5, restoring the material balance.} *
@@ -362,85 +362,85 @@
 1... c5 {Black controls d4 and keeps options open, including a transposition to a Sicilian.}
 2. c4 {Symmetrical English. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
 (2. g3 {KIA style. The pawn on g3 controls f4 and h4.}
- 2... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+ 2... Nc6 {The knight on c6 eyes d4 and e5. White plays Bg2 and castles, then picks between c4 (English structures) and d4.}
  3. Bg2 {Fianchetto. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
  3... g6 {Black fianchettoes too. The pawn on g6 controls f5 and h5.}
- 4. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 4. O-O {White castles. Plans: c3 and d4 for the centre, or d3 and e4 for a King's Indian Attack shape.}
  4... Bg7 {Contests the long diagonal. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6, e5 and d4.}
  5. c3 {[%csl Gd4] Prepares d4. Supports the centre: the pawn on c3 controls b4 and d4. It also opens a line for the queen on d1.}
  5... e5 {Black stops d4. Claims the centre: the pawn on e5 controls d4 and f4. It also opens a line for the queen on d8.}
  6. d3 {Prepares e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
- 6... Nge7 {Keeps the f-pawn free. Develops the knight to e7, where it controls d5. That clears the way to castle kingside.}
+ 6... Nge7 {Keeps the f-pawn free. That clears the way to castle kingside.}
  7. a3 {[%cal Ga3b4] Prepares b4 to attack c5. The pawn on a3 controls b4.})
-2... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
-(2... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
- 3. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+2... Nc6 {Black develops symmetrically. White's best is usually Nc3 and g3, keeping d4 in hand for the right moment.}
+(2... Nf6 {Black develops toward e4 and d5. White's g3 and Bg2 make d5 hard for Black to occupy safely.}
+ 3. Nc3 {The knight controls d5 and e4 and prepares d4 to open the centre on White's terms.}
  3... d5 {Black strikes in the centre. The pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the bishop on c8 and the queen on d8.}
  4. cxd5 {Opens lines. Takes the pawn on d5; Black will want to recapture.}
- 4... Nxd5 {Recaptures on d5, restoring the material balance.}
+ 4... Nxd5 {Black recaptures toward the centre. Now e4 or g3 hits the d5-knight; be ready for ...Nxc3 bxc3, which gives White a strong centre.}
  5. e4 {[%cal Ge4d5] Gains time on the d5-knight. Claims the centre: the pawn on e4 controls f5 and eyes the knight on d5. It also opens a line for the bishop on f1.}
  5... Nb4 {[%cal Gb4d3] Threatens Nd3+. Moves the knight out of attack to b4 and controls d5.}
- 6. Bc4 {[%csl Gd3] Covers d3 and develops. The bishop on c4 controls d5. That clears the way to castle kingside.}
+ 6. Bc4 {[%csl Gd3] Covers d3 and develops. That clears the way to castle kingside.}
  6... Nd3+ {The knight lands on d3 with check. The knight goes to d3 and controls e5. It gives check.}
  7. Ke2 {The king attacks the d3-knight and forces it to leave.}
- 7... Nf4+ {The knight retreats with check. The knight goes to f4 and controls d5. It gives check and attacks the pawn on g2, which is undefended.}
+ 7... Nf4+ {The knight retreats with check. The knight goes to f4 and controls d5.}
  8. Kf1 {[%csl Rf4] White has lost the right to castle, but will gain time on the f4-knight with d4 and g3.})
-(2... Nf6 3. Nc3 e6 {Supports the centre: the pawn on e6 controls d5 and f5. It also opens a line for the bishop on f8.}
+(2... Nf6 3. Nc3 e6 {Black builds a solid centre with ...e6 so ...d5 can follow. White's d4 now leads to open, IQP-type positions.}
  4. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
  4... b6 {Prepares ...Bb7. The pawn on b6 controls a5 and supports the pawn on c5.}
- 5. Bg2 {Contests the long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
- 5... Bb7 {Fianchettoes the bishop on b7, where it rakes the long diagonal through c6, d5 and e4.}
- 6. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
- 6... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+ 5. Bg2 {Contests the long diagonal. That clears the way to castle kingside.}
+ 5... Bb7 {Black fianchettoes, eyeing the long diagonal and the e4 square. White's plan is O-O and d4 to grab space.}
+ 6. O-O {White castles. In this Hedgehog setup White gains space with d4 and e4; Black waits for a ...d5 or ...b5 break.}
+ 6... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
  7. d4 {Takes the centre. The pawn on d4 controls e5 and eyes the pawn on c5. It also opens a line for the bishop on c1 and the queen on d1.}
  7... cxd4 {Black trades a wing pawn for a centre pawn. Takes the pawn on d4; White will want to recapture.}
  8. Qxd4 {[%cal Gd4d7] The queen recaptures. It is active in the centre and Black can't easily hit it.})
 (2... g6 {Accelerated fianchetto. The pawn on g6 controls f5 and h5.}
  3. d4 {Takes the centre. The pawn on d4 controls e5 and eyes the pawn on c5. It also opens a line for the bishop on c1 and the queen on d1.}
  3... cxd4 {Black trades a wing pawn for a centre pawn. Takes the pawn on d4; White will want to recapture.}
- 4. Nxd4 {Recaptures on d4, restoring the material balance.}
+ 4. Nxd4 {Black recaptures and has a typical Accelerated-Dragon structure. White's c4 pawn gives a grip on d5 (Maróczy-style).}
  4... Nc6 {Development with tempo. The knight on c6 controls e5 and eyes the knight on d4. White's last move put a knight on d4, which this now pressures.}
  5. Nc2 {A retreat that avoids exchanges. The knight goes to c2 and controls d4.}
  5... Bg7 {Fianchetto. The bishop on g7 rakes the long diagonal through f6, e5 and d4.}
  6. e4 {[%csl Gd5] A Maróczy bind with pawns on c4 and e4. Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
- 6... d6 {Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
- 7. Be2 {Develops the bishop to e2, where it controls f3 and d3. That clears the way to castle kingside.}
- 7... Nh6 {A typical knight route to f5. Develops the knight to h6, where it controls f5. That clears the way to castle kingside.}
- 8. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.})
-3. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+ 6... d6 {Black supports e5 and opens the c8-bishop. The key square is d5: White wants to control it; Black hopes for ...f5 or ...b5 later.}
+ 7. Be2 {Quiet and solid. The bishop backs up the f3-knight (no annoying ...Bg4 pin pressure) and White is one move from castling.}
+ 7... Nh6 {A typical knight route to f5. That clears the way to castle kingside.}
+ 8. Nc3 {White develops toward d5. Black's knight on h6 plans ...f5; Nc3 adds a defender to e4.})
+3. Nc3 {White develops toward d5 and e4. The symmetric English structure is about who gets d4 or ...d5 in safely.}
 3... g6 {Fianchetto. The pawn on g6 controls f5 and h5.}
 (3... e5 {Black takes space with a Botvinnik-style setup.}
  4. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
  4... g6 {Black fianchettoes too. The pawn on g6 controls f5 and h5.}
- 5. Bg2 {The long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
+ 5. Bg2 {The long diagonal. That clears the way to castle kingside.}
  5... Bg7 {Contests the long diagonal. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6 and e5.}
- 6. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
- 6... Nge7 {Keeps the f-pawn free. Develops the knight to e7, where it controls d5. That clears the way to castle kingside.}
+ 6. O-O {White castles. Black's ...e5 grabs space but leaves d5 weak; White plans d3, a3 and b4 to fight on the queenside.}
+ 6... Nge7 {Keeps the f-pawn free. That clears the way to castle kingside.}
  7. d3 {Prepares Rb1 and b4. Supports the centre: the pawn on d3 controls e4 and supports the pawn on c4. It also opens a line for the bishop on c1.}
- 7... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+ 7... O-O {Black castles. White's main plan is a3, Rb1 and b4 to break up Black's queenside.}
  8. a3 {[%cal Ga3b4] Prepares b4. The pawn on a3 controls b4.}
- 8... d6 {Supports the centre: the pawn on d6 supports the pawn on c5 and the pawn on e5. It also opens a line for the bishop on c8.}
+ 8... d6 {Black secures c5 and e5. White pushes on with b4; Black's plans are ...f5 and kingside expansion.}
  9. Rb1 {[%cal Gb1b4] Supports b4. The rook goes to b1.})
-(3... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+(3... Nf6 {Black develops toward the centre. The symmetric English often turns on d4 for White or ...d5 for Black.}
  4. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
  4... d5 {Black strikes in the centre. The pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the bishop on c8 and the queen on d8.}
  5. cxd5 {Opens lines. Takes the pawn on d5; Black will want to recapture.}
- 5... Nxd5 {Recaptures on d5, restoring the material balance.}
- 6. Bg2 {Pressure on d5. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
+ 5... Nxd5 {Black recaptures with the knight, leaving a strong central piece but one that can be chased with g3, Bg2 and Nxd5 or e4.}
+ 6. Bg2 {Pressure on d5. That clears the way to castle kingside.}
  6... Nc7 {Regroups the knight to c7 and controls d5.}
- 7. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+ 7. O-O {White castles. Black's knight on c7 is solid but passive; White aims for a3 and b4 to undermine c5.}
  7... e5 {Black takes space. Claims the centre: the pawn on e5 controls d4 and f4. It also opens a line for the queen on d8 and the bishop on f8.}
- 8. d3 {Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
- 8... Be7 {Develops the bishop to e7, where it controls f6 and d6. That clears the way to castle kingside.}
+ 8. d3 {White supports e4 and prepares Nd2 or a3 and b4. The pawn on d3 also stops ...e4.}
+ 8... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
  9. Nd2 {[%cal Gd2c4] Reroutes to c4 and frees the long diagonal. Regroups the knight to d2 and controls e4.})
 4. e3 {Prepares d4. Supports the centre: the pawn on e3 controls d4 and f4. It also opens a line for the bishop on f1.}
 4... Bg7 {Fianchetto. The bishop on g7 rakes the long diagonal through f6, e5 and d4.}
 5. d4 {Takes the centre. The pawn on d4 controls e5 and eyes the pawn on c5. It also opens a line for the queen on d1.}
-5... d6 {Supports the centre: the pawn on d6 controls e5 and supports the pawn on c5. It also opens a line for the bishop on c8.}
-6. Be2 {Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
-6... Nf6 {Develops the knight to f6, where it controls e4 and d5. That clears the way to castle kingside.}
-7. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
-7... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+5... d6 {Black holds e5 and opens the c8-bishop. This is a King's-Indian-style setup: plans include ...e5 and ...Nf6–d7.}
+6. Be2 {Quiet and solid. The bishop backs up the f3-knight (no annoying ...Bg4 pin pressure) and White is one move from castling.}
+6... Nf6 {The knight develops with pressure on e4 and Black is ready to castle. Typical mistake: delaying this for pawn moves and getting caught in the centre.}
+7. O-O {White castles. Against this setup, b3 and Bb2 or d5 are common plans.}
+7... O-O {Black castles. White's centre is broad; Black will strike with ...e5 or ...c5.}
 8. d5 {[%csl Gc6,Ge6] White gains space with tempo. Claims the centre: the pawn on d5 controls e6 and eyes the knight on c6.}
 8... Na5 {The knight retreats toward the c4-pawn. The knight goes to a5.}
 9. e4 {Takes more central space. Claims the centre: the pawn on e4 controls f5 and supports the pawn on d5. It also opens a line for the bishop on c1.} *
@@ -452,75 +452,75 @@
 1... f5 {[%csl Re6,Rg6] The Dutch. It controls e4 but weakens the e8–h5 diagonal and the king's cover.}
 2. d3 {[%cal Ge2e4] Prepares e4 to open lines against Black's king.}
 (2. g3 {A quieter Leningrad-style approach. The pawn on g3 controls f4 and h4.}
- 2... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+ 2... Nf6 {Black's knight supports ...f5 and controls e4 and d5. White's plan is g3 and Bg2, then c4 or d3/e4.}
  3. Bg2 {Fianchetto. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
  3... g6 {A Leningrad setup. The pawn on g6 controls h5 and supports the pawn on f5.}
- 4. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
- 4... Bg7 {Contests the long diagonal. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+ 4. O-O {White castles. Black's Leningrad Dutch setup seeks ...d6 and ...e5. White's counter: c4, Nc3 and d4 or b3.}
+ 4... Bg7 {Contests the long diagonal. That clears the way to castle kingside.}
  5. d3 {Prepares e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
- 5... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+ 5... O-O {Black castles. White's plan: c4, Nc3, then e4 or d4 to challenge the centre.}
  6. c4 {Gains queenside space. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
- 6... d6 {Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
- 7. Nc3 {Develops the knight to c3, where it controls d5 and e4.})
+ 6... d6 {Black supports ...e5. White develops and prepares d4 to stop it gaining ground.}
+ 7. Nc3 {White's knight supports d5 and e4, preparing to push e4 to undermine f5.})
 (2. d4 {Transposes to a Dutch with 1.d4. Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
- 2... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+ 2... Nf6 {The knight supports ...f5 and eyes e4. Here d4 gives White a Dutch-type structure with a firm grip.}
  3. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
  3... e6 {A Stonewall or Classical setup. Supports the centre: the pawn on e6 controls d5 and supports the pawn on f5. It also opens a line for the bishop on f8.}
  4. Bg2 {Fianchetto. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
  4... d5 {The Stonewall: pawns on f5, e6 and d5. Claims the centre: the pawn on d5 controls c4 and e4. It also opens a line for the queen on d8.}
- 5. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
- 5... Bd6 {[%cal Gd6h2] Eyes h2. Develops the bishop to d6, where it controls e5. That clears the way to castle kingside.}
+ 5. O-O {White castles. Against the Stonewall pawn shape, b3/Ba3 and c4 target the dark squares Black left weak.}
+ 5... Bd6 {[%cal Gd6h2] Eyes h2. That clears the way to castle kingside.}
  6. c4 {Challenges d5. Supports the centre: the pawn on c4 controls b5 and eyes the pawn on d5. It also opens a line for the queen on d1.}
  6... c6 {Completes the Stonewall. Supports the centre: the pawn on c6 controls b5 and supports the pawn on d5. It also opens a line for the queen on d8.}
  7. b3 {[%cal Gc1a3] Prepares Ba3 to trade Black's good dark-squared bishop.})
-2... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2... Nf6 {The knight eyes e4. After d3 White is ready for e4 to hit f5.}
 (2... d6 {Prepares ...e5. Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
  3. e4 {Strikes at once. Claims the centre: the pawn on e4 controls d5 and eyes the pawn on f5.}
  3... fxe4 {Black captures. Takes the pawn on e4; White will want to recapture.}
  4. dxe4 {Opens the d-file and the e-file. Recaptures on e4, restoring the material balance.}
  4... e5 {Black builds a centre. The pawn on e5 controls d4 and f4. It also opens a line for the queen on d8.}
  5. Bc4 {[%cal Gc4g8] Aims at the weak light squares around Black's king.}
- 5... Nf6 {Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That pawn is currently undefended.}
+ 5... Nf6 {Black develops and hits e4. With the f-pawn traded off, the a2–g8 diagonal toward Black's king is open, which is why Bc4 is so useful for White.}
  6. Ng5 {[%cal Gg5f7] Threatens Nf7, forking the queen and the h8-rook.}
  6... d5 {Blocks the bishop's diagonal. Claims the centre: the pawn on d5 eyes the bishop on c4 and the pawn on e4. It also opens a line for the bishop on f8.}
- 7. exd5 {Takes the pawn on d5; Black will want to recapture.})
-(2... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+ 7. exd5 {White grabs the pawn and opens the e-file. Be precise: Black's pieces get active quickly, so finish development before going pawn-hunting further.})
+(2... Nc6 {The knight eyes e5 and d4. White's e4 follows to open the f-file.}
  3. e4 {Strikes at once. Claims the centre: the pawn on e4 controls d5 and eyes the pawn on f5. That pawn is currently undefended.}
  3... fxe4 {Black captures. Takes the pawn on e4; White will want to recapture.}
- 4. dxe4 {Recaptures on e4, restoring the material balance.}
+ 4. dxe4 {White recaptures and owns the centre.}
  4... e5 {Black builds a centre. The pawn on e5 controls d4 and f4. It also opens a line for the queen on d8 and the bishop on f8.}
- 5. Bc4 {[%cal Gc4g8] Aims at the weak light squares. Develops the bishop to c4, where it controls d5. That clears the way to castle kingside.}
- 5... Nf6 {Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That pawn is currently undefended.}
- 6. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
- 6... d6 {Supports the centre: the pawn on d6 controls c5 and supports the pawn on e5. It also opens a line for the bishop on c8.}
+ 5. Bc4 {[%cal Gc4g8] Aims at the weak light squares. That clears the way to castle kingside.}
+ 5... Nf6 {Black develops and puts pressure on e4. White keeps it simple: castle and use the c4-bishop's grip on the weakened a2–g8 diagonal.}
+ 6. O-O {White castles. With Black's f-pawn gone, the a2–g8 diagonal and the e6 square are long-term targets for White's pieces.}
+ 6... d6 {Black supports e5. White plans Nc3 and Bg5 to pressure.}
  7. Ng5 {[%cal Gg5f7] Threatens Nf7. The knight goes to g5 and supports the pawn on e4.})
 3. e4 {[%cal Ge4f5] The thematic break. Claims the centre: the pawn on e4 controls d5 and eyes the pawn on f5. That pawn is currently undefended.}
 3... fxe4 {Black captures. Takes the pawn on e4; White will want to recapture.}
 4. dxe4 {Recaptures. The e-file and the e8–h5 diagonal are opening up.}
 4... e5 {Black builds a centre. The pawn on e5 controls d4 and f4. It also opens a line for the bishop on f8.}
 (4... Nxe4 {Grabs a pawn, but White gains a big lead in development.}
- 5. Bd3 {[%cal Gd3e4] Develops with tempo on the e4-knight. The bishop on d3 eyes the knight on e4. That clears the way to castle kingside.}
+ 5. Bd3 {[%cal Gd3e4] Develops with tempo on the e4-knight. That clears the way to castle kingside.}
  5... Nf6 {Moves the knight out of attack to f6 and controls e4 and d5.}
  6. Ng5 {[%cal Gd3h7,Gg5h7] White aims at h7 with a menacing attack. The knight goes to g5 and controls e4.}
  6... g6 {Defends h7. The pawn on g6 controls f5 and h5.}
  7. h4 {[%cal Gh4h5] Brings the h-pawn into the attack. Gains space on the kingside; the pawn on h4 takes g5 away from the opponent.})
-(4... d6 {Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
+(4... d6 {Black solidifies e5 and frees the c8-bishop. White develops Nc3 and Bc4.}
  5. e5 {[%csl Ge5] Gains space. Claims the centre: the pawn on e5 eyes the pawn on d6 and the knight on f6. Black's last move put a pawn on d6, which this now pressures.}
  5... dxe5 {Black captures. Takes the pawn on e5; White will want to recapture.}
  6. Qxd8+ {Trades queens with check. Takes the queen on d8; Black will want to recapture. It gives check.}
  6... Kxd8 {Black loses the right to castle. Recaptures on d8, restoring the material balance.}
  7. Nxe5 {White wins back the pawn, and Black's king is stuck in the centre.}
  7... Ke8 {The king steps to safety. The king goes to e8.}
- 8. Bc4 {[%cal Gc4f7] Hits f7. Develops the bishop to c4, where it controls d5. That clears the way to castle kingside.}
+ 8. Bc4 {[%cal Gc4f7] Hits f7. That clears the way to castle kingside.}
  8... e6 {Blocks. Supports the centre: the pawn on e6 controls d5 and f5. It also opens a line for the bishop on f8.}
- 9. Nf7 {[%cal Gf7h8] Forks the rook. The knight goes to f7 and controls e5. It attacks the rook on h8, which is undefended.}
+ 9. Nf7 {[%cal Gf7h8] Forks the rook. The knight goes to f7 and controls e5.}
  9... Rg8 {The rook escapes. Moves the rook out of attack to g8.})
-5. Bc4 {[%cal Gc4g8] Pressure on the light squares. Develops the bishop to c4, where it controls d5. That clears the way to castle kingside.}
+5. Bc4 {[%cal Gc4g8] Pressure on the light squares. That clears the way to castle kingside.}
 5... c6 {Prepares ...d5. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
-6. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
-6... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
-7. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
-7... d6 {Supports the centre: the pawn on d6 controls c5 and supports the pawn on e5. It also opens a line for the bishop on c8.}
+6. Nc3 {White develops to support e4 and d5. Black still needs ...d6 and ...O-O.}
+6... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
+7. O-O {White castles. Black's king lacks its f-pawn shelter, so pressure along the a2–g8 diagonal stays a theme.}
+7... d6 {Black supports e5 and develops. White continues with Re1 and a4.}
 8. Ng5 {[%cal Gg5f7] Threatens Nf7, forking the queen and the h8-rook. Black must react precisely.} *
 
 [Event "vs 1...d5: 2.g3 ...Bf5 setups"]
@@ -532,17 +532,17 @@
 2... Bf5 {The bishop develops early. The bishop on f5 controls e4.}
 3. Bg2 {Fianchetto. The bishop on g2 rakes the long diagonal through f3. That clears the way to castle kingside.}
 3... e6 {A London-style setup. Supports the centre: the pawn on e6 supports the pawn on d5 and the bishop on f5. It also opens a line for the queen on d8 and the bishop on f8.}
-4. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
-4... Nf6 {Develops the knight to f6, where it controls e4 and supports the pawn on d5.}
+4. O-O {White castles. The f5-bishop is Black's pride; White's d3, Nbd2 and e4 aim to blunt it.}
+4... Nf6 {Black develops toward e4. White's plan: d3 and Nbd2, then e4.}
 5. d3 {Prepares e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
 5... h6 {Makes a retreat square on h7. The pawn on h6 controls g5.}
 6. c4 {Challenges d5. Supports the centre: the pawn on c4 controls b5 and eyes the pawn on d5. It also opens a line for the queen on d1.}
 6... c6 {Supports d5. Supports the centre: the pawn on c6 controls b5 and supports the pawn on d5. It also opens a line for the queen on d8.}
 7. cxd5 {Opens the c-file. Takes the pawn on d5; Black will want to recapture.}
 7... exd5 {The bishop on f5 now leaves b7 unguarded. Recaptures on d5, restoring the material balance.}
-8. Nc3 {Develops the knight to c3, where it controls e4 and eyes the pawn on d5. Black's last move put a pawn on d5, which this now pressures.}
-8... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
-9. Qb3 {[%cal Gb3b7] Attacks b7, which the f5-bishop left behind. The queen goes to b3 and eyes the pawn on d5. It attacks the pawn on b7, which is undefended.}
+8. Nc3 {White develops, pressuring d5. The Carlsbad structure means minority attack ideas with b4–b5.}
+8... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
+9. Qb3 {[%cal Gb3b7] Attacks b7, which the f5-bishop left behind. The queen goes to b3 and eyes the pawn on d5.}
 9... Qb6 {The queen goes to b6 and controls d4. White's last move put a queen on b3, which this now pressures.}
 10. Be3 {Development with tempo on the queen. The bishop on e3 controls d4. It attacks the queen on b6.} *
 
@@ -555,25 +555,25 @@
  2. c4 {Gains queenside space. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
  2... d5 {Black occupies the centre. The pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the queen on d8.}
  3. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
- 3... Nf6 {Develops the knight to f6, where it controls e4 and supports the pawn on d5.}
- 4. Bg2 {Pressure on d5. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
- 4... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
- 5. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
- 5... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
+ 3... Nf6 {Black develops, controlling e4. White's g3 and Bg2 aim at d5.}
+ 4. Bg2 {Pressure on d5. That clears the way to castle kingside.}
+ 4... Be7 {A modest but safe home for the bishop: it shields the f6-knight from pins and lets Black castle next. Don't worry that it looks passive; it can reroute later.}
+ 5. O-O {White castles. Against Black's solid centre, b3/Bb2 or d4 are standard.}
+ 5... O-O {Black castles. White chooses b3 and Bb2 or d4.}
  6. b3 {Prepares Bb2. The pawn on b3 controls a4 and supports the pawn on c4.}
  6... c5 {Space in the centre. The pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
  7. Bb2 {The long diagonal. Fianchettoes the bishop on b2, where it rakes the long diagonal through c3, d4 and e5.}
- 7... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+ 7... Nc6 {The knight lands on c6 to support ...d4 or ...e5. White's e3 keeps it off d4.}
  8. e3 {Holds d4. Supports the centre: the pawn on e3 controls d4 and f4.})
 (1... b6 {The Larsen-style fianchetto. The pawn on b6 controls a5 and c5.}
  2. e4 {Takes the centre. The pawn on e4 controls d5 and f5. It also opens a line for the bishop on f1.}
  2... Bb7 {Attacks e4. Fianchettoes the bishop on b7, where it rakes the long diagonal through c6, d5 and e4. It attacks the pawn on e4, which is undefended.}
  3. Nc3 {Defends e4. Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
- 3... e6 {Supports the centre: the pawn on e6 controls d5 and f5. It also opens a line for the queen on d8 and the bishop on f8.}
+ 3... e6 {Black supports ...d5 and opens the bishop. White's d4 grabs the centre.}
  4. d4 {Builds the big centre. The pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
  4... Bb4 {Pins the c3-knight. Develops the bishop to b4, where it controls c5 and d6.}
- 5. Bd3 {Defends e4. Develops the bishop to d3, where it supports the pawn on e4. That clears the way to castle kingside.}
- 5... Nf6 {Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That clears the way to castle kingside.}
+ 5. Bd3 {Defends e4. That clears the way to castle kingside.}
+ 5... Nf6 {The knight develops with pressure on e4 and Black is ready to castle. Typical mistake: delaying this for pawn moves and getting caught in the centre.}
  6. Qe2 {Defends e4. The queen goes to e2 and supports the pawn on e4.})
 (1... Nc6 {Black heads for a Chigorin setup. Develops the knight to c6, where it controls d4 and e5.}
  2. d4 {Takes the centre. The pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
@@ -583,16 +583,16 @@
  4. cxd5 {Opens lines. Takes the pawn on d5; Black will want to recapture.}
  4... Bxf3 {Gives up the bishop pair. Takes the knight on f3; White will want to recapture.}
  5. gxf3 {Recaptures toward the centre. White has the bishop pair.}
- 5... Qxd5 {Takes the pawn on d5, and it cannot be taken back at once.}
+ 5... Qxd5 {Black takes the pawn but has given up the bishop pair.}
  6. e3 {Solid, supporting d4. Supports the centre: the pawn on e3 controls f4 and supports the pawn on d4. It also opens a line for the bishop on f1.})
 2. e4 {Takes the centre. The pawn on e4 controls d5 and f5. It also opens a line for the bishop on f1.}
 2... Bg7 {Fianchetto. The bishop on g7 rakes the long diagonal through f6, e5 and d4.}
 3. d4 {Builds the big centre. The pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
-3... d6 {Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
-4. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
-4... Nf6 {Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That clears the way to castle kingside.}
-5. Be2 {The Classical setup. Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
-5... O-O {Castles kingside: the king is safe and the rook on f8 joins the game.}
-6. O-O {Castles kingside: the king is safe and the rook on f1 joins the game.}
+3... d6 {Black supports ...e5. White develops Nc3 and Be2.}
+4. Nc3 {White develops toward d5. Black needs ...Nf6 and ...O-O.}
+4... Nf6 {The knight develops with pressure on e4 and Black is ready to castle. Typical mistake: delaying this for pawn moves and getting caught in the centre.}
+5. Be2 {The Classical setup. That clears the way to castle kingside.}
+5... O-O {Black castles. White's plan: O-O and then d5 or dxe5.}
+6. O-O {White castles.}
 6... c6 {Prepares ...b5. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
 7. a4 {[%csl Rb5] Stops ...b5. Gains space on the queenside; the pawn on a4 takes b5 away from the opponent.} *
