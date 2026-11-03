@@ -1,7 +1,7 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg } from './core.js?v=20261102h';
-import { KB } from './kb.js?v=20261102h';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg } from './core.js?v=20261102i';
+import { KB } from './kb.js?v=20261102i';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -66,7 +66,7 @@ function showTab(t) {
   document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === t));
   const nav = { home: 'home', opening: 'home', line: 'home', drill: 'drill', build: 'settings', settings: 'settings', data: 'settings' }[t];
   document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === nav));
-  if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); }
+  if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); requestAnimationFrame(() => cueNew()); }
   if (t === 'build') buildCg.redrawAll();
   if (t === 'line') lineCg.redrawAll();
   if (t === 'settings') renderSettings();
@@ -324,7 +324,7 @@ $('#drillStudy').onclick = () => { if (drill.rep && drill.li >= 0) go(`#/line/${
 // coach "cutout": explains the move just played (or the new move to play), with arrows on the board
 function coach(ply, upcoming = false) {
   const l = drill.rep.lines[drill.li]; const n = l.n?.[ply]; const el = $('#drillNote');
-  if (!S().notes) { el.className = 'bnote empty'; return; }
+  if (!S().notes && !upcoming) { el.className = 'bnote empty'; return; }
   const c = new Chess(); l.m.slice(0, ply).forEach(x => c.move(x)); const mv = c.move(l.m[ply]);
   const mine = (ply % 2 === 0 ? 'w' : 'b') === userColor();
   const num = Math.floor(ply / 2) + 1 + (ply % 2 ? '...' : '.');
@@ -337,14 +337,45 @@ function coach(ply, upcoming = false) {
   const topHits = sqs.filter(q => row(q) <= 1).length, botHits = sqs.filter(q => row(q) >= 6).length;
   const topHalf = topHits > 0 && topHits >= botHits;
   el.className = `bnote ${topHalf ? 'at-bottom' : 'at-top'} ${upcoming ? 'up' : mine ? 'you' : 'opp'}`;
-  el.innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${num} ${esc(l.m[ply])}${esc(n?.g || '')}</span><span class="who ${mine ? 'you' : 'opp'}">${label}</span></div><p class="${n?.t ? '' : 'auto'}">${esc(text)}</p></div>`;
+  let body = `<p class="${n?.t ? '' : 'auto'}">${esc(text)}</p>`;
+  if (upcoming) {
+    const prev = ply > 0 ? l.n?.[ply - 1] : null, pc = new Chess(); l.m.slice(0, Math.max(0, ply - 1)).forEach(x => pc.move(x));
+    const pm = ply > 0 ? pc.move(l.m[ply - 1]) : null;
+    body = `<p class="play" id="playLead"><b>${esc(playLead(mv))}</b></p>` + (S().notes ? `<p class="${n?.t ? '' : 'auto'}">${esc(text)}</p>` : '') +
+      (S().notes && pm && (prev?.t) ? `<p class="prevnote">After ${Math.floor((ply - 1) / 2) + 1}${(ply - 1) % 2 ? '...' : '.'}${esc(l.m[ply - 1])}: ${esc(prev.t)}</p>` : '');
+  }
+  el.innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${num} ${esc(l.m[ply])}${esc(n?.g || '')}</span><span class="who ${mine ? 'you' : 'opp'}">${label}</span></div>${body}</div>`;
   el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
   if ($('#drill').classList.contains('active')) {
     const sh = shapesOf(n);
-    if (upcoming) sh.push({ orig: mv.from, dest: mv.to, brush: 'blue' });
+    if (upcoming) sh.push(...cueShapes(mv));
     if (upcoming || drill.view != null || !(drill.learning && drill.chess.turn() === userColor())) drillCg.setAutoShapes(sh);
   }
 }
+const PIECE = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
+function playLead(m) {
+  if (m.flags.includes('k') || m.flags.includes('q')) return `Play ${m.san}: castle ${m.flags.includes('k') ? 'kingside' : 'queenside'} (king from ${m.from} to ${m.to})`;
+  return `Play ${m.san}: move the ${PIECE[m.piece]} from ${m.from} to ${m.to}${m.captured ? ', capturing the ' + PIECE[m.captured] : ''}`;
+}
+const cueShapes = m => [{ orig: m.from, dest: m.to, brush: 'blue', modifiers: { lineWidth: 14 } }, { orig: m.from, brush: 'blue' }, { orig: m.to, brush: 'blue' }];
+// show the move to play for a new (unlearned) move: bold blue arrow, ringed from/to squares, pulsing target, "Play X" bubble
+function cueNew() {
+  const p = $('#drillPulse'); if (p) p.hidden = true;
+  if (!drill.line || drill.view != null || !drill.learning || drill.waiting || drill.ply >= drill.line.length || drill.chess.turn() !== userColor()) return;
+  if (!$('#drill').classList.contains('active')) return;
+  const m = new Chess(drill.chess.fen()).move(drill.line[drill.ply]); if (!m) return;
+  coach(drill.ply, true); drillCg.setAutoShapes([...cueShapes(m)]);
+  drillCg.set({ highlight: { lastMove: true, check: true } });
+  const bd = $('#drillBoard').getBoundingClientRect(), st = $('#drillBoard').parentElement.getBoundingClientRect(), w = bd.width / 8;
+  const f = m.to.charCodeAt(0) - 97, r = +m.to[1] - 1, white = drillCg.state.orientation === 'white';
+  const x = (white ? f : 7 - f) * w, y = (white ? 7 - r : r) * w;
+  let el = p; if (!el) { el = document.createElement('div'); el.id = 'drillPulse'; el.className = 'pulse'; $('#drillBoard').parentElement.append(el); }
+  Object.assign(el.style, { left: bd.left - st.left + x + 'px', top: bd.top - st.top + y + 'px', width: w + 'px', height: w + 'px' }); el.hidden = false; el.dataset.sq = m.to;
+}
+window.__freereps.cueNew = () => cueNew();
+// keep the explanation box exactly as tall as the board beside it
+{ const fit = () => [['#drillBoard', '#drill .tnote'], ['#lineBoard', '#line .tnote']].forEach(([b, n]) => { const bd = $(b), nt = $(n); if (bd && nt) nt.style.setProperty('--bh', innerWidth > 900 ? bd.getBoundingClientRect().height + 'px' : 'auto'); });
+  const ro = new ResizeObserver(fit); ro.observe($('#drillBoard')); ro.observe($('#lineBoard')); addEventListener('resize', fit); } addEventListener('resize', () => cueNew());
 const drillNote = ply => { if (drill.view == null) coach(ply); navUi(); };
 // ---- explanation history: browse every move played so far (read-only board while browsing) ----
 function navUi() {
@@ -369,9 +400,9 @@ function navGo(v) {
   if (nv != null && drill.view == null) {          // leaving live: pause the opponent's reply
     clearTimeout(drill.timer); drill.paused = drill.busy; drill.busy = false; drillCg.cancelPremove();
   }
-  drill.view = nv;
+  drill.view = nv; if (nv != null && $('#drillPulse')) $('#drillPulse').hidden = true;
   if (nv == null) {                                  // back to live
-    resync(); coach(drill.ply - 1); if (drill.waiting) drillCg.set({ movable: { color: undefined } }); navUi();
+    resync(); coach(drill.ply - 1); cueNew(); if (drill.waiting) drillCg.set({ movable: { color: undefined } }); navUi();
     if (drill.ply >= drill.line.length) drillCg.set({ movable: { color: undefined } });
     else if (drill.paused) { drill.paused = false; advance(); }
     else if (drill.learning && drill.chess.turn() === userColor()) coach(drill.ply, true);
@@ -422,7 +453,7 @@ function nextLine() {
   }
   drill.view = null; drill.paused = false; drill.waiting = false; $('#drillNote').className = 'bnote empty';
   drill.li = drill.queue[drill.qi++]; drill.line = drill.rep.lines[drill.li].m; drill.ply = 0; drill.chess = new Chess(); drill.lineMiss = 0;
-  drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = '';
+  drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = ''; if ($('#drillPulse')) $('#drillPulse').hidden = true;
   drillCg.set({ fen: drill.chess.fen(), lastMove: undefined, check: false, turnColor: 'white' }); setOrientation();
   $('#drillInfo').textContent = `${drill.rep.lines[drill.li].ch} · line ${drill.qi}/${drill.queue.length}`; drillStats();
   msg(`Your move as ${userColor() === 'w' ? 'White' : 'Black'}.`); navUi();
@@ -438,10 +469,8 @@ function advance() {
     drillCg.set({ turnColor: turnColor(drill.chess), check: drill.chess.inCheck(), movable: { color: cname(userColor()), dests: dests(drill.chess) } });
     const card = cardsOf(drill.rep)[cardKey()];
     drill.missed = false; drill.learning = !card;
-    if (drill.learning) { msg(`New move: play <b>${drill.line[drill.ply]}</b> (blue arrow).`);
-      if (drill.ply === 0 || !S().notes) { showArrow(drill.line[drill.ply], 'blue'); coach(drill.ply, true); }
-      else if ($('#drill').classList.contains('active')) { const m = new Chess(drill.chess.fen()).move(drill.line[drill.ply]); drillCg.setAutoShapes([...shapesOf(drill.rep.lines[drill.li].n?.[drill.ply - 1]), { orig: m.from, dest: m.to, brush: 'blue' }]); }
-      navUi(); } else drillCg.setAutoShapes([]);
+    if (drill.learning) { msg(`New move: play <b>${drill.line[drill.ply]}</b> (follow the blue arrow).`); cueNew(); navUi(); }
+    else { drillCg.setAutoShapes([]); cueNew(); }
     drillCg.playPremove();
   } else {
     // step-by-step flow: after the user's move, wait for Next ▶ before the reply (unless auto-play is on)
@@ -495,7 +524,7 @@ function onUserMove(from, to) {
   if (!m) return resync();
   if (m.san === expected) {
     if (!drill.missed) record(true);
-    drill.ply++; drillCg.setAutoShapes([]);
+    drill.ply++; drillCg.setAutoShapes([]); cueNew();
     if (m.flags.includes('e') || m.flags.includes('p') || m.flags.includes('k') || m.flags.includes('q')) drillCg.set({ fen: drill.chess.fen() });
     Sound.play(soundFor(m, drill.chess.inCheck()));
     msg(drill.learning ? `✔ ${m.san}: learned.` : `✔ ${m.san}`, 'ok');
@@ -581,7 +610,7 @@ const TOUR = [
 ];
 function gStep(n) { document.querySelectorAll('#guide .gstep').forEach(s => s.hidden = +s.dataset.step !== n); }
 function openGuide() { $('#guide').hidden = false; gStep(0); }
-function closeGuide(goTo) { $('#guide').hidden = true; db.guided = true; db.profile = { side: G.side, level: G.level }; save(); if (goTo) go('#/opening/' + goTo); }
+function closeGuide(goTo) { $('#guide').hidden = true; db.guided = true; db.profile = { side: G.side, level: G.level }; save(); const r = goTo && repById(goTo); if (r) { go('#/train'); $('#drillRep').value = r.id; setMode('due'); } }
 window.__freereps.openGuide = openGuide;
 $('#replayGuide').onclick = () => { go('#/'); openGuide(); };
 document.querySelectorAll('#guide .gopts').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => {

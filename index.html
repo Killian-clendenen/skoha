@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261102h">
+<link rel="stylesheet" href="style.css?v=20261102i">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♞</text></svg>">
 </head><body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -49,13 +49,13 @@
 
   <section id="line" class="tab">
     <div class="crumbs" id="lineCrumbs"></div>
-    <div class="split">
+    <div class="split lsplit">
+      <div class="tnote lnote"><div class="note" id="lnNote"></div></div>
       <div class="boardwrap"><div id="lineBoard" class="board"></div>
         <div class="navbtns"><button id="lnFirst" title="Start (Home)">⏮</button><button id="lnPrev" title="Back (←)">◀</button><button id="lnNext" title="Forward (→)">▶</button><button id="lnLast" title="End (End)">⏭</button></div>
       </div>
       <aside class="panel">
         <div class="lnhead"><div><div class="muted" id="lnChapter"></div><h2 id="lnTitle"></h2></div><button id="lnDrill" class="primary">Practise this line</button></div>
-        <div class="note" id="lnNote"></div>
         <div class="legend"><span><i class="lg g"></i>idea / control</span><span><i class="lg r"></i>threat / weakness</span><span><i class="lg y"></i>alternative</span><span><i class="lg b"></i>new move</span></div>
         <div class="movelist" id="lnMoves"></div>
         <div class="row"><button id="lnPrevLine">← Previous line</button><button id="lnNextLine">Next line →</button></div>
@@ -80,8 +80,9 @@
       <div class="tstats" id="drillStats" aria-live="polite"></div>
     </div>
     <div class="tsplit">
+      <div class="tnote"><div id="drillNote" class="bnote empty" aria-live="polite"></div></div>
       <div class="boardwrap">
-        <div class="bstage"><div id="drillBoard" class="board"></div><div id="drillNote" class="bnote empty" aria-live="polite"></div></div>
+        <div class="bstage"><div id="drillBoard" class="board"></div></div>
         <div class="tprogress"><i id="drillProg"></i></div>
         <div class="tnav"><button id="navBack" title="Back (←)" aria-label="Back">◀ Back</button><span id="navPos" class="muted">No moves yet</span><button id="navFwd" title="Next (→ / Space / Enter)" aria-label="Next">Next ▶</button></div>
       </div>
@@ -179,5 +180,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2).</footer>
-<script type="module" src="app.js?v=20261102h"></script>
+<script type="module" src="app.js?v=20261102i"></script>
 </body></html>

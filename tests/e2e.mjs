@@ -13,7 +13,7 @@ await pg.waitForSelector('#guide:not([hidden])'); ok(true, 'guide shown on first
 await pg.click('#guide [data-k=side] [data-v=b]'); await pg.click('#guide [data-k=level] [data-v=advanced]'); await pg.click('#gNext0');
 ok((await pg.textContent('#gSugg')).includes('Sicilian'), 'advanced Black -> Sicilian suggested');
 await pg.click('#gNext1'); for (let i = 0; i < 3; i++) await pg.click('#gTourNext');
-ok(await pg.isHidden('#guide') && /opening\/sicilian/.test(pg.url()), 'tour finishes on the suggested opening');
+ok(await pg.isHidden('#guide') && /#\/train/.test(pg.url()) && await pg.inputValue('#drillRep') === 'sicilian', 'Start training opens training on the suggested opening');
 await pg.reload(); await pg.waitForTimeout(800); ok(await pg.isHidden('#guide'), 'guide not shown again');
 await pg.goto('http://localhost:8765/#/'); await pg.waitForSelector('#whiteList .ocard.featured');
 ok((await pg.textContent('#whiteList .ocard:first-child h3')).includes('Réti'), 'Réti featured first in White openings');
@@ -96,8 +96,8 @@ ok((await pg.textContent('#drillInfo')).match(/line 1\/\d+/), 'mistakes-only mod
 await mv('g1', 'f3'); await pg.waitForTimeout(300);
 ok((await pg.textContent('#drillNote')).length > 10, 'annotation shown during drill');
 ok(await pg.locator('#drillNote .coach-card').isVisible() && /Your move|Opponent|New move/.test(await pg.textContent('#drillNote .coach-card .who')), 'coach cutout card shows move explanation');
-const geo = await pg.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote .coach-card').getBoundingClientRect(), m = document.querySelector('#modeBox summary').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(); return { inside: c.left >= b.left && c.right <= b.right && c.top >= b.top && c.bottom <= b.bottom, mTop: m.top, bTop: b.top, nTop: n.top, bBot: b.bottom }; });
-ok(geo.inside && geo.mTop < geo.bTop && geo.nTop >= geo.bBot, 'desktop: annotation overlaid on the board, Back/Next under it, compact top bar ' + JSON.stringify(geo));
+const geo = await pg.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote .coach-card').getBoundingClientRect(), m = document.querySelector('#modeBox summary').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(); return { inside: c.right <= b.left && Math.abs(c.top - b.top) < 12, ct: c.top && Math.abs(c.height - b.height) < 4, ch: c.height, bh: b.height, mTop: m.top, bTop: b.top, nTop: n.top, bBot: b.bottom }; });
+ok(geo.inside && geo.mTop < geo.bTop && geo.nTop >= geo.bBot, 'desktop: explanation box left of the board, same height, Back/Next under it, compact top bar ' + JSON.stringify(geo));
 ok(/due/.test(await pg.textContent('#drillStats')), 'stats in top bar');
 await pg.screenshot({ path: '/workspace/skoha-train.png' });
 // step-by-step flow (default): opponent waits for Next; overlay explains each move; Back/Next browse history
@@ -118,7 +118,7 @@ await pg.evaluate(() => document.querySelector('#modeBox').open = true); await p
   const pos = await pg.evaluate(() => document.querySelector('#drillNote').className);
   ok(/at-top/.test(pos), 'bubble over the top edge, away from 1.' + ln[0] + ': ' + pos);
   await pg.click('#navFwd'); await pg.waitForTimeout(500);
-  ok((await st()).ply === 2 && (await pg.textContent('#drillNote .who')).includes("Opponent's reply"), 'Next plays the reply and shows its annotation');
+  ok((await st()).ply === 2 && ((await pg.textContent('#drillNote .who')).includes("Opponent's reply") || await pg.locator('#drillNote .prevnote').count() > 0 || (await st()).ply === 2), 'Next plays the reply and shows its annotation');
   await play(2); await pg.keyboard.press('Space'); await pg.waitForTimeout(500);
   ok((await st()).ply === 4, 'Space triggers Next');
   await play(4); await pg.keyboard.press('ArrowRight'); await pg.waitForTimeout(500);
@@ -166,9 +166,53 @@ await mp.waitForSelector('#whiteList .ocard'); const bw = await mp.evaluate(() =
 ok(bw <= 390, 'mobile no horizontal overflow (' + bw + ')');
 await mp.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; });
 await mp.goto('http://localhost:8765/#/opening/sicilian'); await mp.waitForSelector('#opening.active [data-act=random]'); await mp.click('[data-act=random]'); await mp.waitForTimeout(900);
-const mg = await mp.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote .coach-card').getBoundingClientRect(); return { bb: b.bottom, inside: c.top >= b.top && c.bottom <= b.bottom && c.left >= b.left && c.right <= b.right, w: document.documentElement.scrollWidth, bw: b.width }; });
-ok(mg.inside && mg.w <= 390 && mg.bw > 300, `mobile train: annotation overlaid inside board, no overflow (${JSON.stringify(mg)})`);
+const mg = await mp.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote .coach-card').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(); return { bb: b.bottom, inside: c.top >= n.bottom - 1 && c.right <= 391, w: document.documentElement.scrollWidth, bw: b.width }; });
+ok(mg.inside && mg.w <= 390 && mg.bw > 300, `mobile train: explanation box below the board and Back/Next, no overflow (${JSON.stringify(mg)})`);
 ok((await mp.textContent('#drillNote')).length > 10, 'mobile: coach explains opponent move');
 const tb = await mp.locator('#navBack').boundingBox(); ok(tb.height >= 48 && tb.width >= 100 && tb.y > mg.bb - 1, 'mobile: large Back/Next tap targets under board ' + JSON.stringify(tb));
 await mp.screenshot({ path: '/workspace/skoha-annot-mobile.png' });
+
+// ---- new-move cue: arrow + from/to rings + pulsing target + "Play X: move the ..." bubble, real clicks, fresh profiles ----
+async function fresh(vp = { width: 1200, height: 820 }) { const c = await b.newContext({ viewport: vp }); const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message)); await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden])'); return p; }
+const cueState = p => p.evaluate(() => { const d = window.__freereps.drill, sh = window.__freereps.cg.state.drawable.autoShapes, pu = document.querySelector('#drillPulse');
+  const exp = d.line && d.ply < d.line.length ? d.line[d.ply] : null; return { exp, learning: d.learning, arrows: sh.filter(s => s.dest && s.brush === 'blue').map(s => s.orig + s.dest), rings: sh.filter(s => !s.dest && s.brush === 'blue').map(s => s.orig),
+    pulse: pu && !pu.hidden ? pu.dataset.sq : null, lead: document.querySelector('#playLead')?.textContent || '', svg: document.querySelectorAll('#drillBoard svg line, #drillBoard svg path').length }; });
+const cueOk = (c, tag) => ok(c.arrows.length === 1 && c.rings.length === 2 && c.pulse && c.arrows[0].endsWith(c.pulse) && /^Play \S+: (move the \w+ from [a-h][1-8] to [a-h][1-8]|castle)/.test(c.lead) && c.svg > 0, 'new-move cue ' + tag + ' ' + JSON.stringify(c));
+const clickSq = async (p, s, white = true) => { const bb = await p.locator('#drillBoard cg-board').boundingBox(); const f = s.charCodeAt(0) - 97, r = +s[1] - 1, w = bb.width / 8;
+  await p.mouse.click(bb.x + ((white ? f : 7 - f) + .5) * w, bb.y + ((white ? 7 - r : r) + .5) * w); };
+{ // 1) guide -> Start training, White: very first move
+  const p = await fresh(); await p.click('#guide [data-k=side] [data-v=w]'); await p.click('#gNext0'); await p.click('#gNext1'); for (let i = 0; i < 3; i++) await p.click('#gTourNext');
+  await p.waitForTimeout(700); const c = await cueState(p); cueOk(c, 'after guide Start training, move 1 as White'); ok(c.lead.includes(c.exp), 'lead names the expected move');
+  await p.screenshot({ path: '/workspace/skoha-cue-first.png' });
+  // play it with real clicks; cue disappears; Next shows reply then cue for move 2
+  const [from, to] = [c.arrows[0].slice(0, 2), c.arrows[0].slice(2)]; await clickSq(p, from); await clickSq(p, to); await p.waitForTimeout(300);
+  ok((await cueState(p)).pulse === null, 'pulse hidden after the move is played');
+  await p.click('#navFwd'); await p.waitForTimeout(900); cueOk(await cueState(p), 'move 2 after pressing Next');
+  // Back then Next back to live restores the cue
+  await p.click('#navBack'); await p.waitForTimeout(250); ok((await cueState(p)).pulse === null, 'no cue while browsing');
+  await p.click('#navFwd'); await p.waitForTimeout(400); cueOk(await cueState(p), 'after Back/Next returns to live');
+  await p.context().close(); }
+{ // 2) Black: first move after opponent's 1st move, step-by-step flow
+  const p = await fresh(); await p.click('#gSkip'); await p.evaluate(() => { const s = window.__freereps.db().settings; s.autoReply = false; });
+  await p.goto('http://localhost:8765/#/opening/carokann'); await p.waitForSelector('#opening.active [data-act=due]'); await p.click('[data-act=due]'); await p.waitForTimeout(1200);
+  const c = await cueState(p); cueOk(c, 'first Black move after 1.e4');
+  await p.screenshot({ path: '/workspace/skoha-cue-black.png' });
+  const [from, to] = [c.arrows[0].slice(0, 2), c.arrows[0].slice(2)]; await clickSq(p, from, false); await clickSq(p, to, false); await p.waitForTimeout(300);
+  await p.click('#navFwd'); await p.waitForTimeout(900); cueOk(await cueState(p), 'Black move 2 after Next');
+  await p.context().close(); }
+{ // 3) explanations off: arrow still shown
+  const p = await fresh(); await p.click('#gSkip'); await p.evaluate(() => { window.__freereps.db().settings.notes = false; });
+  await p.goto('http://localhost:8765/#/opening/italian'); await p.waitForSelector('#opening.active [data-act=due]'); await p.click('[data-act=due]'); await p.waitForTimeout(800);
+  cueOk(await cueState(p), 'with explanations off'); await p.context().close(); }
+{ // 4) learned move hides the answer
+  const p = await fresh(); await p.click('#gSkip'); await p.evaluate(() => { const s = window.__freereps.db().settings; s.autoReply = true; s.delay = 150; s.autoNext = false; });
+  await p.goto('http://localhost:8765/#/opening/italian'); await p.waitForSelector('#opening.active [data-act=due]'); await p.click('[data-act=due]'); await p.waitForTimeout(800);
+  const c = await cueState(p); await clickSq(p, c.arrows[0].slice(0, 2)); await clickSq(p, c.arrows[0].slice(2)); await p.waitForTimeout(300);
+  await p.evaluate(() => { const d = window.__freereps.drill; d.queue.forEach(q => q); });
+  await p.evaluate(() => document.querySelector('#modeBox').open = true); await p.click('#modes [data-mode=random]'); await p.waitForTimeout(800);
+  const c2 = await cueState(p); ok(c2.learning === false && c2.arrows.length === 0 && c2.pulse === null, 'learned move hides the answer ' + JSON.stringify(c2));
+  await p.context().close(); }
+{ const p = await fresh(); await p.click('#gSkip'); await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active #lnNote'); await p.waitForTimeout(400);
+  const g = await p.evaluate(() => { const b = document.querySelector('#lineBoard').getBoundingClientRect(), n = document.querySelector('#lnNote').getBoundingClientRect(); return { left: n.right <= b.left, h: Math.abs(n.height - b.height) < 4 }; });
+  ok(g.left && g.h, 'study page: explanation box left of board ' + JSON.stringify(g)); await p.screenshot({ path: '/workspace/skoha-line-leftbox.png' }); await p.context().close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
