@@ -1,6 +1,6 @@
 import { chromium } from 'playwright-core';
 import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
-const root = new URL('..', import.meta.url).pathname.replace(/\/$/, ''); const T = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.wav': 'audio/wav', '.pgn': 'text/plain' };
+const root = new URL('..', import.meta.url).pathname.replace(/\/$/, ''); const T = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.wav': 'audio/wav', '.pgn': 'text/plain', '.wasm': 'application/wasm' };
 const srv = http.createServer((q, r) => { if (q.url.startsWith('/api/')) { r.writeHead(501, { 'content-type': 'application/json' }); return r.end('{"enabled":false}'); } let p = path.join(root, decodeURIComponent(q.url.split('?')[0])); if (p.endsWith('/')) p += 'index.html';
   fs.readFile(p, (e, d) => { if (e) { r.writeHead(404); r.end(); } else { r.writeHead(200, { 'content-type': T[path.extname(p)] || 'application/octet-stream' }); r.end(d); } }); }).listen(8765);
 let fail = 0; const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++; };
@@ -242,4 +242,21 @@ const clickSq = async (p, s, white = true) => { const bb = await p.locator('#dri
   ok((await B.inputValue('#syncCode')).startsWith('SK1.'), 'sync link fills the code'); await B.click('#codeLoad'); await B.waitForFunction(() => /Merged/.test(document.querySelector('#codeStatus').textContent));
   ok(await B.evaluate(() => window.__freereps.db().cards.reti?.['x|Nf3']?.reps === 4 && window.__freereps.db().history['2026-11-02'] === 7 && window.__freereps.db().reps.find(r => r.id === 'reti').lines.length > 5), 'progress merged on device B, starter lines restored');
   await A.context().close(); await B.context().close(); }
+{ // play it out vs Stockfish after a finished line
+  const p = await fresh(); await p.click('#gSkip'); await p.evaluate(() => { const s = window.__freereps.db().settings; s.autoReply = true; s.delay = 150; s.autoNext = false; s.anim = 0; });
+  await p.goto('http://localhost:8765/#/opening/italian'); await p.waitForSelector('#opening.active [data-act=due]'); await p.click('[data-act=due]'); await p.waitForTimeout(700);
+  for (let i = 0; i < 40; i++) { const c = await cueState(p); if (!c.exp) break; if (!c.arrows.length) { await p.waitForTimeout(250); continue; } await clickSq(p, c.arrows[0].slice(0, 2)); await clickSq(p, c.arrows[0].slice(2)); await p.waitForTimeout(450); }
+  await p.waitForSelector('#playBar:not([hidden])'); ok(true, 'Play it out offered when the line ends');
+  const fen0 = await p.evaluate(() => window.__freereps.drill.chess.fen()); const n0 = await p.evaluate(() => window.__freereps.drill.chess.history().length);
+  await p.selectOption('#playLevel', 'easy'); await p.click('#playOut'); await p.waitForSelector('#playOn:not([hidden])');
+  const mine = await p.evaluate(() => { const pl = window.__freereps.play(); return pl.chess.turn() === pl.me; });
+  if (!mine) await p.waitForFunction(() => window.__freereps.play().chess.turn() === window.__freereps.play().me, null, { timeout: 15000 });
+  const lm = await p.evaluate(() => { const c = window.__freereps.play().chess; const ms = c.moves({ verbose: true }); const q = ms.find(m => m.piece === 'p') || ms[0]; return q.from + q.to; });
+  const h0 = await p.evaluate(() => window.__freereps.play().chess.history().length);
+  await clickSq(p, lm.slice(0, 2), await p.evaluate(() => window.__freereps.play().me === 'w')); await clickSq(p, lm.slice(2, 4), await p.evaluate(() => window.__freereps.play().me === 'w'));
+  await p.waitForFunction(h => window.__freereps.play().chess.history().length >= h + 2, h0, { timeout: 20000 }).then(() => ok(true, 'Stockfish (Web Worker) replied to a real-click move'), () => ok(false, 'Stockfish replied'));
+  ok(/Engine played/.test(await p.textContent('#playInfo')), 'engine move reported'); await p.screenshot({ path: '/workspace/skoha-playout.png' });
+  await p.click('#backTrain'); await p.waitForTimeout(300);
+  ok(await p.evaluate(f => window.__freereps.play() === null && window.__freereps.cg.state.pieces.size > 0 && window.__freereps.drill.chess.fen() === f, fen0) && await p.isVisible('#drillNext'), 'Back to training restores the finished line');
+  await p.context().close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

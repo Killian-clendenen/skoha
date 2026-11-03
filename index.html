@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261102k">
+<link rel="stylesheet" href="style.css?v=20261102l">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♞</text></svg>">
 </head><body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -92,6 +92,8 @@
           <div id="drillInfo" class="muted"></div>
           <div id="drillMoves" class="moves"></div>
           <div class="tbtns"><button id="drillHint" title="Hint (H)">💡 Hint</button><button id="drillFlip" title="Flip (F)">⇅ Flip</button><button id="drillSpeak" aria-label="Narrator" aria-pressed="false">🔇</button><button id="drillStudy" title="Open this line in study view">📖 Explain line</button><button id="drillNext" class="primary" hidden>Next line →</button></div>
+          <div class="playbar" id="playBar" hidden><button id="playOut">♞ Play it out</button><select id="playLevel" aria-label="Engine level"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>
+          <div class="playbar" id="playOn" hidden><button id="backTrain" class="primary">← Back to training</button><span class="muted" id="playInfo"></span></div>
         </div>
       </div>
     </div>
@@ -199,6 +201,6 @@
     </div>
   </div>
 </div>
-<footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2).</footer>
-<script type="module" src="app.js?v=20261102k"></script>
+<footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2) · Engine: Stockfish.js (GPL-3.0).</footer>
+<script type="module" src="app.js?v=20261102l"></script>
 </body></html>

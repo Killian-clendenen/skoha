@@ -295,3 +295,8 @@ footer{max-width:1200px;margin:0 auto;padding:var(--s6) var(--s5);border-top:1px
 @media(max-width:1180px){.tsplit,.lsplit{grid-template-columns:minmax(220px,300px) minmax(0,1fr)}.tsplit>.tside,.lsplit>.panel{grid-column:1/-1}}
 @media(max-width:900px){.tsplit,.lsplit{grid-template-columns:1fr}.tnote{order:2;height:auto;min-height:0}.tsplit>.boardwrap,.lsplit>.boardwrap{order:1}.tsplit>.tside,.lsplit>.panel{order:3}
   .tnote .bnote .coach-card{max-height:44vh}.lnote .note{max-height:44vh}.tnote .bnote.empty::before{padding:var(--s3)}}
+
+/* play it out */
+.playbar{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center;margin-top:var(--s3)}.playbar select{height:40px}
+#drill.playing .tnav{opacity:.4;pointer-events:none}
+#drill.playing .tbtns{display:none}#drill.playing .tnote .bnote.empty::before{content:"Playing it out: free play from the final position. Explanations return when you go back to training."}

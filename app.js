@@ -1,8 +1,9 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102k';
-import { KB } from './kb.js?v=20261102k';
-import { Narrator } from './narrator.js?v=20261102k';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102l';
+import { KB } from './kb.js?v=20261102l';
+import { Engine } from './engine.js?v=20261102l';
+import { Narrator } from './narrator.js?v=20261102l';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -377,6 +378,40 @@ function cueNew() {
   Object.assign(el.style, { left: bd.left - st.left + x + 'px', top: bd.top - st.top + y + 'px', width: w + 'px', height: w + 'px' }); el.hidden = false; el.dataset.sq = m.to;
 }
 window.__freereps.cueNew = () => cueNew();
+// ---------- play it out against a light engine ----------
+let play = null, engine = null;
+function playUi() { const c = play.chess; drillCg.set({ fen: c.fen(), turnColor: turnColor(c), check: c.inCheck(), lastMove: lastMoveOf(c), movable: { color: c.turn() === play.me && !c.isGameOver() ? cname(play.me) : undefined, dests: dests(c) } }); renderMovesPlay(); }
+function renderMovesPlay() { $('#drillMoves').innerHTML = fmt(play.chess.history()); }
+function playOver() { const c = play.chess; if (!c.isGameOver()) return false;
+  msg(c.isCheckmate() ? (c.turn() === play.me ? 'Checkmate. The engine wins this one.' : 'Checkmate! You win. 🎉') : 'Draw.', c.isCheckmate() && c.turn() !== play.me ? 'ok' : ''); Sound.play('complete'); return true; }
+async function engineMove() {
+  if (!play || playOver()) return; const g = play.gen; $('#playInfo').textContent = 'Engine is thinking…';
+  let uci; try { uci = await engine.best(play.chess.fen(), play.level); } catch { uci = null; }
+  if (!play || g !== play.gen) return;
+  let m = uci && uci !== '(none)' ? tryMove(play.chess, uci.slice(0, 2), uci.slice(2, 4), uci[4] || 'q') : null;
+  if (!m) { const ms = play.chess.moves({ verbose: true }); if (!ms.length) return playOver(); m = play.chess.move(ms[Math.floor(Math.random() * ms.length)]); }
+  Sound.play(soundFor(m, play.chess.inCheck())); playUi(); $('#playInfo').textContent = `Engine played ${m.san}. Your move.`; playOver();
+}
+function playMove(from, to) {
+  const m = tryMove(play.chess, from, to); if (!m) return playUi();
+  Sound.play(soundFor(m, play.chess.inCheck())); playUi(); if (!playOver()) setTimeout(engineMove, 150);
+}
+function startPlay() {
+  engine ||= new Engine(); clearTimeout(drill.timer); Narrator.cancel();
+  play = { chess: new Chess(drill.chess.fen()), me: userColor(), level: $('#playLevel').value, gen: 1, back: drill.chess.fen() };
+  $('#playBar').hidden = true; $('#playOn').hidden = false; $('#drillNext').hidden = true; $('#drillNote').className = 'bnote empty'; $('#drillNote').innerHTML = '';
+  drillCg.setAutoShapes([]); if ($('#drillPulse')) $('#drillPulse').hidden = true; $('#drill').classList.add('playing');
+  msg(`Playing it out against Stockfish (${$('#playLevel').selectedOptions[0].text}). You are ${play.me === 'w' ? 'White' : 'Black'}.`); $('#playInfo').textContent = '';
+  playUi(); if (play.chess.turn() !== play.me) engineMove();
+}
+function endPlay(silent) {
+  if (!play) return; play.gen = 0; play = null; engine?.stop(); $('#playOn').hidden = true; $('#drill').classList.remove('playing');
+  if (silent) return;
+  drillCg.set({ fen: drill.chess.fen(), lastMove: lastMoveOf(drill.chess), check: drill.chess.inCheck(), turnColor: turnColor(drill.chess), movable: { color: undefined } });
+  renderMoves(); $('#drillNext').hidden = false; $('#playBar').hidden = false; coach(drill.ply - 1); msg('Back to training. Press Next line → when ready.', 'ok'); navUi();
+}
+$('#playOut').onclick = startPlay; $('#backTrain').onclick = () => endPlay();
+window.__freereps.play = () => play;
 // ---------- sync across devices ----------
 async function applyRemote(remote) { db = mergeData(db, remote); db.settings = { ...DEF, ...db.settings }; save(); await loadStarters(); save(); renderHome(); applyTheme(); renderSettings(); }
 const copy = async t => { try { await navigator.clipboard.writeText(t); return true; } catch { return false; } };
@@ -422,7 +457,7 @@ function navUi() {
   $('#drill').classList.toggle('browsing', drill.view != null);
 }
 function navGo(v) {
-  Narrator.cancel();
+  Narrator.cancel(); if (play) return;
   if (v > 0 && drill.view == null) {                 // live "Next": opponent's reply, or the next line
     if (drill.waiting) { drill.waiting = false; drillCg.set({ movable: { color: S().premove ? cname(userColor()) : undefined, dests: new Map() } }); drill.busy = true; drill.timer = setTimeout(playReply, 60); navUi(); return; }
     if (drill.line && drill.ply >= drill.line.length && !$('#drillNext').hidden) return nextLine();
@@ -465,6 +500,7 @@ $('#drillLine').onchange = () => startSession('line');
 
 const msg = (t, cls = '') => { $('#drillMsg').innerHTML = t; $('#drillMsg').className = 'msg ' + cls; };
 function startSession(mode) {
+  endPlay(true); $('#playBar').hidden = true;
   clearTimeout(drill.timer);
   drill.rep = db.reps.find(r => r.id === $('#drillRep').value) || db.reps[0];
   if (!drill.rep) return msg('Add a repertoire first (Repertoires tab).', 'bad');
@@ -479,7 +515,7 @@ function startSession(mode) {
 }
 $('#drillNext').onclick = () => nextLine();
 function nextLine() {
-  clearTimeout(drill.timer); $('#drillNext').hidden = true;
+  endPlay(true); clearTimeout(drill.timer); $('#drillNext').hidden = true; $('#playBar').hidden = true;
   if (drill.qi >= drill.queue.length) {
     drillCg.set({ movable: { color: undefined } });
     msg(`Session complete: ${drill.done} lines, ${drill.perfect} perfect. ${drill.mode === 'random' ? '' : 'Pick another mode to keep going.'}`, 'ok');
@@ -550,6 +586,7 @@ function resync() {
     movable: { color: cname(userColor()), dests: dests(drill.chess) } });
 }
 function onUserMove(from, to) {
+  if (play) return playMove(from, to);
   if (drill.view != null) return;
   if (!drill.line || drill.busy || drill.chess.turn() !== userColor()) return resync();
   const expected = drill.line[drill.ply];
@@ -583,7 +620,7 @@ function lineDone() {
   drillCg.cancelPremove(); drillCg.set({ movable: { color: undefined } });
   Sound.play('complete');
   msg(drill.lineMiss ? `Line complete (${drill.lineMiss} mistake${drill.lineMiss > 1 ? 's' : ''}).` : 'Line complete — perfect! 🎯', 'ok');
-  $('#drillNext').hidden = false;
+  $('#drillNext').hidden = false; $('#playBar').hidden = false;
   if (S().autoNext && S().autoReply) drill.timer = setTimeout(nextLine, 900);
   navUi();
 }

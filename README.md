@@ -77,3 +77,6 @@ To turn it on:
 Free-plan limits: 100k KV reads and 1k writes per day, 1 GB storage; Pages Functions get 100k requests per day. The server only ever sees a SHA-256 hash of the key as the record id. There is no account or password reset: losing the key means losing the cloud copy (the device copy remains).
 
 **What real account sync would need:** a sign-in (email magic link or OAuth via Cloudflare Access, Auth0 or Clerk), a D1 table of users plus per-device change logs for conflict-free merging, background sync, account deletion/export for privacy compliance, and rate limiting. That is beyond a static site.
+
+## Play it out
+After a line ends, *Play it out* starts a game from that position against Stockfish 19 lite (single-threaded WASM, vendored in `vendor/stockfish/`, GPL-3.0, from the npm `stockfish` package by Nathan Rugg). It runs in a Web Worker. Easy = Skill 0, 120 ms; Medium = Skill 8, 350 ms; Hard = Skill 20, 900 ms.
