@@ -88,21 +88,21 @@ ok((await pg.textContent('#drillMsg')).includes('Line complete'), 'line-complete
 ok(['move', 'error', 'complete', 'castle'].every(x => s.sounds.includes(x)), 'sounds triggered: ' + [...new Set(s.sounds)].join(','));
 const loaded = await pg.evaluate(() => fetch('sounds/capture.wav').then(r => r.ok));
 ok(loaded, 'sound files served');
-await pg.click('#modes [data-mode=line]'); await pg.waitForTimeout(500); await mv('a2', 'a3'); await pg.waitForTimeout(300);
+await pg.evaluate(() => document.querySelector('#modeBox').open = true); await pg.click('#modes [data-mode=line]'); await pg.waitForTimeout(500); await mv('a2', 'a3'); await pg.waitForTimeout(300);
 const cards = await pg.evaluate(() => Object.values(Object.values(window.__freereps.db().cards)[0]));
 ok(cards.some(c => c.lapses === 1), 'review mistake recorded as SM-2 lapse');
-await pg.click('#modes [data-mode=mistakes]'); await pg.waitForTimeout(400);
+await pg.evaluate(() => document.querySelector('#modeBox').open = true); await pg.click('#modes [data-mode=mistakes]'); await pg.waitForTimeout(400);
 ok((await pg.textContent('#drillInfo')).match(/line 1\/\d+/), 'mistakes-only mode queues lines containing the missed move');
 await mv('g1', 'f3'); await pg.waitForTimeout(300);
 ok((await pg.textContent('#drillNote')).length > 10, 'annotation shown during drill');
 ok(await pg.locator('#drillNote .coach-card').isVisible() && /Your move|Opponent|New move/.test(await pg.textContent('#drillNote .coach-card .who')), 'coach cutout card shows move explanation');
-const geo = await pg.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote .coach-card').getBoundingClientRect(), m = document.querySelector('#modes').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(); return { inside: c.left >= b.left && c.right <= b.right && c.top >= b.top && c.bottom <= b.bottom, mTop: m.top, bTop: b.top, nTop: n.top, bBot: b.bottom }; });
+const geo = await pg.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote .coach-card').getBoundingClientRect(), m = document.querySelector('#modeBox summary').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(); return { inside: c.left >= b.left && c.right <= b.right && c.top >= b.top && c.bottom <= b.bottom, mTop: m.top, bTop: b.top, nTop: n.top, bBot: b.bottom }; });
 ok(geo.inside && geo.mTop < geo.bTop && geo.nTop >= geo.bBot, 'desktop: annotation overlaid on the board, Back/Next under it, compact top bar ' + JSON.stringify(geo));
 ok(/due/.test(await pg.textContent('#drillStats')), 'stats in top bar');
 await pg.screenshot({ path: '/workspace/skoha-train.png' });
 // step-by-step flow (default): opponent waits for Next; overlay explains each move; Back/Next browse history
 await pg.evaluate(() => { window.__freereps.db().settings.autoReply = false; });
-await pg.click('#modes [data-mode=line]'); await pg.selectOption('#drillLine', '0'); await pg.waitForTimeout(400);
+await pg.evaluate(() => document.querySelector('#modeBox').open = true); await pg.click('#modes [data-mode=line]'); await pg.selectOption('#drillLine', '0'); await pg.waitForTimeout(400);
 { const ln = (await st()).line.split(' ');
   const play = async p => { const c = new Chess(); ln.slice(0, p).forEach(x => c.move(x)); const m = c.move(ln[p]); await mv(m.from, m.to); await pg.waitForTimeout(250); return m; };
   const m0 = await play(0); await pg.waitForTimeout(500);
@@ -150,6 +150,10 @@ await pg.click('#modes [data-mode=line]'); await pg.selectOption('#drillLine', '
   ok((await pg.textContent('#navPos')).includes('No moves yet') || /Move 0/.test(await pg.textContent('#navPos')), 'switching lines resets the counter: ' + await pg.textContent('#navPos'));
   ok(await pg.isDisabled('#navBack'), 'Back disabled at line start'); }
 await pg.click('nav [data-nav=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400); await pg.selectOption('#sTheme', 'aurora'); ok(await pg.evaluate(() => document.body.classList.contains('bt-aurora')), 'board theme switch');
+ok(await pg.locator('nav a').count() === 3, 'three-item nav');
+await pg.click('#toData'); await pg.waitForSelector('#data.active #exportBtn'); ok(true, 'Your data page');
+await pg.screenshot({ path: '/workspace/skoha-simple-data.png' });
+await pg.click('nav [data-nav=settings]'); await pg.screenshot({ path: '/workspace/skoha-simple-settings.png', fullPage: true });
 ok(errs.length === 0, 'no page errors ' + errs.join(' | '));
 // mobile
 const mp = await b.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); await mp.goto('http://localhost:8765/'); await mp.waitForSelector('#guide:not([hidden])'); await mp.screenshot({ path: '/workspace/skoha-guide-mobile.png' }); await mp.tap('#gSkip');

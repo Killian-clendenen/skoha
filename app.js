@@ -1,7 +1,7 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings } from './core.js?v=20261102f';
-import { KB } from './kb.js?v=20261102f';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings } from './core.js?v=20261102g';
+import { KB } from './kb.js?v=20261102g';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -63,7 +63,7 @@ function tryMove(chess, from, to, promo = 'q') { try { return chess.move({ from,
 function showTab(t) {
   if (t !== 'drill') drillCg.setAutoShapes([]); if (t !== 'line') lineCg.setAutoShapes([]);
   document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === t));
-  const nav = { home: 'home', opening: 'home', line: 'home', drill: 'drill', build: 'build', settings: 'settings' }[t];
+  const nav = { home: 'home', opening: 'home', line: 'home', drill: 'drill', build: 'settings', settings: 'settings', data: 'settings' }[t];
   document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === nav));
   if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); }
   if (t === 'build') buildCg.redrawAll();
@@ -79,6 +79,7 @@ function route() {
   else if (p === 'train') showTab('drill');
   else if (p === 'build') showTab('build');
   else if (p === 'settings') showTab('settings');
+  else if (p === 'data') showTab('data');
   else { showTab('home'); renderHome(); }
 }
 addEventListener('popstate', route); addEventListener('hashchange', route);
@@ -309,8 +310,10 @@ function fillPickers() {
   $('#drillLine').innerHTML = r.lines.map((l, i) => `<option value="${i}">${esc(l.ch)}: ${fmt(l.m.slice(0, 14)).replace(/<\/?b>/g, '')}${l.m.length > 14 ? '…' : ''}</option>`).join('');
 }
 $('#drillRep').onchange = () => { fillPickers(); startSession(drill.mode || 'due'); };
+$('#modeBox').addEventListener('toggle', () => requestAnimationFrame(() => drillCg.redrawAll()));
 function setMode(m) {
   document.querySelectorAll('#modes button').forEach(x => x.classList.toggle('primary', x.dataset.mode === m));
+  { const lb = document.querySelector('#modes [data-mode=' + m + ']'); if (lb) $('#modeLabel').textContent = lb.textContent; $('#modeBox').open = m === 'chapter' || m === 'line'; }
   $('#drillChapter').hidden = m !== 'chapter'; $('#drillLine').hidden = m !== 'line';
   startSession(m);
 }
@@ -577,6 +580,7 @@ function gStep(n) { document.querySelectorAll('#guide .gstep').forEach(s => s.hi
 function openGuide() { $('#guide').hidden = false; gStep(0); }
 function closeGuide(goTo) { $('#guide').hidden = true; db.guided = true; db.profile = { side: G.side, level: G.level }; save(); if (goTo) go('#/opening/' + goTo); }
 window.__freereps.openGuide = openGuide;
+$('#replayGuide').onclick = () => { go('#/'); openGuide(); };
 document.querySelectorAll('#guide .gopts').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => {
   g.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); G[g.dataset.k] = b.dataset.v; }));
 $('#gSkip').onclick = () => closeGuide();

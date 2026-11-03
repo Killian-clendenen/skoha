@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261102f">
+<link rel="stylesheet" href="style.css?v=20261102g">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♞</text></svg>">
 </head><body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -16,7 +16,6 @@
   <nav>
     <a href="#/" data-nav="home">Home</a>
     <a href="#/train" data-nav="drill">Train</a>
-    <a href="#/build" data-nav="build">Build</a>
     <a href="#/settings" data-nav="settings">Settings</a>
   </nav>
 </header>
@@ -43,6 +42,7 @@
     <h2 class="sect"><span class="dot b"></span> Black defences</h2>
     <div id="blackList" class="ocards"></div>
     <div id="customWrap"><h2 class="sect"><span class="dot c"></span> Your repertoires</h2><div id="customList" class="ocards"></div></div>
+    <div class="row center"><a class="btn" href="#/build" id="homeBuild">＋ Make your own repertoire</a></div>
   </section>
 
   <section id="opening" class="tab"></section>
@@ -51,10 +51,10 @@
     <div class="crumbs" id="lineCrumbs"></div>
     <div class="split">
       <div class="boardwrap"><div id="lineBoard" class="board"></div>
-        <div class="navbtns"><button id="lnFirst" title="Start (Home)">⏮</button><button id="lnPrev" title="Back (←)">◀</button><button id="lnNext" class="primary" title="Forward (→)">▶</button><button id="lnLast" title="End (End)">⏭</button></div>
+        <div class="navbtns"><button id="lnFirst" title="Start (Home)">⏮</button><button id="lnPrev" title="Back (←)">◀</button><button id="lnNext" title="Forward (→)">▶</button><button id="lnLast" title="End (End)">⏭</button></div>
       </div>
       <aside class="panel">
-        <div class="lnhead"><div><div class="muted" id="lnChapter"></div><h2 id="lnTitle"></h2></div><button id="lnDrill" class="primary">Drill this line</button></div>
+        <div class="lnhead"><div><div class="muted" id="lnChapter"></div><h2 id="lnTitle"></h2></div><button id="lnDrill" class="primary">Practise this line</button></div>
         <div class="note" id="lnNote"></div>
         <div class="legend"><span><i class="lg g"></i>idea / control</span><span><i class="lg r"></i>threat / weakness</span><span><i class="lg y"></i>alternative</span><span><i class="lg b"></i>new move</span></div>
         <div class="movelist" id="lnMoves"></div>
@@ -66,15 +66,17 @@
   <section id="drill" class="tab">
     <div class="trainbar">
       <select id="drillRep" aria-label="Repertoire"></select>
+      <details class="tmore" id="modeBox"><summary>What to practise: <b id="modeLabel">Due reviews</b></summary><div class="tmenu">
       <div class="seg" id="modes" role="tablist" aria-label="Training mode">
-        <button data-mode="due" class="primary" title="Due reviews + new moves">Due</button>
-        <button data-mode="random" title="Random lines">Random</button>
-        <button data-mode="mistakes" title="Only lines with past mistakes">Mistakes</button>
-        <button data-mode="chapter" title="One chapter">Chapter</button>
-        <button data-mode="line" title="One specific line">Line</button>
+        <button data-mode="due" class="primary" title="Due reviews + new moves">Due reviews</button>
+        <button data-mode="random" title="Random lines">Any line</button>
+        <button data-mode="mistakes" title="Only lines with past mistakes">My mistakes</button>
+        <button data-mode="chapter" title="One chapter">One chapter</button>
+        <button data-mode="line" title="One specific line">One line</button>
       </div>
       <select id="drillChapter" hidden aria-label="Chapter"></select>
       <select id="drillLine" hidden aria-label="Line"></select>
+      </div></details>
       <div class="tstats" id="drillStats" aria-live="polite"></div>
     </div>
     <div class="tsplit">
@@ -84,11 +86,11 @@
         <div class="tnav"><button id="navBack" title="Back (←)" aria-label="Back">◀ Back</button><span id="navPos" class="muted">No moves yet</span><button id="navFwd" title="Next (→ / Space / Enter)" aria-label="Next">Next ▶</button></div>
       </div>
       <div class="tside">
-        <div id="drillMsg" class="msg">Pick a repertoire and a mode.</div>
+        <div id="drillMsg" class="msg">Pick an opening to practise.</div>
         <div class="tfoot">
           <div id="drillInfo" class="muted"></div>
           <div id="drillMoves" class="moves"></div>
-          <div class="tbtns"><button id="drillHint" title="Hint (H)">💡 Hint</button><button id="drillFlip" title="Flip (F)">⇅ Flip</button><button id="drillStudy" title="Open this line in study view">📖 Study</button><button id="drillNext" class="primary" hidden>Next line →</button></div>
+          <div class="tbtns"><button id="drillHint" title="Hint (H)">💡 Hint</button><button id="drillFlip" title="Flip (F)">⇅ Flip</button><button id="drillStudy" title="Open this line in study view">📖 Explain line</button><button id="drillNext" class="primary" hidden>Next line →</button></div>
         </div>
       </div>
     </div>
@@ -106,7 +108,7 @@
         <input id="buildChapter" placeholder="Chapter for new lines" value="Main">
         <p class="muted">Play moves for both sides, then “Save line”. Or paste PGN: every game becomes a chapter and every variation a line. Comments {…} and [%cal]/[%csl] arrows are kept.</p>
         <div id="buildMoves" class="moves"></div>
-        <div class="row"><button id="buildUndo">Undo</button><button id="buildReset">Clear board</button><button id="buildSave" class="primary">Save line</button></div>
+        <div class="row"><button id="buildUndo">Undo</button><button id="buildReset">Clear board</button><button id="buildSave">Save line</button></div>
         <div id="buildLines" class="linelist"></div>
         <textarea id="pgn" rows="6" placeholder='[Event "Chapter name"]&#10;1. e4 {Takes the centre} e5 2. Nf3 {[%cal Gf3e5] Hits e5} Nc6 (2... d6 3. d4) 3. Bc4'></textarea>
         <div class="row"><button id="pgnAdd">Add PGN</button><label class="btn">Load .pgn file<input type="file" id="pgnFile" accept=".pgn,text/plain" hidden></label></div>
@@ -118,30 +120,38 @@
 
   <section id="settings" class="tab">
     <div class="settings panel">
-      <h2>Board &amp; feel</h2>
-      <label>Board theme <select id="sTheme"><option value="brown">Classic wood</option><option value="blue">Ice blue</option><option value="green">Tournament green</option><option value="aurora">Aurora (violet)</option><option value="slate">Slate</option></select></label>
-      <label>Animation speed <select id="sAnim"><option value="0">Off</option><option value="120">Fast</option><option value="200">Normal</option><option value="320">Slow</option></select></label>
-      <label>Opponent reply delay <select id="sDelay"><option value="150">Instant</option><option value="400">Normal</option><option value="800">Relaxed</option></select></label>
-      <label><input type="checkbox" id="sPremove"> Premoves</label>
-      <label><input type="checkbox" id="sDests"> Show legal-move dots</label>
-      <label><input type="checkbox" id="sCoords"> Board coordinates</label>
-      <label><input type="checkbox" id="sNotes"> Show annotations while drilling</label>
-      <label><input type="checkbox" id="sAutoReply"> Auto-play opponent replies (off = press Next ▶ to see the reply)</label>
-      <label><input type="checkbox" id="sAutoNext"> Auto-advance to next line</label>
-      <label><input type="checkbox" id="sFlip"> Flip board (play from the other side)</label>
-      <label>New lines per session <input type="number" id="sNew" min="0" max="100"></label>
-      <h2>Sound</h2>
-      <label><input type="checkbox" id="sSound"> Sounds</label>
+      <div class="sgroup"><h2>Board</h2>
+      <label>Board colours <select id="sTheme"><option value="brown">Classic wood</option><option value="blue">Ice blue</option><option value="green">Tournament green</option><option value="aurora">Aurora (violet)</option><option value="slate">Slate</option></select></label>
+      <label>Piece animation <select id="sAnim"><option value="0">Off</option><option value="120">Fast</option><option value="200">Normal</option><option value="320">Slow</option></select></label>
+      <label><input type="checkbox" id="sDests"> Show dots where a piece can move</label>
+      <label><input type="checkbox" id="sCoords"> Show a–h / 1–8 around the board</label>
+      <label><input type="checkbox" id="sFlip"> Turn the board around</label></div>
+      <div class="sgroup"><h2>Training</h2>
+      <label><input type="checkbox" id="sNotes"> Show explanations while practising</label>
+      <label><input type="checkbox" id="sAutoReply"> Opponent replies by itself (off: press Next ▶ to see the reply)</label>
+      <label><input type="checkbox" id="sAutoNext"> Go to the next line automatically</label>
+      <label><input type="checkbox" id="sPremove"> Let me move before the opponent has replied</label>
+      <label>Opponent speed <select id="sDelay"><option value="150">Instant</option><option value="400">Normal</option><option value="800">Relaxed</option></select></label>
+      <label>New lines per session <input type="number" id="sNew" min="0" max="100"></label></div>
+      <div class="sgroup"><h2>Sound</h2>
+      <label><input type="checkbox" id="sSound"> Sounds on</label>
       <label>Volume <input type="range" id="sVolume" min="0" max="1" step="0.05"></label>
-      <div class="row"><button id="testSounds">Test sounds</button></div>
-      <p class="muted">Custom sounds: replace the files in <code>/sounds/</code> (move, capture, castle, check, error, complete .wav).</p>
-      <h2>Backup</h2>
+      <div class="row"><button id="testSounds">Play test sounds</button></div></div>
+      <div class="sgroup"><h2>More</h2><div class="row"><a class="btn" href="#/data" id="toData">Your data &amp; backup →</a><a class="btn" href="#/build">Make your own repertoire →</a><button id="replayGuide">Show the welcome guide again</button></div></div>
+    </div>
+  </section>
+
+  <section id="data" class="tab">
+    <div class="settings panel">
+      <h2>Your data</h2>
+      <p class="muted">Everything is stored in this browser only. No account, no server, no ads. Save a backup file to keep your progress safe or move it to another browser.</p>
       <div class="row">
-        <button id="exportBtn">Export backup (JSON)</button>
-        <label class="btn">Import backup<input type="file" id="importFile" accept=".json,application/json" hidden></label>
-        <button id="resetBtn" class="danger">Reset all data</button>
+        <button id="exportBtn" class="primary">Download backup</button>
+        <label class="btn">Restore from backup<input type="file" id="importFile" accept=".json,application/json" hidden></label>
       </div>
-      <p class="muted">Everything is stored in this browser only. No account, no server, no ads.</p>
+      <div id="dataExtra"></div>
+      <h2>Start over</h2>
+      <div class="row"><button id="resetBtn" class="danger">Erase all progress</button></div>
     </div>
   </section>
 </main>
@@ -168,5 +178,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2).</footer>
-<script type="module" src="app.js?v=20261102f"></script>
+<script type="module" src="app.js?v=20261102g"></script>
 </body></html>
