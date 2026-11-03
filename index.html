@@ -78,14 +78,12 @@
       <div class="tstats" id="drillStats" aria-live="polite"></div>
     </div>
     <div class="tsplit">
-      <div class="boardwrap"><div id="drillBoard" class="board"></div>
+      <div class="boardwrap">
+        <div class="bstage"><div id="drillBoard" class="board"></div><div id="drillNote" class="bnote empty" aria-live="polite"></div></div>
         <div class="tprogress"><i id="drillProg"></i></div>
-        <div class="tnav"><button id="navBack" title="Previous explanation (←)" aria-label="Previous explanation">◀</button><span id="navPos" class="muted">No moves yet</span><button id="navFwd" title="Next explanation (→)" aria-label="Next explanation">▶</button></div>
+        <div class="tnav"><button id="navBack" title="Back (←)" aria-label="Back">◀ Back</button><span id="navPos" class="muted">No moves yet</span><button id="navFwd" title="Next (→ / Space / Enter)" aria-label="Next">Next ▶</button></div>
       </div>
       <div class="tside">
-        <div id="drillNote" class="coach" aria-live="polite">
-          <div class="coach-empty"><div class="coach-k">Coach</div><p>Every move you play, and every reply, is explained here, with arrows on the board.</p></div>
-        </div>
         <div id="drillMsg" class="msg">Pick a repertoire and a mode.</div>
         <div class="tfoot">
           <div id="drillInfo" class="muted"></div>
@@ -128,6 +126,7 @@
       <label><input type="checkbox" id="sDests"> Show legal-move dots</label>
       <label><input type="checkbox" id="sCoords"> Board coordinates</label>
       <label><input type="checkbox" id="sNotes"> Show annotations while drilling</label>
+      <label><input type="checkbox" id="sAutoReply"> Auto-play opponent replies (off = press Next ▶ to see the reply)</label>
       <label><input type="checkbox" id="sAutoNext"> Auto-advance to next line</label>
       <label><input type="checkbox" id="sFlip"> Flip board (play from the other side)</label>
       <label>New lines per session <input type="number" id="sNew" min="0" max="100"></label>

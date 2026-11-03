@@ -5,7 +5,7 @@ import { KB } from './kb.js';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
-const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true };
+const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false };
 let db = load();
 function load() {
   try {
@@ -260,7 +260,7 @@ function download(name, text, type) {
 }
 
 // ---------- settings ----------
-const SET = { sSound: 'sound', sVolume: 'volume', sAnim: 'anim', sDelay: 'delay', sPremove: 'premove', sDests: 'dests', sCoords: 'coords', sAutoNext: 'autoNext', sFlip: 'flip', sNew: 'newLimit', sNotes: 'notes' };
+const SET = { sSound: 'sound', sVolume: 'volume', sAnim: 'anim', sDelay: 'delay', sPremove: 'premove', sDests: 'dests', sCoords: 'coords', sAutoNext: 'autoNext', sAutoReply: 'autoReply', sFlip: 'flip', sNew: 'newLimit', sNotes: 'notes' };
 function renderSettings() {
   $('#sTheme').value = S().theme || 'brown';
   for (const [id, k] of Object.entries(SET)) { const el = $('#' + id); if (el.type === 'checkbox') el.checked = S()[k]; else el.value = S()[k]; }
@@ -316,22 +316,21 @@ document.querySelectorAll('#modes button').forEach(b => b.onclick = () => setMod
 $('#drillStudy').onclick = () => { if (drill.rep && drill.li >= 0) go(`#/line/${drill.rep.id}/${drill.li}`); };
 // coach "cutout": explains the move just played (or the new move to play), with arrows on the board
 function coach(ply, upcoming = false) {
-  const l = drill.rep.lines[drill.li]; const n = l.n?.[ply];
-  if (!S().notes) return;
+  const l = drill.rep.lines[drill.li]; const n = l.n?.[ply]; const el = $('#drillNote');
+  if (!S().notes) { el.className = 'bnote empty'; return; }
   const c = new Chess(); l.m.slice(0, ply).forEach(x => c.move(x)); const mv = c.move(l.m[ply]);
   const mine = (ply % 2 === 0 ? 'w' : 'b') === userColor();
   const num = Math.floor(ply / 2) + 1 + (ply % 2 ? '...' : '.');
   const text = n?.t || describeMove(mv, c.inCheck());
   const label = upcoming ? 'New move: why we play it' : mine ? 'Your move' : 'Opponent\'s reply';
-  const sub = upcoming ? 'Play it on the board.' : mine ? 'Why it works' : 'What it aims for, and what it concedes';
-  let prev = '';
-  if (ply > 0) { const pn = l.n?.[ply - 1]; const pc = new Chess(); l.m.slice(0, ply - 1).forEach(x => pc.move(x)); const pm = pc.move(l.m[ply - 1]);
-    const pmine = ((ply - 1) % 2 === 0 ? 'w' : 'b') === userColor();
-    prev = `<div class="coach-prev ${pmine ? 'you' : 'opp'}"><span class="pwho">${pmine ? 'Your move' : 'Opponent'}</span><span class="san">${Math.floor((ply - 1) / 2) + 1}${(ply - 1) % 2 ? '...' : '.'} ${esc(l.m[ply - 1])}</span> ${esc(pn?.t || describeMove(pm, pc.inCheck()))}</div>`; }
-  const el = $('#drillNote');
-  el.innerHTML = prev + `<div class="coach-card ${upcoming ? 'up' : mine ? 'you' : 'opp'}"><div class="coach-head"><span class="coach-san">${num} ${esc(l.m[ply])}${esc(n?.g || '')}</span><span class="who ${mine ? 'you' : 'opp'}">${label}</span></div>
-    <div class="coach-k">${sub}</div><p class="${n?.t ? '' : 'auto'}">${esc(text)}</p>
-    ${n?.cal?.length || n?.csl?.length ? '<div class="legend"><span><i class="lg g"></i>idea</span><span><i class="lg r"></i>threat / weakness</span><span><i class="lg y"></i>alternative</span></div>' : ''}</div>`;
+  // bubble goes over the top edge (opponent's back ranks) unless the move or its arrows live there
+  const whiteView = drillCg.state.orientation === 'white', row = q => whiteView ? 8 - +q[1] : +q[1] - 1;
+  const nx = !upcoming && !mine && l.m[ply + 1] ? new Chess(c.fen()).move(l.m[ply + 1]) : null;
+  const sqs = [mv.to, ...(nx ? [nx.from, nx.to] : []), ...(n?.cal || []).flatMap(([o, d]) => [o, d]), ...(n?.csl || []).map(([q]) => q)];
+  const topHits = sqs.filter(q => row(q) <= 1).length, botHits = sqs.filter(q => row(q) >= 6).length;
+  const topHalf = topHits > 0 && topHits >= botHits;
+  el.className = `bnote ${topHalf ? 'at-bottom' : 'at-top'} ${upcoming ? 'up' : mine ? 'you' : 'opp'}`;
+  el.innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${num} ${esc(l.m[ply])}${esc(n?.g || '')}</span><span class="who ${mine ? 'you' : 'opp'}">${label}</span></div><p class="${n?.t ? '' : 'auto'}">${esc(text)}</p></div>`;
   el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
   if ($('#drill').classList.contains('active')) {
     const sh = shapesOf(n);
@@ -344,10 +343,19 @@ const drillNote = ply => { if (drill.view == null) coach(ply); navUi(); };
 function navUi() {
   const n = drill.line ? drill.ply : 0, v = drill.view ?? n;
   $('#navPos').textContent = n ? `Move ${v} of ${n}${drill.view == null ? '' : ' · browsing'}` : 'No moves yet';
-  $('#navBack').disabled = v <= 1; $('#navFwd').disabled = drill.view == null;
+  const done = drill.line && drill.ply >= drill.line.length;
+  $('#navBack').disabled = v <= 1;
+  $('#navFwd').disabled = !(drill.view != null || drill.waiting || (done && !$('#drillNext').hidden));
+  $('#navFwd').classList.toggle('primary', !!drill.waiting || (done && drill.view == null));
+  $('#navFwd').textContent = drill.view == null && done ? 'Next line ▶' : 'Next ▶';
   $('#drill').classList.toggle('browsing', drill.view != null);
 }
 function navGo(v) {
+  if (v > 0 && drill.view == null) {                 // live "Next": opponent's reply, or the next line
+    if (drill.waiting) { drill.waiting = false; drillCg.set({ movable: { color: S().premove ? cname(userColor()) : undefined, dests: new Map() } }); drill.busy = true; drill.timer = setTimeout(playReply, 60); navUi(); return; }
+    if (drill.line && drill.ply >= drill.line.length && !$('#drillNext').hidden) return nextLine();
+    return;
+  }
   if (!drill.line || !drill.ply) return;
   const nv = navStep(drill.view, drill.ply, v);
   if (nv === drill.view) return;
@@ -356,7 +364,7 @@ function navGo(v) {
   }
   drill.view = nv;
   if (nv == null) {                                  // back to live
-    resync(); coach(drill.ply - 1); navUi();
+    resync(); coach(drill.ply - 1); if (drill.waiting) drillCg.set({ movable: { color: undefined } }); navUi();
     if (drill.ply >= drill.line.length) drillCg.set({ movable: { color: undefined } });
     else if (drill.paused) { drill.paused = false; advance(); }
     else if (drill.learning && drill.chess.turn() === userColor()) coach(drill.ply, true);
@@ -369,7 +377,7 @@ function navGo(v) {
 $('#navBack').onclick = () => navGo(-1); $('#navFwd').onclick = () => navGo(1);
 addEventListener('keydown', e => {
   if (!$('#drill').classList.contains('active') || e.target.matches('input,textarea,select')) return;
-  if (e.key === 'ArrowLeft') { e.preventDefault(); navGo(-1); } if (e.key === 'ArrowRight') { e.preventDefault(); navGo(1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); navGo(-1); } if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); navGo(1); }
 });
 function drillStats() {
   if (!drill.rep) { $('#drillStats').innerHTML = ''; return; }
@@ -402,9 +410,9 @@ function nextLine() {
     msg(`Session complete: ${drill.done} lines, ${drill.perfect} perfect. ${drill.mode === 'random' ? '' : 'Pick another mode to keep going.'}`, 'ok');
     Sound.play('complete'); renderDrillSelect(); return;
   }
-  drill.view = null; drill.paused = false;
+  drill.view = null; drill.paused = false; drill.waiting = false; $('#drillNote').className = 'bnote empty';
   drill.li = drill.queue[drill.qi++]; drill.line = drill.rep.lines[drill.li].m; drill.ply = 0; drill.chess = new Chess(); drill.lineMiss = 0;
-  drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = `<div class="coach-empty"><div class="coach-k">${esc(drill.rep.lines[drill.li].ch)}</div><p>${esc(drill.rep.intros?.[drill.rep.lines[drill.li].ch] || 'Play your moves. Each one is explained here.')}</p></div>`;
+  drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = '';
   drillCg.set({ fen: drill.chess.fen(), lastMove: undefined, check: false, turnColor: 'white' }); setOrientation();
   $('#drillInfo').textContent = `${drill.rep.lines[drill.li].ch} · line ${drill.qi}/${drill.queue.length}`; drillStats();
   msg(`Your move as ${userColor() === 'w' ? 'White' : 'Black'}.`);
@@ -420,21 +428,31 @@ function advance() {
     drillCg.set({ turnColor: turnColor(drill.chess), check: drill.chess.inCheck(), movable: { color: cname(userColor()), dests: dests(drill.chess) } });
     const card = cardsOf(drill.rep)[cardKey()];
     drill.missed = false; drill.learning = !card;
-    if (drill.learning) { showArrow(drill.line[drill.ply], 'blue'); msg(`New move: play <b>${drill.line[drill.ply]}</b>.`); coach(drill.ply, true); navUi(); } else drillCg.setAutoShapes([]);
+    if (drill.learning) { msg(`New move: play <b>${drill.line[drill.ply]}</b> (blue arrow).`);
+      if (drill.ply === 0 || !S().notes) { showArrow(drill.line[drill.ply], 'blue'); coach(drill.ply, true); }
+      else if ($('#drill').classList.contains('active')) { const m = new Chess(drill.chess.fen()).move(drill.line[drill.ply]); drillCg.setAutoShapes([...shapesOf(drill.rep.lines[drill.li].n?.[drill.ply - 1]), { orig: m.from, dest: m.to, brush: 'blue' }]); }
+      navUi(); } else drillCg.setAutoShapes([]);
     drillCg.playPremove();
   } else {
+    // step-by-step flow: after the user's move, wait for Next ▶ before the reply (unless auto-play is on)
+    if (!S().autoReply && drill.ply > 0) {
+      drill.waiting = true; drill.busy = false;
+      drillCg.set({ turnColor: turnColor(drill.chess), movable: { color: undefined, dests: new Map() } });
+      msg(`${$('#drillMsg').textContent.startsWith('✔') ? $('#drillMsg').innerHTML + ' · ' : ''}Read the idea, then <b>Next ▶</b> (Space) for the reply.`, 'ok'); navUi(); return;
+    }
     // opponent to move: user may premove meanwhile
     drillCg.set({ turnColor: turnColor(drill.chess), movable: { color: S().premove ? cname(userColor()) : undefined, dests: new Map() } });
     drill.busy = true;
-    drill.timer = setTimeout(() => {
-      const m = drill.chess.move(drill.line[drill.ply++]); drill.busy = false;
-      drillCg.move(m.from, m.to);
-      if (m.flags.includes('e') || m.flags.includes('p')) drillCg.set({ fen: drill.chess.fen() });
-      drillCg.set({ lastMove: [m.from, m.to] });
-      Sound.play(soundFor(m, drill.chess.inCheck())); drillNote(drill.ply - 1);
-      advance();
-    }, drill.ply === 0 ? 300 : S().delay);
+    drill.timer = setTimeout(playReply, drill.ply === 0 ? 300 : S().delay);
   }
+}
+function playReply() {
+  const m = drill.chess.move(drill.line[drill.ply++]); drill.busy = false; drill.waiting = false;
+  drillCg.move(m.from, m.to);
+  if (m.flags.includes('e') || m.flags.includes('p')) drillCg.set({ fen: drill.chess.fen() });
+  drillCg.set({ lastMove: [m.from, m.to] });
+  Sound.play(soundFor(m, drill.chess.inCheck())); drillNote(drill.ply - 1);
+  advance();
 }
 const cardKey = () => userCards(drill.line, userColor()).find(c => c.ply === drill.ply).key;
 function showArrow(san, brush = 'green') { if (!$('#drill').classList.contains('active')) return; const m = new Chess(drill.chess.fen()).move(san); drillCg.setAutoShapes([{ orig: m.from, dest: m.to, brush }]); }
@@ -492,9 +510,10 @@ function lineDone() {
   Sound.play('complete');
   msg(drill.lineMiss ? `Line complete (${drill.lineMiss} mistake${drill.lineMiss > 1 ? 's' : ''}).` : 'Line complete — perfect! 🎯', 'ok');
   $('#drillNext').hidden = false;
-  if (S().autoNext) drill.timer = setTimeout(nextLine, 900);
+  if (S().autoNext && S().autoReply) drill.timer = setTimeout(nextLine, 900);
+  navUi();
 }
-addEventListener('keydown', e => { if (e.target.matches('input,textarea,select')) return; if (e.key === 'h') $('#drillHint').click(); if (e.key === 'n' || e.key === 'Enter') { if (!$('#drillNext').hidden) nextLine(); } if (e.key === 'f') drillCg.toggleOrientation(); });
+addEventListener('keydown', e => { if (e.target.matches('input,textarea,select')) return; if (e.key === 'h') $('#drillHint').click(); if (e.key === 'n') { if (!$('#drillNext').hidden) nextLine(); } if (e.key === 'f') drillCg.toggleOrientation(); });
 
 // ---------- build ----------
 const build = { chess: new Chess(), lines: [], editing: null };

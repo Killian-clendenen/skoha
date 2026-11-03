@@ -43,7 +43,7 @@ ok((await pg.textContent('#lnNote')).includes('signature Réti move'), 'keyboard
 ok((await pg.locator('#lineBoard svg line, #lineBoard svg path').count()) > 0, 'arrow drawn for 2.c4');
 await pg.screenshot({ path: root + '/screenshot-line.png' });
 await pg.goto('http://localhost:8765/#/'); await pg.waitForSelector('#whiteList .ocard');
-await pg.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.anim = 120; s.autoNext = false; });
+await pg.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.anim = 120; s.autoNext = false; s.autoReply = true; });
 await pg.goto('http://localhost:8765/#/opening/reti'); await pg.waitForSelector('#opening.active [data-act=due]'); await pg.click('[data-act=due]'); await pg.waitForTimeout(500);
 // click squares on the board helper (white orientation)
 const sq = async s => { const bb = await pg.locator('#drillBoard cg-board').boundingBox(); const f = s.charCodeAt(0) - 97, r = +s[1] - 1; const w = bb.width / 8;
@@ -86,40 +86,49 @@ ok((await pg.textContent('#drillInfo')).match(/line 1\/\d+/), 'mistakes-only mod
 await mv('g1', 'f3'); await pg.waitForTimeout(300);
 ok((await pg.textContent('#drillNote')).length > 10, 'annotation shown during drill');
 ok(await pg.locator('#drillNote .coach-card').isVisible() && /Your move|Opponent|New move/.test(await pg.textContent('#drillNote .coach-card .who')), 'coach cutout card shows move explanation');
-const geo = await pg.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote').getBoundingClientRect(), m = document.querySelector('#modes').getBoundingClientRect(); return { cTop: c.top, mTop: m.top, bRight: b.right, cLeft: c.left }; });
-ok(geo.cLeft >= geo.bRight - 1 && geo.mTop < geo.cTop, 'desktop: coach card beside board, controls in compact top bar');
+const geo = await pg.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote .coach-card').getBoundingClientRect(), m = document.querySelector('#modes').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(); return { inside: c.left >= b.left && c.right <= b.right && c.top >= b.top && c.bottom <= b.bottom, mTop: m.top, bTop: b.top, nTop: n.top, bBot: b.bottom }; });
+ok(geo.inside && geo.mTop < geo.bTop && geo.nTop >= geo.bBot, 'desktop: annotation overlaid on the board, Back/Next under it, compact top bar ' + JSON.stringify(geo));
 ok(/due/.test(await pg.textContent('#drillStats')), 'stats in top bar');
 await pg.screenshot({ path: '/workspace/skoha-train.png' });
-// explanation history: play a fresh line, then browse back/forward
+// step-by-step flow (default): opponent waits for Next; overlay explains each move; Back/Next browse history
+await pg.evaluate(() => { window.__freereps.db().settings.autoReply = false; });
 await pg.click('#modes [data-mode=line]'); await pg.selectOption('#drillLine', '0'); await pg.waitForTimeout(400);
 { const ln = (await st()).line.split(' ');
-  for (let p = 0; p < 6; p += 2) { const c = new Chess(); ln.slice(0, p).forEach(x => c.move(x)); const m = c.move(ln[p]); await mv(m.from, m.to); await pg.waitForTimeout(450); }
-  let s3 = await st(); ok(s3.ply === 6, 'played 3 moves + replies (ply ' + s3.ply + ')');
-  ok((await pg.textContent('#drillNote')).includes('Your move') && (await pg.textContent('#drillNote')).includes("Opponent's reply"), 'your move explanation stays stacked above opponent reply');
-  ok((await pg.textContent('#navPos')).includes('Move 6 of 6'), 'indicator live: ' + await pg.textContent('#navPos'));
+  const play = async p => { const c = new Chess(); ln.slice(0, p).forEach(x => c.move(x)); const m = c.move(ln[p]); await mv(m.from, m.to); await pg.waitForTimeout(250); return m; };
+  const m0 = await play(0); await pg.waitForTimeout(500);
+  ok((await st()).ply === 1, 'opponent does not reply automatically');
+  ok((await pg.textContent('#drillNote .who')).includes('Your move') && (await pg.textContent('#drillNote .coach-san')).includes(ln[0]), 'overlay shows your move explanation');
+  ok(await pg.evaluate(() => document.querySelector('#navFwd').classList.contains('primary')), 'Next is highlighted while waiting');
+  const pos = await pg.evaluate(() => document.querySelector('#drillNote').className);
+  ok(/at-top/.test(pos), 'bubble over the top edge, away from 1.' + ln[0] + ': ' + pos);
+  await pg.click('#navFwd'); await pg.waitForTimeout(500);
+  ok((await st()).ply === 2 && (await pg.textContent('#drillNote .who')).includes("Opponent's reply"), 'Next plays the reply and shows its annotation');
+  await play(2); await pg.keyboard.press('Space'); await pg.waitForTimeout(500);
+  ok((await st()).ply === 4, 'Space triggers Next');
+  await play(4); await pg.keyboard.press('ArrowRight'); await pg.waitForTimeout(500);
+  ok((await st()).ply === 6, '→ triggers Next');
+  ok((await pg.textContent('#navPos')).includes('Move 6 of 6'), 'counter: ' + await pg.textContent('#navPos'));
   await pg.click('#navBack'); await pg.waitForTimeout(150);
-  ok((await pg.textContent('#navPos')).includes('Move 5 of 6') && (await pg.textContent('#drillNote .coach-card .coach-san')).includes(ln[4]), 'Back shows move 5 explanation');
+  ok((await pg.textContent('#navPos')).includes('Move 5 of 6') && (await pg.textContent('#drillNote .coach-san')).includes(ln[4]), 'Back shows move 5 annotation');
   await pg.keyboard.press('ArrowLeft'); await pg.waitForTimeout(150);
   const fen4 = await pg.evaluate(() => window.__freereps.cg.getFen()); const c4 = new Chess(); ln.slice(0, 4).forEach(x => c4.move(x));
   ok(fen4 === c4.fen().split(' ')[0], 'board shows position at move 4 while browsing');
-  ok(await pg.evaluate(() => document.querySelector('#drill').classList.contains('browsing')), 'browsing state styled');
-  await pg.screenshot({ path: '/workspace/skoha-train-nav.png' });
   await mv('a2', 'a3'); await pg.waitForTimeout(150); ok((await st()).ply === 6, 'board read-only while browsing');
   await pg.click('#navFwd'); await pg.keyboard.press('ArrowRight'); await pg.waitForTimeout(150);
   ok((await pg.textContent('#navPos')).includes('Move 6 of 6') && !(await pg.evaluate(() => document.querySelector('#drill').classList.contains('browsing'))), 'Next returns to live');
-  const c6 = new Chess(); ln.slice(0, 6).forEach(x => c6.move(x)); const m6 = c6.move(ln[6]); await mv(m6.from, m6.to); await pg.waitForTimeout(450);
-  ok((await st()).ply >= 7, 'live board playable again after browsing'); }
+  await play(6); await pg.screenshot({ path: '/workspace/skoha-train-overlay.png' });
+  ok((await st()).ply === 7, 'live board playable again after browsing'); }
 await pg.click('nav [data-nav=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400); await pg.selectOption('#sTheme', 'aurora'); ok(await pg.evaluate(() => document.body.classList.contains('bt-aurora')), 'board theme switch');
 ok(errs.length === 0, 'no page errors ' + errs.join(' | '));
 // mobile
 const mp = await b.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); await mp.goto('http://localhost:8765/');
 await mp.waitForSelector('#whiteList .ocard'); const bw = await mp.evaluate(() => document.documentElement.scrollWidth);
 ok(bw <= 390, 'mobile no horizontal overflow (' + bw + ')');
-await mp.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; });
+await mp.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; });
 await mp.goto('http://localhost:8765/#/opening/sicilian'); await mp.waitForSelector('#opening.active [data-act=random]'); await mp.click('[data-act=random]'); await mp.waitForTimeout(900);
-const mg = await mp.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote').getBoundingClientRect(); return { bb: b.bottom, ct: c.top, w: document.documentElement.scrollWidth, bw: b.width }; });
-ok(mg.ct >= mg.bb && mg.w <= 390 && mg.bw > 300, `mobile train: board above coach card, no overflow (${JSON.stringify(mg)})`);
+const mg = await mp.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote .coach-card').getBoundingClientRect(); return { bb: b.bottom, inside: c.top >= b.top && c.bottom <= b.bottom && c.left >= b.left && c.right <= b.right, w: document.documentElement.scrollWidth, bw: b.width }; });
+ok(mg.inside && mg.w <= 390 && mg.bw > 300, `mobile train: annotation overlaid inside board, no overflow (${JSON.stringify(mg)})`);
 ok((await mp.textContent('#drillNote')).length > 10, 'mobile: coach explains opponent move');
 const tb = await mp.locator('#navBack').boundingBox(); ok(tb.height >= 48 && tb.width >= 100 && tb.y > mg.bb - 1, 'mobile: large Back/Next tap targets under board ' + JSON.stringify(tb));
-await mp.screenshot({ path: '/workspace/skoha-train-mobile.png' });
+await mp.screenshot({ path: '/workspace/skoha-train-overlay-mobile.png' });
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

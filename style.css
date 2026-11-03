@@ -127,3 +127,18 @@ cg-board square.last-move{background-color:rgba(62,240,208,.32)}
 #drill.browsing .board{box-shadow:0 0 0 2px var(--a3),0 30px 60px -25px #000}#drill.browsing #navPos{color:var(--a3)}
 .coach-prev .pwho{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-right:8px;color:var(--a1)}.coach-prev.opp .pwho{color:#c6bfff}
 @media(max-width:900px){.tnav button{min-height:56px;font-size:24px}}
+/* ---------- v5: on-board annotation overlay ---------- */
+.bstage{position:relative}
+.bnote{position:absolute;left:4%;right:4%;z-index:5;pointer-events:none;transition:top .3s,bottom .3s}
+.bnote.at-top{top:3%}.bnote.at-bottom{bottom:3%}.bnote.empty{display:none}
+.bnote .coach-card{pointer-events:none;background:linear-gradient(140deg,rgba(10,14,30,.8),rgba(24,20,60,.76));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(140,160,255,.3);border-radius:16px;padding:10px 14px;box-shadow:0 18px 40px -18px rgba(0,0,0,.9),0 0 0 1px rgba(62,240,208,.08);max-height:42%;overflow:auto}
+.bnote.you .coach-card{border-color:rgba(62,240,208,.55)}.bnote.opp .coach-card{border-color:rgba(123,108,255,.6)}.bnote.up .coach-card{border-color:rgba(80,130,255,.7)}
+.bnote .coach-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bnote .coach-san{font-size:20px;font-weight:800;letter-spacing:-.02em;color:#fff}
+.bnote .who{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;padding:2px 8px;border-radius:999px}
+.bnote .who.you{background:var(--grad);color:#0a0d1a}.bnote .who.opp{border:1px solid var(--a2);color:#c6bfff}.bnote.up .who{background:#1b3a8a;color:#cfe0ff;border:0}
+.bnote p{margin:4px 0 0;font-size:14.5px;line-height:1.45;color:#eef1ff}.bnote p.auto{color:var(--muted);font-style:italic}
+.bnote.pop .coach-card{animation:coachIn .35s cubic-bezier(.2,.8,.2,1)}
+.tnav button{font-size:16px;font-weight:700}.tnav #navFwd.primary{box-shadow:0 0 0 0 rgba(62,240,208,.6);animation:nudge 1.8s ease-in-out infinite}
+@keyframes nudge{50%{box-shadow:0 0 0 6px rgba(62,240,208,.0),0 0 24px -2px rgba(62,240,208,.7)}}
+@media(max-width:600px){.bnote{left:2%;right:2%}.bnote .coach-card{padding:8px 10px;border-radius:12px}.bnote .coach-san{font-size:16px}.bnote p{font-size:13px}}
