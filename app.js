@@ -1,9 +1,9 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102p';
-import { KB } from './kb.js?v=20261102p';
-import { Engine } from './engine.js?v=20261102p';
-import { Narrator } from './narrator.js?v=20261102p';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102q';
+import { KB } from './kb.js?v=20261102q';
+import { Engine } from './engine.js?v=20261102q';
+import { Narrator } from './narrator.js?v=20261102q';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -13,7 +13,7 @@ function load() {
   try {
     let d = JSON.parse(localStorage.getItem(KEY));
     if (!d) { const v1 = JSON.parse(localStorage.getItem('freereps.v1')); if (v1) d = migrate(v1); }
-    d ||= { reps: [], cards: {} }; d.settings = { ...DEF, ...d.settings }; return repair(d);
+    d ||= { reps: [], cards: {} }; return repair(d);
   } catch { return { reps: [], cards: {}, settings: { ...DEF } }; }
 }
 // repair data saved by any older version so one bad record can never break an opening
@@ -22,7 +22,7 @@ function repair(d) {
   d.reps = Array.isArray(d.reps) ? d.reps.filter(r => r && typeof r === 'object') : []; d.cards = d.cards && typeof d.cards === 'object' ? d.cards : {};
   const seen = new Map();
   for (const r of d.reps) {
-    r.id = String(r.id || r.starter || uid()); r.color = r.color === 'b' ? 'b' : 'w'; r.name = String(r.name || 'Repertoire');
+    r.id = String(r.id || r.starter || Math.random().toString(36).slice(2, 10)); r.color = r.color === 'b' ? 'b' : 'w'; r.name = String(r.name || 'Repertoire');
     r.lines = (Array.isArray(r.lines) ? r.lines : []).map(l => Array.isArray(l) ? { m: l, ch: 'Main' } : l).filter(l => l && Array.isArray(l.m) && l.m.length);
     r.lines.forEach(l => { l.m = l.m.map(String); l.ch = String(l.ch || 'Main'); });
     if (r.starter) { r.starter = String(r.starter).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -32,6 +32,11 @@ function repair(d) {
   }
   d.reps = d.reps.filter(r => !r._dup);
   if (!Array.isArray(d.removed)) d.removed = [];
+  const st = d.settings = { ...DEF, ...(d.settings && typeof d.settings === 'object' ? d.settings : {}) };
+  const num = (k, lo, hi) => { const v = Number(st[k]); st[k] = Number.isFinite(v) && v >= lo && v <= hi ? v : DEF[k]; };
+  num('newLimit', 1, 100); num('dailyGoal', 1, 500); num('delay', 0, 5000); num('anim', 0, 2000); num('volume', 0, 1); num('voiceRate', 0.3, 3); num('voicePitch', 0.3, 2);
+  for (const k of Object.keys(DEF)) if (typeof DEF[k] === 'boolean') st[k] = typeof st[k] === 'boolean' ? st[k] : DEF[k];
+  if (!['guided', 'none'].includes(st.help)) st.help = 'guided';
   return d;
 }
 function migrate(d) { d.reps.forEach(r => r.lines = dedupe(r.lines.map(l => Array.isArray(l) ? { m: l, ch: 'Main' } : l))); return d; }
@@ -86,7 +91,9 @@ function showTab(t) {
   document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === t));
   const nav = { home: 'home', opening: 'home', line: 'home', drill: 'drill', build: 'settings', settings: 'settings', data: 'settings' }[t];
   document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === nav));
-  if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); requestAnimationFrame(() => cueNew()); }
+  if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); requestAnimationFrame(() => cueNew());
+    // opening the Train screen must never leave an idle board: start the selected opening if nothing is running
+    if (!drill.line && !play && db.reps.length) setTimeout(() => { if (!drill.line && $('#drill').classList.contains('active')) startSession(drill.mode || 'due'); }, 0); }
   if (t === 'build') buildCg.redrawAll();
   if (t === 'line') lineCg.redrawAll();
   if (t === 'settings') renderSettings();
@@ -209,7 +216,7 @@ function renderOpening(rep) {
   <div class="ohero"><div class="eco">${esc(m.eco || '')} · ${rep.color === 'w' ? 'You play White' : 'You play Black'}</div><h1 class="grad">${esc(rep.name)}</h1>
     <p class="lead">${esc(kb?.tagline || m.blurb || '')}</p>
     <div class="row"><button class="primary" data-act="due">Train due (${s.due + Math.min(s.fresh, 999)} to go)</button><button data-act="random">Random lines</button><button data-act="mistakes">Mistakes</button>
-      <button data-act="edit">Edit</button><button data-act="pgn">Export PGN</button><button data-act="del" class="danger">Remove</button></div>
+      <details class="omore"><summary aria-label="More actions">⋯</summary><div class="omenu"><button data-act="edit">Edit lines</button><button data-act="pgn">Export PGN</button><button data-act="reset">Reset this opening's progress</button><button data-act="del" class="danger">Remove from library</button></div></details></div>
     <div class="muted">${Object.keys(byCh).length} chapters · ${rep.lines.length} lines · ${s.total} of your moves · ${s.learned} learned · ${s.mistakes} with mistakes</div></div>
   <div class="otabs"><button data-t="lines" class="${openingTab === 'lines' ? 'on' : ''}">Lines</button>${kb ? `<button data-t="kb" class="${openingTab === 'kb' ? 'on' : ''}">Knowledge base</button>` : ''}</div>
   <div id="oBody"></div>`;
@@ -218,6 +225,7 @@ function renderOpening(rep) {
     const a = b.dataset.act;
     if (['due', 'random', 'mistakes'].includes(a)) { go('#/train'); $('#drillRep').value = rep.id; setMode(a); }
     if (a === 'edit') editRep(rep);
+    if (a === 'reset' && confirm(`Reset all progress for ${rep.name}? Its lines stay; every move becomes new again.`)) { delete db.cards[rep.id]; save(); toast('Progress reset for ' + rep.name); renderOpening(rep); }
     if (a === 'pgn') download(rep.name.replace(/\W+/g, '_') + '.pgn', toPgn(rep), 'application/x-chess-pgn');
     if (a === 'del' && confirm('Remove ' + rep.name + ' and its progress?')) { db.reps = db.reps.filter(q => q !== rep); delete db.cards[rep.id]; if (rep.starter) (db.removed ||= []).push(rep.starter); save(); go('#/'); }
   });
@@ -529,6 +537,24 @@ $('#drillChapter').onchange = () => startSession('chapter');
 $('#drillLine').onchange = () => startSession('line');
 
 const msg = (t, cls = '') => { $('#drillMsg').innerHTML = t; $('#drillMsg').className = 'msg ' + cls; };
+function firstIllegal(m) { if (!m.length) return 0; const c = new Chess(); for (let i = 0; i < m.length; i++) { try { c.move(m[i]); } catch { return i; } } return null; }
+// self-check: when it's the user's live turn the board must accept their pieces; log why if not and repair
+function boardCheck(where) {
+  if (!drill.line || play || drill.view != null || drill.waiting || drill.busy || drill.ply >= drill.line.length || drill.chess.turn() !== userColor() || !$('#drill').classList.contains('active')) return true;
+  const st = drillCg.state, why = [];
+  if (st.movable.color !== cname(userColor())) why.push(`movable.color=${st.movable.color} expected ${cname(userColor())}`);
+  if (!st.movable.dests || !st.movable.dests.size) why.push('no legal destinations');
+  if (st.turnColor !== cname(userColor())) why.push(`turnColor=${st.turnColor}`);
+  if (drillCg.getFen() !== drill.chess.fen().split(' ')[0]) why.push('board pieces differ from game');
+  if (!why.length) return true;
+  console.warn('[skoha] board not movable at', where, '→', why.join('; '), { rep: drill.rep?.id, li: drill.li, ply: drill.ply });
+  resync(); drillCg.state.dom.bounds.clear?.(); return false;
+}
+window.__freereps.boardCheck = boardCheck;
+// keep chessground's cached board position in sync with layout changes (explanation box, menus, scrolling)
+{ const fix = () => { drillCg.state.dom.bounds.clear?.(); lineCg.state.dom.bounds.clear?.(); };
+  new ResizeObserver(fix).observe(document.querySelector('#drill .tsplit')); addEventListener('scroll', fix, { passive: true, capture: true });
+  $('#drillBoard').addEventListener('pointerdown', () => drillCg.state.dom.bounds.clear?.(), { capture: true }); }
 function startSession(mode) {
   endPlay(true); $('#playBar').hidden = true;
   clearTimeout(drill.timer);
@@ -536,7 +562,12 @@ function startSession(mode) {
   if (!drill.rep) return msg('Add a repertoire first (Repertoires tab).', 'bad');
   drill.mode = mode; drill.alts = repMoves(drill.rep); drill.done = drill.perfect = 0;
   drill.queue = buildQueue(drill.rep, cardsOf(drill.rep), mode, { chapter: $('#drillChapter').value, line: Number($('#drillLine').value), newLimit: S().newLimit });
-  drill.qi = 0;
+  drill.qi = 0; drill.notice = '';
+  if (!drill.queue.length && mode === 'due') {   // never leave the board dead: nothing due -> new lines, else random practice
+    const fresh = buildQueue(drill.rep, cardsOf(drill.rep), 'due', { newLimit: 999 });
+    drill.queue = fresh.length ? fresh : buildQueue(drill.rep, cardsOf(drill.rep), 'random', {});
+    drill.notice = fresh.length ? 'Nothing due right now, so here are new lines.' : 'Nothing due right now, so here is free practice with random lines.';
+  }
   if (!drill.queue.length) { $('#drillInfo').textContent = '';
     drillCg.set({ fen: 'start', lastMove: undefined, movable: { color: undefined } });
     return msg(mode === 'mistakes' ? 'No mistakes recorded yet. 🎉' : mode === 'due' ? 'Nothing due — come back later, or try Random lines.' : 'No lines here.', 'ok');
@@ -552,11 +583,13 @@ function nextLine() {
     Sound.play('complete'); renderDrillSelect(); return;
   }
   drill.view = null; drill.paused = false; drill.waiting = false; $('#drillNote').className = 'bnote empty';
-  drill.li = drill.queue[drill.qi++]; drill.line = drill.rep.lines[drill.li].m; drill.ply = 0; drill.chess = new Chess(); drill.lineMiss = 0;
+  drill.li = drill.queue[drill.qi++]; drill.line = drill.rep.lines[drill.li]?.m || []; drill.ply = 0; drill.chess = new Chess(); drill.lineMiss = 0;
+  drill.busy = false; drill.missed = false; clearTimeout(drill.wrongT); $('#confirmBar').hidden = true;
+  { const bad = firstIllegal(drill.line); if (bad != null) { console.warn('[skoha] skipping line', drill.li, 'illegal move at ply', bad, drill.line[bad]); toast(`Skipped a damaged line (${drill.line.slice(0, bad + 1).join(' ')}).`); return nextLine(); } }
   Narrator.cancel(); drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = ''; if ($('#drillPulse')) $('#drillPulse').hidden = true;
   drillCg.set({ fen: drill.chess.fen(), lastMove: undefined, check: false, turnColor: 'white' }); setOrientation();
   $('#drillInfo').textContent = `${drill.rep.lines[drill.li].ch} · line ${drill.qi}/${drill.queue.length}`; drillStats();
-  msg(`Your move as ${userColor() === 'w' ? 'White' : 'Black'}.`); navUi();
+  msg(`${drill.notice ? drill.notice + ' ' : ''}Your move as ${userColor() === 'w' ? 'White' : 'Black'}.${S().flip ? ' (The board is turned around: Settings › Board.)' : ''}`); drill.notice = ''; navUi();
   advance();
 }
 function renderMoves() { $('#drillMoves').innerHTML = fmt(drill.chess.history()); drillStats(); }
@@ -572,7 +605,7 @@ function advance() {
     if (drill.learning) { msg(`New move: play <b>${drill.line[drill.ply]}</b> (follow the blue arrow).`); cueNew(); navUi(); }
     else if (S().help !== 'none') { msg(`Your move: play <b>${drill.line[drill.ply]}</b> (guided). Switch to <b>No help</b> to test yourself.`); cueNew(); navUi(); }
     else { drillCg.setAutoShapes([]); cueNew(); }
-    drillCg.playPremove();
+    drillCg.playPremove(); setTimeout(() => boardCheck('advance'), 0);
   } else {
     // step-by-step flow: after the user's move, wait for Next ▶ before the reply (unless auto-play is on)
     if (!S().autoReply && drill.ply > 0) {
@@ -723,7 +756,7 @@ function editRep(r) {
   go('#/build'); buildSync(); bmsg('Editing "' + r.name + '". Add/remove lines, then Save repertoire.');
 }
 buildSync(); renderSettings(); applyTheme();
-loadStarters().then(() => { route(); if (!db.guided) openGuide(); });
+loadStarters().then(() => { route(); if (!db.guided) { if (Object.values(db.cards || {}).some(c => c && Object.keys(c).length)) { db.guided = true; save(); } else openGuide(); } });
 // ---------- first-visit guide ----------
 const G = { side: 'both', level: 'beginner', tour: 0, pick: null };
 const TOUR = [

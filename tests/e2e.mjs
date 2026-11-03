@@ -333,4 +333,52 @@ await retiFlow('fresh mobile', null, { width: 390, height: 844 });
 { const db = await retiFlow('legacy damaged data', fs.readFileSync(root + '/tests/fixtures/legacy-broken.json', 'utf8'));
   ok(db.reps.filter(x => x.starter === 'reti').length === 1 && Object.values(db.cards).some(cs => cs.k?.reps === 5), 'damaged: duplicate Réti merged, progress kept');
   ok(db.reps.find(x => x.id === 'c9')?.lines.length === 1, 'damaged: custom repertoire repaired'); }
+// ---- regression: Réti board must accept moves (click-click, drag, touch) for every past version's saved data ----
+async function retiMoves(tag, seed, { touch = false, learnAll = false } = {}) {
+  const c = await b.newContext(touch ? { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true } : { viewport: { width: 1366, height: 768 } });
+  if (seed) await c.addInitScript(s => { if (!localStorage.getItem('freereps.v2')) localStorage.setItem('freereps.v2', s); }, seed);
+  const p = await c.newPage(); const pe = [], warn = []; p.on('pageerror', e => pe.push(e.message)); p.on('console', m => { if (m.type() === 'warning' && m.text().includes('[skoha] board not movable')) warn.push(m.text()); });
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#whiteList .ocard'); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  if (learnAll) await p.evaluate(() => { const db = window.__freereps.db(), r = db.reps.find(x => x.starter === 'reti'), cs = db.cards[r.id] ||= {};
+    // every White move of every line learned and not due for a month
+    for (const l of r.lines) { const C = window.__freereps.drill.chess.constructor, g = new C(); l.m.forEach((s, i) => { if (i % 2 === 0) cs[g.fen().split(' ').slice(0, 4).join(' ') + '|' + s] = { ease: 2.5, interval: 30, reps: 4, lapses: 0, due: Date.now() + 30 * 864e5 }; g.move(s); }); } });
+  await p.locator('#whiteList .ocard').filter({ hasText: 'Réti Opening' }).locator('.chip').first().click(); await p.waitForSelector('#opening.active [data-act=due]');
+  await p.click('#opening [data-act=due]'); await p.waitForTimeout(900);
+  const results = [];
+  for (const how of touch ? ['tap', 'tap'] : ['click', 'drag', 'click']) {
+    await p.waitForTimeout(500);
+    if (await p.evaluate(() => window.__freereps.drill.waiting)) { await p.click('#navFwd'); await p.waitForTimeout(700); }
+    const e = await p.evaluate(() => { const d = window.__freereps.drill; if (!d.line || d.ply >= d.line.length) return null; const C = d.chess.constructor, m = new C(d.chess.fen()).move(d.line[d.ply]); return { from: m.from, to: m.to, ply: d.ply }; });
+    if (!e) { results.push('no-move'); break; }
+    const white = await p.evaluate(() => window.__freereps.cg.state.orientation === 'white'); const bb = await p.locator('#drillBoard cg-board').boundingBox(), w = bb.width / 8;
+    const xy = s => { const f = s.charCodeAt(0) - 97, r = +s[1] - 1; return [bb.x + ((white ? f : 7 - f) + .5) * w, bb.y + ((white ? 7 - r : r) + .5) * w]; };
+    const [x1, y1] = xy(e.from), [x2, y2] = xy(e.to);
+    if (how === 'click') { await p.mouse.click(x1, y1); await p.mouse.click(x2, y2); }
+    else if (how === 'drag') { await p.mouse.move(x1, y1); await p.mouse.down(); await p.mouse.move(x2, y2, { steps: 8 }); await p.mouse.up(); }
+    else { await p.touchscreen.tap(x1, y1); await p.touchscreen.tap(x2, y2); if (await p.isVisible('#confirmBar')) await p.tap('#confirmYes'); }
+    await p.waitForTimeout(350); results.push(await p.evaluate(pl => window.__freereps.drill.ply > pl, e.ply) ? 'ok' : 'STUCK');
+  }
+  ok(results.length >= 2 && results.every(r => r === 'ok') && !pe.length && !warn.length, `Réti moves (${touch ? 'touch' : 'click/drag'}) with ${tag}: ${results.join(',')} ${pe.join('|')} ${warn.join('|')}`);
+  await c.close();
+}
+// the reported bug: opening the Train screen (nav or hero) showed Réti selected but never started a session
+for (const [tag, f] of [['fresh', null], ['narrator-era data', 'ls-c2e3afe.json']]) for (const via of ['nav [data-nav=drill]', '#heroTrain']) {
+  const c = await b.newContext({ viewport: { width: 1366, height: 768 } }); const sd = f && fs.readFileSync(root + '/tests/fixtures/' + f, 'utf8');
+  if (sd) await c.addInitScript(s => { if (!localStorage.getItem('freereps.v2')) localStorage.setItem('freereps.v2', s); }, sd);
+  const p = await c.newPage(); await p.goto('http://localhost:8765/'); await p.waitForSelector('#whiteList .ocard'); await p.waitForTimeout(300); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  await p.click(via); await p.waitForTimeout(900);
+  const st = await p.evaluate(() => ({ rep: window.__freereps.drill.rep?.name, line: !!window.__freereps.drill.line, mov: window.__freereps.cg.state.movable.color, dests: window.__freereps.cg.state.movable.dests?.size }));
+  const bb = await p.locator('#drillBoard cg-board').boundingBox(), w = bb.width / 8; await p.mouse.click(bb.x + 6.5 * w, bb.y + 7.5 * w); await p.mouse.click(bb.x + 5.5 * w, bb.y + 5.5 * w); await p.waitForTimeout(350);
+  ok(st.rep === 'Réti Opening' && st.line && st.mov === 'white' && st.dests > 0 && await p.evaluate(() => window.__freereps.drill.ply === 1), `Train screen via ${via} (${tag}) starts Réti and 1.Nf3 can be played ${JSON.stringify(st)}`);
+  await c.close(); }
+const FX = n => fs.existsSync(root + '/tests/fixtures/' + n) ? fs.readFileSync(root + '/tests/fixtures/' + n, 'utf8') : null;
+for (const [tag, f] of [['fresh profile', null], ['v2 data', 'ls-d155fcc.json'], ['v3 data', 'ls-08e12b3.json'], ['v4 data', 'ls-238d7c3.json'], ['narrator-era data', 'ls-c2e3afe.json'], ['v2→v3→v4→narrator chain', 'ls-d155fcc-08e12b3-238d7c3-c2e3afe.json'], ['damaged data', 'legacy-broken.json'], ['bad settings', 'legacy-badsettings.json']]) {
+  await retiMoves(tag, f && FX(f)); await retiMoves(tag, f && FX(f), { touch: true }); }
+await retiMoves('everything learned, nothing due', FX('ls-c2e3afe.json'), { learnAll: true });
+{ // ⋯ menu: Reset this opening's progress
+  const c = await b.newContext({ viewport: { width: 1200, height: 820 } }); await c.addInitScript(s => { if (!localStorage.getItem('freereps.v2')) localStorage.setItem('freereps.v2', s); }, FX('legacy-v3.json'));
+  const p = await c.newPage(); p.on('dialog', d => d.accept()); await p.goto('http://localhost:8765/#/opening/reti'); await p.waitForTimeout(1200); if (await p.isVisible('#gSkip')) await p.click('#gSkip'); await p.waitForSelector('#opening.active .omore');
+  await p.click('#opening .omore summary'); await p.click('#opening [data-act=reset]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => { const db = window.__freereps.db(), r = db.reps.find(x => x.starter === 'reti'); return !db.cards[r.id] || !Object.keys(db.cards[r.id]).length; }), 'Reset this opening\'s progress clears only its cards');
+  await c.close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
