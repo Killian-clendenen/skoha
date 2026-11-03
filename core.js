@@ -198,3 +198,10 @@ export function search(items, q, limit = 12) {
   // a chapter hit makes its opening relevant too; dedupe openings
   return out.sort((a, b) => b.score - a.score || (a.type === 'opening' ? -1 : 1) - (b.type === 'opening' ? -1 : 1) || a.name.localeCompare(b.name)).slice(0, limit);
 }
+
+// Explanation-history navigation. view = ply count shown (1..ply) or null = live. d = -1 back, +1 forward.
+export function navStep(view, ply, d) {
+  if (!ply) return null;
+  const cur = view ?? ply, nv = Math.max(1, Math.min(ply, cur + d));
+  return nv >= ply ? null : nv;
+}

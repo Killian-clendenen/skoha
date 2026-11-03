@@ -90,6 +90,25 @@ const geo = await pg.evaluate(() => { const b = document.querySelector('#drillBo
 ok(geo.cLeft >= geo.bRight - 1 && geo.mTop < geo.cTop, 'desktop: coach card beside board, controls in compact top bar');
 ok(/due/.test(await pg.textContent('#drillStats')), 'stats in top bar');
 await pg.screenshot({ path: '/workspace/skoha-train.png' });
+// explanation history: play a fresh line, then browse back/forward
+await pg.click('#modes [data-mode=line]'); await pg.selectOption('#drillLine', '0'); await pg.waitForTimeout(400);
+{ const ln = (await st()).line.split(' ');
+  for (let p = 0; p < 6; p += 2) { const c = new Chess(); ln.slice(0, p).forEach(x => c.move(x)); const m = c.move(ln[p]); await mv(m.from, m.to); await pg.waitForTimeout(450); }
+  let s3 = await st(); ok(s3.ply === 6, 'played 3 moves + replies (ply ' + s3.ply + ')');
+  ok((await pg.textContent('#drillNote')).includes('Your move') && (await pg.textContent('#drillNote')).includes("Opponent's reply"), 'your move explanation stays stacked above opponent reply');
+  ok((await pg.textContent('#navPos')).includes('Move 6 of 6'), 'indicator live: ' + await pg.textContent('#navPos'));
+  await pg.click('#navBack'); await pg.waitForTimeout(150);
+  ok((await pg.textContent('#navPos')).includes('Move 5 of 6') && (await pg.textContent('#drillNote .coach-card .coach-san')).includes(ln[4]), 'Back shows move 5 explanation');
+  await pg.keyboard.press('ArrowLeft'); await pg.waitForTimeout(150);
+  const fen4 = await pg.evaluate(() => window.__freereps.cg.getFen()); const c4 = new Chess(); ln.slice(0, 4).forEach(x => c4.move(x));
+  ok(fen4 === c4.fen().split(' ')[0], 'board shows position at move 4 while browsing');
+  ok(await pg.evaluate(() => document.querySelector('#drill').classList.contains('browsing')), 'browsing state styled');
+  await pg.screenshot({ path: '/workspace/skoha-train-nav.png' });
+  await mv('a2', 'a3'); await pg.waitForTimeout(150); ok((await st()).ply === 6, 'board read-only while browsing');
+  await pg.click('#navFwd'); await pg.keyboard.press('ArrowRight'); await pg.waitForTimeout(150);
+  ok((await pg.textContent('#navPos')).includes('Move 6 of 6') && !(await pg.evaluate(() => document.querySelector('#drill').classList.contains('browsing'))), 'Next returns to live');
+  const c6 = new Chess(); ln.slice(0, 6).forEach(x => c6.move(x)); const m6 = c6.move(ln[6]); await mv(m6.from, m6.to); await pg.waitForTimeout(450);
+  ok((await st()).ply >= 7, 'live board playable again after browsing'); }
 await pg.click('nav [data-nav=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400); await pg.selectOption('#sTheme', 'aurora'); ok(await pg.evaluate(() => document.body.classList.contains('bt-aurora')), 'board theme switch');
 ok(errs.length === 0, 'no page errors ' + errs.join(' | '));
 // mobile
@@ -101,5 +120,6 @@ await mp.goto('http://localhost:8765/#/opening/sicilian'); await mp.waitForSelec
 const mg = await mp.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote').getBoundingClientRect(); return { bb: b.bottom, ct: c.top, w: document.documentElement.scrollWidth, bw: b.width }; });
 ok(mg.ct >= mg.bb && mg.w <= 390 && mg.bw > 300, `mobile train: board above coach card, no overflow (${JSON.stringify(mg)})`);
 ok((await mp.textContent('#drillNote')).length > 10, 'mobile: coach explains opponent move');
+const tb = await mp.locator('#navBack').boundingBox(); ok(tb.height >= 48 && tb.width >= 100 && tb.y > mg.bb - 1, 'mobile: large Back/Next tap targets under board ' + JSON.stringify(tb));
 await mp.screenshot({ path: '/workspace/skoha-train-mobile.png' });
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

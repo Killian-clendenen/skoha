@@ -1,6 +1,6 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search } from './core.js';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep } from './core.js';
 import { KB } from './kb.js';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
@@ -325,8 +325,9 @@ function coach(ply, upcoming = false) {
   const label = upcoming ? 'New move: why we play it' : mine ? 'Your move' : 'Opponent\'s reply';
   const sub = upcoming ? 'Play it on the board.' : mine ? 'Why it works' : 'What it aims for, and what it concedes';
   let prev = '';
-  if (upcoming && ply > 0) { const pn = l.n?.[ply - 1]; const pc = new Chess(); l.m.slice(0, ply - 1).forEach(x => pc.move(x)); const pm = pc.move(l.m[ply - 1]);
-    prev = `<div class="coach-prev"><span class="san">${Math.floor((ply - 1) / 2) + 1}${(ply - 1) % 2 ? '...' : '.'} ${esc(l.m[ply - 1])}</span> ${esc(pn?.t || describeMove(pm, pc.inCheck()))}</div>`; }
+  if (ply > 0) { const pn = l.n?.[ply - 1]; const pc = new Chess(); l.m.slice(0, ply - 1).forEach(x => pc.move(x)); const pm = pc.move(l.m[ply - 1]);
+    const pmine = ((ply - 1) % 2 === 0 ? 'w' : 'b') === userColor();
+    prev = `<div class="coach-prev ${pmine ? 'you' : 'opp'}"><span class="pwho">${pmine ? 'Your move' : 'Opponent'}</span><span class="san">${Math.floor((ply - 1) / 2) + 1}${(ply - 1) % 2 ? '...' : '.'} ${esc(l.m[ply - 1])}</span> ${esc(pn?.t || describeMove(pm, pc.inCheck()))}</div>`; }
   const el = $('#drillNote');
   el.innerHTML = prev + `<div class="coach-card ${upcoming ? 'up' : mine ? 'you' : 'opp'}"><div class="coach-head"><span class="coach-san">${num} ${esc(l.m[ply])}${esc(n?.g || '')}</span><span class="who ${mine ? 'you' : 'opp'}">${label}</span></div>
     <div class="coach-k">${sub}</div><p class="${n?.t ? '' : 'auto'}">${esc(text)}</p>
@@ -335,10 +336,41 @@ function coach(ply, upcoming = false) {
   if ($('#drill').classList.contains('active')) {
     const sh = shapesOf(n);
     if (upcoming) sh.push({ orig: mv.from, dest: mv.to, brush: 'blue' });
-    if (upcoming || !(drill.learning && drill.chess.turn() === userColor())) drillCg.setAutoShapes(sh);
+    if (upcoming || drill.view != null || !(drill.learning && drill.chess.turn() === userColor())) drillCg.setAutoShapes(sh);
   }
 }
-const drillNote = ply => coach(ply);
+const drillNote = ply => { if (drill.view == null) coach(ply); navUi(); };
+// ---- explanation history: browse every move played so far (read-only board while browsing) ----
+function navUi() {
+  const n = drill.line ? drill.ply : 0, v = drill.view ?? n;
+  $('#navPos').textContent = n ? `Move ${v} of ${n}${drill.view == null ? '' : ' · browsing'}` : 'No moves yet';
+  $('#navBack').disabled = v <= 1; $('#navFwd').disabled = drill.view == null;
+  $('#drill').classList.toggle('browsing', drill.view != null);
+}
+function navGo(v) {
+  if (!drill.line || !drill.ply) return;
+  const nv = navStep(drill.view, drill.ply, v);
+  if (nv === drill.view) return;
+  if (nv != null && drill.view == null) {          // leaving live: pause the opponent's reply
+    clearTimeout(drill.timer); drill.paused = drill.busy; drill.busy = false; drillCg.cancelPremove();
+  }
+  drill.view = nv;
+  if (nv == null) {                                  // back to live
+    resync(); coach(drill.ply - 1); navUi();
+    if (drill.ply >= drill.line.length) drillCg.set({ movable: { color: undefined } });
+    else if (drill.paused) { drill.paused = false; advance(); }
+    else if (drill.learning && drill.chess.turn() === userColor()) coach(drill.ply, true);
+    return;
+  }
+  const c = new Chess(); drill.line.slice(0, nv).forEach(x => c.move(x)); const h = c.history({ verbose: true }).at(-1);
+  drillCg.set({ fen: c.fen(), lastMove: [h.from, h.to], check: c.inCheck(), turnColor: turnColor(c), movable: { color: undefined, dests: new Map() } });
+  coach(nv - 1); navUi();
+}
+$('#navBack').onclick = () => navGo(-1); $('#navFwd').onclick = () => navGo(1);
+addEventListener('keydown', e => {
+  if (!$('#drill').classList.contains('active') || e.target.matches('input,textarea,select')) return;
+  if (e.key === 'ArrowLeft') { e.preventDefault(); navGo(-1); } if (e.key === 'ArrowRight') { e.preventDefault(); navGo(1); }
+});
 function drillStats() {
   if (!drill.rep) { $('#drillStats').innerHTML = ''; return; }
   const s = repStats(drill.rep);
@@ -370,6 +402,7 @@ function nextLine() {
     msg(`Session complete: ${drill.done} lines, ${drill.perfect} perfect. ${drill.mode === 'random' ? '' : 'Pick another mode to keep going.'}`, 'ok');
     Sound.play('complete'); renderDrillSelect(); return;
   }
+  drill.view = null; drill.paused = false;
   drill.li = drill.queue[drill.qi++]; drill.line = drill.rep.lines[drill.li].m; drill.ply = 0; drill.chess = new Chess(); drill.lineMiss = 0;
   drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = `<div class="coach-empty"><div class="coach-k">${esc(drill.rep.lines[drill.li].ch)}</div><p>${esc(drill.rep.intros?.[drill.rep.lines[drill.li].ch] || 'Play your moves. Each one is explained here.')}</p></div>`;
   drillCg.set({ fen: drill.chess.fen(), lastMove: undefined, check: false, turnColor: 'white' }); setOrientation();
@@ -387,7 +420,7 @@ function advance() {
     drillCg.set({ turnColor: turnColor(drill.chess), check: drill.chess.inCheck(), movable: { color: cname(userColor()), dests: dests(drill.chess) } });
     const card = cardsOf(drill.rep)[cardKey()];
     drill.missed = false; drill.learning = !card;
-    if (drill.learning) { showArrow(drill.line[drill.ply], 'blue'); msg(`New move: play <b>${drill.line[drill.ply]}</b>.`); coach(drill.ply, true); } else drillCg.setAutoShapes([]);
+    if (drill.learning) { showArrow(drill.line[drill.ply], 'blue'); msg(`New move: play <b>${drill.line[drill.ply]}</b>.`); coach(drill.ply, true); navUi(); } else drillCg.setAutoShapes([]);
     drillCg.playPremove();
   } else {
     // opponent to move: user may premove meanwhile
@@ -425,6 +458,7 @@ function resync() {
     movable: { color: cname(userColor()), dests: dests(drill.chess) } });
 }
 function onUserMove(from, to) {
+  if (drill.view != null) return;
   if (!drill.line || drill.busy || drill.chess.turn() !== userColor()) return resync();
   const expected = drill.line[drill.ply];
   const promo = (expected.match(/=([QRBN])/) || [, 'q'])[1].toLowerCase();
