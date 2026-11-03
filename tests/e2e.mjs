@@ -1,12 +1,12 @@
 import { chromium } from 'playwright-core';
 import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
 const root = new URL('..', import.meta.url).pathname.replace(/\/$/, ''); const T = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.wav': 'audio/wav', '.pgn': 'text/plain' };
-const srv = http.createServer((q, r) => { let p = path.join(root, decodeURIComponent(q.url.split('?')[0])); if (p.endsWith('/')) p += 'index.html';
+const srv = http.createServer((q, r) => { if (q.url.startsWith('/api/')) { r.writeHead(501, { 'content-type': 'application/json' }); return r.end('{"enabled":false}'); } let p = path.join(root, decodeURIComponent(q.url.split('?')[0])); if (p.endsWith('/')) p += 'index.html';
   fs.readFile(p, (e, d) => { if (e) { r.writeHead(404); r.end(); } else { r.writeHead(200, { 'content-type': T[path.extname(p)] || 'application/octet-stream' }); r.end(d); } }); }).listen(8765);
 let fail = 0; const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++; };
 const b = await chromium.launch({ executablePath: process.env.CHROME || (fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined), args: ['--autoplay-policy=no-user-gesture-required'] });
 const pg = await b.newPage({ viewport: { width: 1200, height: 820 } });
-const errs = []; pg.on('pageerror', e => errs.push(e.message)); pg.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
+const errs = []; pg.on('pageerror', e => errs.push(e.message)); pg.on('console', m => { if (m.type() === 'error' && !/status of 501/.test(m.text())) errs.push(m.text()); });
 await pg.goto('http://localhost:8765/'); await pg.waitForSelector('#whiteList .ocard.featured');
 // first-visit guide: side + level -> suggestions -> 3-step tour -> lands on the picked opening
 await pg.waitForSelector('#guide:not([hidden])'); ok(true, 'guide shown on first visit');
@@ -233,4 +233,13 @@ const clickSq = async (p, s, white = true) => { const bb = await p.locator('#dri
   const s2 = await p.evaluate(() => window.__spoken); ok(s2.length === 1 && /^Knight to f3\. /.test(s2[0].t), 'study page reads Knight to f3 + note: ' + JSON.stringify(s2));
   await p.click('nav [data-nav=settings]'); ok((await p.textContent('#sVoice')).includes('Automatic (Google US English)'), 'voice picker lists voices, auto picks Google');
   await p.screenshot({ path: '/workspace/skoha-settings-narrator.png', fullPage: true }); await c.close(); }
+{ // sync code: device A -> device B
+  const A = await fresh(); await A.click('#gSkip'); await A.evaluate(() => { const d = window.__freereps.db(); d.cards.reti = { 'x|Nf3': { reps: 4, due: 1, ease: 2.5, interval: 6, lapses: 0 } }; d.history = { '2026-11-02': 7 }; });
+  await A.goto('http://localhost:8765/#/data'); await A.waitForSelector('#data.active'); ok(await A.isHidden('#cloudBox'), 'cloud sync hidden when no Function/KV (static site still works)');
+  await A.click('#linkMake'); await A.waitForFunction(() => document.querySelector('#syncCode').value.includes('#/sync/SK1.')); const link = await A.inputValue('#syncCode');
+  await A.screenshot({ path: '/workspace/skoha-sync.png', fullPage: true });
+  const B = await fresh(); await B.click('#gSkip'); await B.goto(link.replace(/^https?:\/\/[^/]+/, 'http://localhost:8765')); await B.waitForSelector('#data.active');
+  ok((await B.inputValue('#syncCode')).startsWith('SK1.'), 'sync link fills the code'); await B.click('#codeLoad'); await B.waitForFunction(() => /Merged/.test(document.querySelector('#codeStatus').textContent));
+  ok(await B.evaluate(() => window.__freereps.db().cards.reti?.['x|Nf3']?.reps === 4 && window.__freereps.db().history['2026-11-02'] === 7 && window.__freereps.db().reps.find(r => r.id === 'reti').lines.length > 5), 'progress merged on device B, starter lines restored');
+  await A.context().close(); await B.context().close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

@@ -1,8 +1,8 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg } from './core.js?v=20261102j';
-import { KB } from './kb.js?v=20261102j';
-import { Narrator } from './narrator.js?v=20261102j';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102k';
+import { KB } from './kb.js?v=20261102k';
+import { Narrator } from './narrator.js?v=20261102k';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -82,6 +82,7 @@ function route() {
   else if (p === 'build') showTab('build');
   else if (p === 'settings') showTab('settings');
   else if (p === 'data') showTab('data');
+  else if (p === 'sync' && a) { showTab('data'); $('#syncCode').value = decodeURIComponent(location.hash.slice(7)); history.replaceState(null, '', '#/data'); $('#codeStatus').textContent = 'Sync code received: press “Load sync code” to merge it into this device.'; }
   else { showTab('home'); renderHome(); }
 }
 addEventListener('popstate', route); addEventListener('hashchange', route);
@@ -375,7 +376,27 @@ function cueNew() {
   let el = p; if (!el) { el = document.createElement('div'); el.id = 'drillPulse'; el.className = 'pulse'; $('#drillBoard').parentElement.append(el); }
   Object.assign(el.style, { left: bd.left - st.left + x + 'px', top: bd.top - st.top + y + 'px', width: w + 'px', height: w + 'px' }); el.hidden = false; el.dataset.sq = m.to;
 }
-window.__freereps.cueNew = () => cueNew(); window.__freereps.narrator = Narrator;
+window.__freereps.cueNew = () => cueNew();
+// ---------- sync across devices ----------
+async function applyRemote(remote) { db = mergeData(db, remote); db.settings = { ...DEF, ...db.settings }; save(); await loadStarters(); save(); renderHome(); applyTheme(); renderSettings(); }
+const copy = async t => { try { await navigator.clipboard.writeText(t); return true; } catch { return false; } };
+$('#codeMake').onclick = async () => { const c = await encodeSync(syncPayload(db)); $('#syncCode').value = c; $('#codeStatus').textContent = (await copy(c) ? 'Copied. ' : 'Select and copy the code above. ') + `${(c.length / 1024).toFixed(1)} KB. Paste it on your other device under Settings › Your data.`; };
+$('#linkMake').onclick = async () => { const l = location.origin + location.pathname + '#/sync/' + await encodeSync(syncPayload(db)); $('#syncCode').value = l; $('#codeStatus').textContent = (await copy(l) ? 'Link copied. ' : 'Copy the link above. ') + 'Open it on the other device to bring your progress over.'; };
+$('#codeLoad').onclick = async () => { try { const r = await decodeSync($('#syncCode').value); if (r.app !== 'Skoha') throw new Error('not a Skoha sync code'); await applyRemote(r); $('#codeStatus').textContent = '✓ Merged. Progress from both devices is kept.'; } catch (e) { $('#codeStatus').textContent = 'Could not load: ' + e.message; } };
+// optional cloud sync (Cloudflare Pages Function + KV binding "SYNC"); hidden when not configured
+const sha = async t => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('skoha:' + t.trim().toUpperCase())))].map(x => x.toString(16).padStart(2, '0')).join('');
+const newKey = () => { const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789', r = crypto.getRandomValues(new Uint8Array(20)); return [...r].map(x => A[x % A.length]).join('').match(/.{5}/g).join('-'); };
+async function cloudSync() {
+  const k = $('#syncKey').value.trim(); if (k.length < 16) { $('#syncStatus').textContent = 'Enter or create a sync key first.'; return; }
+  db.syncKey = k; save(); $('#syncStatus').textContent = 'Syncing…';
+  try { const id = await sha(k), u = 'api/sync?id=' + id; const g = await fetch(u, { cache: 'no-store' });
+    if (g.ok) await applyRemote(await decodeSync(await g.text())); else if (g.status !== 404) throw new Error('server ' + g.status);
+    const p = await fetch(u, { method: 'PUT', body: await encodeSync(syncPayload(db)) }); if (!p.ok) throw new Error('upload ' + p.status);
+    db.lastSync = Date.now(); save(); $('#syncStatus').textContent = '✓ Synced ' + new Date().toLocaleTimeString(); } catch (e) { $('#syncStatus').textContent = 'Sync failed: ' + e.message; }
+}
+$('#syncNew').onclick = () => { $('#syncKey').value = newKey(); $('#syncStatus').textContent = 'Write this key down: it is the only way to reach your synced data.'; };
+$('#syncNow').onclick = cloudSync;
+fetch('api/sync', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(j => { if (j?.enabled) { $('#cloudBox').hidden = false; $('#syncKey').value = db.syncKey || ''; if (db.syncKey) cloudSync(); } }).catch(() => {}); window.__freereps.narrator = Narrator;
 Narrator.init(S);
 function fillVoices() { const sel = $('#sVoice'); if (!sel) return; const vs = Narrator.voices(), best = Narrator.voice();
   sel.innerHTML = `<option value="">Automatic${best ? ' (' + esc(best.name) + ')' : ''}</option>` + vs.map(v => `<option value="${esc(v.voiceURI)}">${esc(v.name)} · ${esc(v.lang)}</option>`).join(''); sel.value = S().voice || ''; }

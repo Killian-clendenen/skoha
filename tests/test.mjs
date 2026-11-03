@@ -1,7 +1,7 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
+import { syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
 import { KB } from '../kb.js';
 const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
@@ -113,4 +113,19 @@ ok(sanToWords('e8=Q#') === 'e8, promotes to Queen, checkmate', 'say promo mate')
 ok(speechText('[%cal Gf3e5] Hits e5; prepares 3.Bb5! and ...Nf6') === 'Hits e5; prepares Bishop to b5 and Nf6'.replace('Nf6', 'Knight to f6'), 'speech text strips tags/symbols: ' + speechText('[%cal Gf3e5] Hits e5; prepares 3.Bb5! and ...Nf6'));
 ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Microsoft Aria Online (Natural)', lang: 'en-US' }, { name: 'Google français', lang: 'fr-FR' }], 'en-US').name.includes('Natural'), 'prefers natural voice in language');
 ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Google US English', lang: 'en-US' }], 'en-GB').name.startsWith('Google'), 'prefers Google voice');
+{ const A = { reps: [{ id: 'reti', starter: 'reti', lines: [{ m: ['Nf3'] }] }, { id: 'c1', name: 'Mine', color: 'w', lines: [{ m: ['e4'] }] }], cards: { reti: { k1: { reps: 3, due: 5 }, k2: { reps: 1 } } }, history: { '2026-11-01': 4 }, settings: { a: 1 }, stats: { reviews: 5 }, syncKey: 'SECRET' };
+  const P = syncPayload(A); ok(!P.reps[0].lines && P.reps[1].lines && !('syncKey' in P), 'payload strips starter lines + key');
+  const B = { reps: [{ id: 'reti', starter: 'reti' }, { id: 'c2', name: 'Other', lines: [{ m: ['d4'] }] }], cards: { reti: { k1: { reps: 1, due: 9 }, k3: { reps: 2 } } }, history: { '2026-11-01': 9, '2026-11-02': 2 }, settings: { b: 2 }, stats: { reviews: 2 } };
+  const M = mergeData(A, B); ok(M.cards.reti.k1.reps === 3 && M.cards.reti.k2 && M.cards.reti.k3, 'merge keeps more-practised cards from both');
+  ok(M.history['2026-11-01'] === 9 && M.history['2026-11-02'] === 2 && M.reps.length === 3 && M.reps.find(r => r.id === 'reti').lines, 'merge history max + union reps (keeps lines)');
+  ok(M.syncKey === 'SECRET' && M.stats.reviews === 5, 'merge keeps local key + larger stats');
+  const code = await encodeSync(P); ok(code.startsWith('SK1.') && JSON.stringify(await decodeSync('https://x/#/sync/' + code)) === JSON.stringify(P), 'sync code round-trips (also from link)');
+  let bad = false; try { await decodeSync('hello'); } catch { bad = true; } ok(bad, 'rejects non-codes');
+  const { onRequest } = await import('../functions/api/sync.js'); const store = new Map(); const KV = { get: async k => store.get(k) ?? null, put: async (k, v) => store.set(k, v) };
+  const rq = (m, q = '', body) => new Request('https://s.test/api/sync' + q, { method: m, body });
+  ok((await onRequest({ request: rq('GET'), env: {} })).status === 501, 'function: 501 without KV binding');
+  ok((await (await onRequest({ request: rq('GET'), env: { SYNC: KV } })).json()).enabled, 'function: probe enabled');
+  const id = 'a'.repeat(64); ok((await onRequest({ request: rq('GET', '?id=' + id), env: { SYNC: KV } })).status === 404, 'function: 404 before upload');
+  ok((await onRequest({ request: rq('PUT', '?id=' + id, code), env: { SYNC: KV } })).status === 200 && (await (await onRequest({ request: rq('GET', '?id=' + id), env: { SYNC: KV } })).text()) === code, 'function: put/get round trip');
+  ok((await onRequest({ request: rq('PUT', '?id=bad', code), env: { SYNC: KV } })).status === 400 && (await onRequest({ request: rq('PUT', '?id=' + id, 'x'), env: { SYNC: KV } })).status === 413, 'function: validates id + payload'); }
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

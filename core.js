@@ -257,3 +257,34 @@ export function pickVoice(voices, lang = 'en-US') {
   const score = v => (/natural|neural|enhanced|premium/i.test(v.name) ? 4 : 0) + (/google/i.test(v.name) ? 3 : 0) + ((v.lang || '').toLowerCase() === lang.toLowerCase() ? 1 : 0) + (v.localService === false ? .5 : 0);
   return pool.slice().sort((a, b) => score(b) - score(a))[0] || null;
 }
+
+// ---------- sync payload / merge ----------
+export function syncPayload(db) {
+  const reps = db.reps.map(r => r.starter ? { id: r.id, name: r.name, color: r.color, starter: r.starter } : r);
+  const { syncKey, ...rest } = db; return { app: 'Skoha', v: 1, at: Date.now(), ...rest, reps };
+}
+const better = (a, b) => !a ? b : !b ? a : ((b.reps || 0) + (b.lapses || 0) > (a.reps || 0) + (a.lapses || 0) || ((b.reps || 0) + (b.lapses || 0) === (a.reps || 0) + (a.lapses || 0) && (b.due || 0) > (a.due || 0))) ? b : a;
+// merge two progress snapshots without losing work: per card keep the more-practised one, per day keep the higher count
+export function mergeData(local, remote) {
+  if (!remote) return local; const out = { ...local, ...remote };
+  const ids = new Set([...(local.reps || []).map(r => r.id), ...(remote.reps || []).map(r => r.id)]);
+  out.reps = [...ids].map(id => (local.reps || []).find(r => r.id === id && r.lines) || (remote.reps || []).find(r => r.id === id && r.lines) || (local.reps || []).find(r => r.id === id) || (remote.reps || []).find(r => r.id === id));
+  out.cards = {}; for (const rid of new Set([...Object.keys(local.cards || {}), ...Object.keys(remote.cards || {})])) {
+    const A = local.cards?.[rid] || {}, B = remote.cards?.[rid] || {}; out.cards[rid] = {};
+    for (const k of new Set([...Object.keys(A), ...Object.keys(B)])) out.cards[rid][k] = better(A[k], B[k]);
+  }
+  out.history = { ...(local.history || {}) }; for (const [d, n] of Object.entries(remote.history || {})) out.history[d] = Math.max(out.history[d] || 0, n);
+  const ls = local.stats || {}, rs = remote.stats || {}; out.stats = (rs.reviews || 0) > (ls.reviews || 0) ? rs : ls;
+  out.removed = [...new Set([...(local.removed || []), ...(remote.removed || [])])].filter(id => !out.reps.some(r => r.starter === id));
+  out.settings = (remote.at || 0) >= (local.at || 0) ? { ...local.settings, ...remote.settings } : { ...remote.settings, ...local.settings };
+  out.guided = local.guided || remote.guided; if (local.syncKey) out.syncKey = local.syncKey; else delete out.syncKey;
+  delete out.app; delete out.v; return out;
+}
+export const b64u = { enc: u8 => { let s = ''; for (const c of u8) s += String.fromCharCode(c); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); },
+  dec: s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)), c => c.charCodeAt(0)) };
+async function pipe(u8, T) { return new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(new T('deflate-raw'))).arrayBuffer()); }
+export async function encodeSync(obj) { return 'SK1.' + b64u.enc(await pipe(new TextEncoder().encode(JSON.stringify(obj)), CompressionStream)); }
+export async function decodeSync(code) {
+  const c = String(code).trim().replace(/^.*#\/sync\//, '').replace(/\s+/g, ''); if (!c.startsWith('SK1.')) throw new Error('not a Skoha sync code');
+  return JSON.parse(new TextDecoder().decode(await pipe(b64u.dec(c.slice(4)), DecompressionStream)));
+}

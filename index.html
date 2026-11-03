@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261102j">
+<link rel="stylesheet" href="style.css?v=20261102k">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♞</text></svg>">
 </head><body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -159,7 +159,19 @@
         <button id="exportBtn" class="primary">Download backup</button>
         <label class="btn">Restore from backup<input type="file" id="importFile" accept=".json,application/json" hidden></label>
       </div>
-      <div id="dataExtra"></div>
+      <div id="dataExtra">
+        <h2>Use on another device</h2>
+        <div id="cloudBox" hidden>
+          <p>Cloud sync is on for this site. Create a private sync key here, then enter the same key on your other devices. Progress merges both ways.</p>
+          <div class="row"><input id="syncKey" placeholder="Sync key (e.g. 4K7Q-…)" autocomplete="off" spellcheck="false"><button id="syncNew">New key</button><button id="syncNow" class="primary">Sync now</button></div>
+          <p class="muted" id="syncStatus"></p>
+        </div>
+        <p class="muted">Copy a sync code (or link) here and paste it on the other device. Nothing is uploaded: the code itself contains your progress.</p>
+        <div class="row"><button id="codeMake">Copy sync code</button><button id="linkMake">Copy sync link</button></div>
+        <textarea id="syncCode" rows="3" placeholder="Paste a sync code or link from another device here" spellcheck="false"></textarea>
+        <div class="row"><button id="codeLoad">Load sync code</button></div>
+        <p class="muted" id="codeStatus" aria-live="polite"></p>
+      </div>
       <h2>Start over</h2>
       <div class="row"><button id="resetBtn" class="danger">Erase all progress</button></div>
     </div>
@@ -188,5 +200,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2).</footer>
-<script type="module" src="app.js?v=20261102j"></script>
+<script type="module" src="app.js?v=20261102k"></script>
 </body></html>
