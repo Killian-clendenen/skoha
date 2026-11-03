@@ -1,44 +1,44 @@
 [Event "Modern Benoni"]
 
 {The Benoni gives up central space for a queenside majority and an active g7-bishop.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
-2. c4 {Space. The pawn on c4 controls d5.}
-2... c5 {[%cal Gc5d4] The Benoni. The pawn on c5 eyes the pawn on d4.}
-3. d5 {Gains space.}
-3... e6 {Opens lines. The pawn on e6 eyes the pawn on d5.}
-4. Nc3 {Develops. The knight on c3 controls e4.}
-4... exd5 {Takes. The pawn on d5 eyes the pawn on c4 and controls e4.}
-5. cxd5 {Recaptures.}
-5... d6 {Solid. The pawn on d6 controls e5.}
-6. e4 {Centre.}
- (6. Nf3 {Develops. The knight on f3 controls d4 and e5.}
-6... g6 {Fianchetto.}
-7. g3 {Fianchetto.}
-7... Bg7 {Develops.}
-8. Bg2 {Long diagonal.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2. c4 {Space. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
+2... c5 {[%cal Gc5d4] The Benoni. Supports the centre: the pawn on c5 controls b4 and eyes the pawn on d4. It also opens a line for the queen on d8.}
+3. d5 {Gains space. Claims the centre: the pawn on d5 controls c6 and e6.}
+3... e6 {Opens lines. Supports the centre: the pawn on e6 controls f5 and eyes the pawn on d5. It also opens a line for the bishop on f8.}
+4. Nc3 {Develops the knight to c3, where it controls e4 and supports the pawn on d5.}
+4... exd5 {Takes the pawn on d5; White will want to recapture.}
+5. cxd5 {Recaptures on d5, restoring the material balance.}
+5... d6 {Supports the centre: the pawn on d6 controls e5 and supports the pawn on c5. It also opens a line for the bishop on c8.}
+6. e4 {Claims the centre: the pawn on e4 controls f5 and supports the pawn on d5. It also opens a line for the queen on d1 and the bishop on f1.}
+ (6. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
+6... g6 {Fianchetto. The pawn on g6 controls f5 and h5.}
+7. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
+7... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+8. Bg2 {Long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
 8... O-O {Castles. The king is safe and the rook comes into play.}
 9. O-O {Castles. The king is safe and the rook comes into play.}
-9... Na6 {Heads for c7.}
+9... Na6 {Heads for c7. Develops the knight to a6, where it supports the pawn on c5.}
 )
-6... g6 {Fianchetto.}
-7. Nf3 {Develops. The knight on f3 controls d4 and e5.}
- (7. f4 {The Taimanov. The pawn on f4 controls e5.}
-7... Bg7 {Develops.}
-8. Bb5+ {Checks. It is check, so the reply is forced.}
-8... Nfd7 {Blocks. The knight on d7 controls e5.}
-9. a4 {Stops ...a6 and ...b5.}
+6... g6 {Fianchetto. The pawn on g6 controls f5 and h5.}
+7. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
+ (7. f4 {The Taimanov. Supports the centre: the pawn on f4 controls e5 and g5.}
+7... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+8. Bb5+ {Checks. It is check, so the reply is forced. Develops the bishop to b5, where it controls c6 and c4. It gives check.}
+8... Nfd7 {Blocks. Regroups the knight to d7 and controls e5.}
+9. a4 {Stops ...a6 and ...b5. Gains space on the queenside; the pawn on a4 takes b5 away from the opponent.}
 )
-7... Bg7 {Develops.}
-8. Be2 {Develops.}
+7... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+8. Be2 {Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
 8... O-O {Castles. The king is safe and the rook comes into play.}
 9. O-O {Castles. The king is safe and the rook comes into play.}
-9... Re8 {Hits e4. The rook on e8 eyes the pawn on e4 and controls e5.}
- (9... a6 {Prepares ...b5.}
-10. a4 {Stops ...b5.}
+9... Re8 {Hits e4. The rook goes to e8 and controls e5 and eyes the pawn on e4.}
+ (9... a6 {Prepares ...b5. The pawn on a6 controls b5.}
+10. a4 {Stops ...b5. Gains space on the queenside; the pawn on a4 takes b5 away from the opponent.}
 )
-10. Nd2 {Supports e4.}
-10... Na6 {Heads for c7.}
- (10... Nbd7 {Heads for e5. The knight on d7 controls e5.}
-11. a4 {Stops ...b5.}
+10. Nd2 {Supports e4. Regroups the knight to d2 and supports the pawn on e4.}
+10... Na6 {Heads for c7. Develops the knight to a6, where it supports the pawn on c5.}
+ (10... Nbd7 {Heads for e5. Develops the knight to d7, where it controls e5.}
+11. a4 {Stops ...b5. Gains space on the queenside; the pawn on a4 takes b5 away from the opponent.}
 ) *

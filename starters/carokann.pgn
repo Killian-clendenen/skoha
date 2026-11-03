@@ -1,153 +1,153 @@
 [Event "Caro-Kann: Classical"]
 
 {Black plays ...c6 and ...d5 to keep a solid structure, then develops the light-squared bishop before ...e6.}
-1. e4 {Takes the centre.}
-1... c6 {[%cal Gc6d5] Prepares ...d5 with pawn support.}
-2. d4 {Takes the full centre.}
-2... d5 {[%cal Gd5e4] Challenges e4.}
-3. Nc3 {Defends e4.}
+1. e4 {Takes the centre. The pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... c6 {[%cal Gc6d5] Prepares ...d5 with pawn support. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
+2. d4 {Takes the full centre. The pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+2... d5 {[%cal Gd5e4] Challenges e4. Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
+3. Nc3 {Defends e4. Develops the knight to c3, where it supports the pawn on e4 and eyes the pawn on d5. Black's last move put a pawn on d5, which this now pressures.}
 3... dxe4 {Black gives up the centre to free the c8-bishop.}
-4. Nxe4 {Recaptures.}
+4. Nxe4 {Recaptures on e4, restoring the material balance.}
 4... Bf5 {[%cal Gf5e4] The Classical. It develops with tempo on the e4-knight.}
-5. Ng3 {[%cal Gg3f5] Gains time on the bishop.}
-(5. Nc5 {Attacks b7.}
- 5... e5 {Counterattacks in the centre.}
- 6. Nxb7 {Takes the pawn.}
- 6... Qc7 {[%cal Gc7b7] Traps the knight.}
- 7. Nc5 {The knight escapes.}
- 7... Bxc5 {Trades.}
- 8. dxc5 {Recaptures.}
- 8... Qa5+ {Regains the pawn.})
-(5. Bd3 {Gambits d4.}
- 5... Qxd4 {Accepts.}
- 6. Nf3 {Development with tempo.}
- 6... Qd8 {Retreats.}
- 7. Qe2 {Development.}
- 7... e6 {Solid.})
-5... Bg6 {Retreats.}
-6. h4 {[%cal Gh4h5] Threatens h5, which would trap the bishop.}
-6... h6 {Makes room on h7.}
-7. Nf3 {Development.}
-7... Nd7 {Prevents Ne5.}
-8. h5 {Gains space.}
-8... Bh7 {Retreats.}
-9. Bd3 {Offers a trade of the light-squared bishops.}
-9... Bxd3 {Trades.}
-10. Qxd3 {Recaptures.}
-10... e6 {Solid.}
-11. Bd2 {Development.}
-11... Ngf6 {Development.}
-12. O-O-O {Opposite-side castling.}
-12... Be7 {Development.} *
+5. Ng3 {[%cal Gg3f5] Gains time on the bishop. Moves the knight out of attack to g3 and controls e4. It attacks the bishop on f5, which is undefended.}
+(5. Nc5 {Attacks b7. Moves the knight out of attack to c5 and controls e4. It attacks the pawn on b7, which is undefended.}
+ 5... e5 {Counterattacks in the centre. The pawn on e5 controls f4 and eyes the pawn on d4. It also opens a line for the queen on d8 and the bishop on f8.}
+ 6. Nxb7 {Takes the pawn. Takes the pawn on b7, and it cannot be taken back at once.}
+ 6... Qc7 {[%cal Gc7b7] Traps the knight. Moves the queen out of attack to c7 and supports the pawn on e5. It attacks the knight on b7, which is undefended.}
+ 7. Nc5 {The knight escapes. Moves the knight out of attack to c5 and controls e4.}
+ 7... Bxc5 {Takes the knight on c5; White will want to recapture.}
+ 8. dxc5 {Recaptures on c5, restoring the material balance.}
+ 8... Qa5+ {Regains the pawn. The queen goes to a5. It gives check and attacks the pawn on c5, which is undefended.})
+(5. Bd3 {Gambits d4. Develops the bishop to d3, where it supports the knight on e4.}
+ 5... Qxd4 {Accepts. Takes the pawn on d4, and it cannot be taken back at once.}
+ 6. Nf3 {Development with tempo. The knight on f3 controls e5 and eyes the queen on d4. That clears the way to castle kingside.}
+ 6... Qd8 {Moves the queen out of attack to d8 and controls d5 and d4.}
+ 7. Qe2 {The queen goes to e2 and supports the knight on e4.}
+ 7... e6 {Supports the centre: the pawn on e6 controls d5 and supports the bishop on f5. It also opens a line for the queen on d8 and the bishop on f8.})
+5... Bg6 {Moves the bishop out of attack to g6 and controls e4.}
+6. h4 {[%cal Gh4h5] Threatens h5, which would trap the bishop. Gains space on the kingside; the pawn on h4 takes g5 away from the opponent.}
+6... h6 {Makes room on h7. The pawn on h6 controls g5.}
+7. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+7... Nd7 {Prevents Ne5. Develops the knight to d7, where it controls e5.}
+8. h5 {Gains space. The pawn on h5 eyes the bishop on g6.}
+8... Bh7 {Moves the bishop out of attack to h7 and controls e4.}
+9. Bd3 {Offers a trade of the light-squared bishops. Develops the bishop to d3, where it controls e4. That clears the way to castle kingside.}
+9... Bxd3 {Takes the bishop on d3; White will want to recapture.}
+10. Qxd3 {Recaptures on d3, restoring the material balance.}
+10... e6 {Supports the centre: the pawn on e6 controls d5 and f5. It also opens a line for the queen on d8 and the bishop on f8.}
+11. Bd2 {Develops the bishop to d2, where it controls e3 and f4.}
+11... Ngf6 {Develops the knight to f6, where it controls e4 and d5.}
+12. O-O-O {Opposite-side castling. Castles queenside: the king is safe and the rook on d1 joins the game.}
+12... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.} *
 
 [Event "Caro-Kann: Advance"]
 
 {White gains space with e5. Black develops the bishop to f5 and attacks the d4 pawn base with ...c5.}
-1. e4 {Takes the centre.}
-1... c6 {Prepares ...d5.}
-2. d4 {Takes the centre.}
-2... d5 {Challenges e4.}
-3. e5 {[%csl Gd6,Gf6] The Advance: White gains space.}
-3... Bf5 {The bishop develops before ...e6.}
-4. Nf3 {The Short system.}
-(4. Nc3 {Prepares g4.}
- 4... e6 {Solid.}
- 5. g4 {[%cal Gg4f5] Hunts the bishop.}
- 5... Bg6 {Retreats.}
- 6. Nge2 {Prepares Nf4.}
- 6... c5 {Counterattack.}
- 7. h4 {[%cal Gh4h5] Threatens h5.}
- 7... h5 {Stops h5.}
- 8. Nf4 {[%cal Gf4g6] Hits the g6-bishop.}
- 8... Bh7 {Retreats.})
-(4. h4 {Hunts the bishop.}
- 4... h5 {Stops h5.}
- 5. c4 {Strikes at d5.}
- 5... e6 {Solid.}
- 6. Nc3 {Development.}
- 6... Ne7 {Heads for f5.}
- 7. Nge2 {Development.}
- 7... dxc4 {Captures.})
-4... e6 {Solid.}
-5. Be2 {Development.}
-5... c5 {[%cal Gc5d4] Attacks d4.}
-6. Be3 {Supports d4.}
-6... Qb6 {[%cal Gb6b2] Hits b2.}
-7. Nc3 {Development.}
-7... Nc6 {Pressure on d4.}
+1. e4 {Takes the centre. The pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... c6 {Prepares ...d5. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
+2. d4 {Takes the centre. The pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+2... d5 {Challenges e4. Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
+3. e5 {[%csl Gd6,Gf6] The Advance: White gains space. Claims the centre: the pawn on e5 controls d6 and f6.}
+3... Bf5 {The bishop develops before ...e6. The bishop on f5 controls e4.}
+4. Nf3 {The Short system. Develops the knight to f3, where it supports the pawn on e5 and the pawn on d4.}
+(4. Nc3 {Prepares g4. Develops the knight to c3, where it controls e4 and eyes the pawn on d5.}
+ 4... e6 {Supports the centre: the pawn on e6 supports the pawn on d5 and the bishop on f5. It also opens a line for the queen on d8 and the bishop on f8.}
+ 5. g4 {[%cal Gg4f5] Hunts the bishop. Gains space on the kingside; the pawn on g4 takes f5 and h5 away from the opponent. It attacks the bishop on f5.}
+ 5... Bg6 {Moves the bishop out of attack to g6 and controls e4.}
+ 6. Nge2 {Prepares Nf4. Develops the knight to e2, where it supports the pawn on d4.}
+ 6... c5 {Counterattack. Supports the centre: the pawn on c5 controls b4 and eyes the pawn on d4.}
+ 7. h4 {[%cal Gh4h5] Threatens h5. Gains space on the kingside; the pawn on h4 takes g5 away from the opponent.}
+ 7... h5 {Stops h5. Gains space on the kingside; the pawn on h5 takes g4 away from the opponent. It attacks the pawn on g4, which is undefended.}
+ 8. Nf4 {[%cal Gf4g6] Hits the g6-bishop. The knight goes to f4 and eyes the pawn on d5. Black's last move put a pawn on h5, which this now pressures.}
+ 8... Bh7 {Regroups the bishop to h7 and controls e4.})
+(4. h4 {Hunts the bishop. Gains space on the kingside; the pawn on h4 takes g5 away from the opponent.}
+ 4... h5 {Stops h5. Gains space on the kingside; the pawn on h5 takes g4 away from the opponent.}
+ 5. c4 {Strikes at d5. Supports the centre: the pawn on c4 controls b5 and eyes the pawn on d5. It also opens a line for the queen on d1.}
+ 5... e6 {Supports the centre: the pawn on e6 supports the pawn on d5 and the bishop on f5. It also opens a line for the queen on d8 and the bishop on f8.}
+ 6. Nc3 {Develops the knight to c3, where it controls e4 and eyes the pawn on d5.}
+ 6... Ne7 {Heads for f5. Develops the knight to e7, where it supports the pawn on d5.}
+ 7. Nge2 {Develops the knight to e2, where it supports the pawn on d4.}
+ 7... dxc4 {Takes the pawn on c4, and it cannot be taken back at once.})
+4... e6 {Supports the centre: the pawn on e6 supports the pawn on d5 and the bishop on f5. It also opens a line for the queen on d8 and the bishop on f8.}
+5. Be2 {Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
+5... c5 {[%cal Gc5d4] Attacks d4. Supports the centre: the pawn on c5 controls b4 and eyes the pawn on d4.}
+6. Be3 {Supports d4. Develops the bishop to e3, where it supports the pawn on d4.}
+6... Qb6 {[%cal Gb6b2] Hits b2. The queen goes to b6. It attacks the pawn on b2, which is undefended.}
+7. Nc3 {Develops the knight to c3, where it controls e4 and eyes the pawn on d5.}
+7... Nc6 {Pressure on d4. Develops the knight to c6, where it eyes the pawn on d4 and the pawn on e5.}
 8. O-O {White castles and offers b2. Taking it with 8...Qxb2?! is risky because of Nb5 and Nc7+, so a solid move like ...cxd4 or ...Nh6 is wiser.} *
 
 [Event "Caro-Kann: Exchange & Panov"]
 
 {The Exchange gives a symmetrical structure, where Black's comfort comes from active pieces. In the Panov, White plays with an isolated pawn.}
-1. e4 {Takes the centre.}
-1... c6 {Prepares ...d5.}
-2. d4 {Takes the centre.}
-2... d5 {Challenges e4.}
-3. exd5 {The Exchange.}
-3... cxd5 {Recaptures.}
-4. Bd3 {[%cal Gd3h7] Aims at h7.}
-(4. c4 {The Panov.}
- 4... Nf6 {Development.}
- 5. Nc3 {Development.}
- 5... e6 {Solid.}
- 6. Nf3 {Development.}
- 6... Be7 {Development.}
- 7. cxd5 {Captures.}
- 7... Nxd5 {Recaptures, blockading d5.})
-4... Nc6 {Development.}
-5. c3 {[%csl Gd4] The Carlsbad structure.}
-5... Nf6 {Development.}
-6. Bf4 {Development.}
-6... Bg4 {Active development.}
-7. Qb3 {[%cal Gb3b7] Hits b7.}
-7... Qd7 {Defends.}
-8. Nd2 {Development.}
-8... e6 {Solid.} *
+1. e4 {Takes the centre. The pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... c6 {Prepares ...d5. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
+2. d4 {Takes the centre. The pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+2... d5 {Challenges e4. Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
+3. exd5 {The Exchange. Takes the pawn on d5; Black will want to recapture.}
+3... cxd5 {Recaptures on d5, restoring the material balance.}
+4. Bd3 {[%cal Gd3h7] Aims at h7. Develops the bishop to d3, where it controls e4.}
+(4. c4 {The Panov. Supports the centre: the pawn on c4 controls b5 and eyes the pawn on d5. It also opens a line for the queen on d1.}
+ 4... Nf6 {Develops the knight to f6, where it controls e4 and supports the pawn on d5.}
+ 5. Nc3 {Develops the knight to c3, where it controls e4 and eyes the pawn on d5.}
+ 5... e6 {Supports the centre: the pawn on e6 controls f5 and supports the pawn on d5. It also opens a line for the bishop on f8.}
+ 6. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+ 6... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
+ 7. cxd5 {Takes the pawn on d5; Black will want to recapture.}
+ 7... Nxd5 {Recaptures, blockading d5. Recaptures on d5, restoring the material balance.})
+4... Nc6 {Develops the knight to c6, where it controls e5 and eyes the pawn on d4. That pawn is currently undefended.}
+5. c3 {[%csl Gd4] The Carlsbad structure. Supports the centre: the pawn on c3 controls b4 and supports the pawn on d4. It also opens a line for the queen on d1.}
+5... Nf6 {Develops the knight to f6, where it controls e4 and supports the pawn on d5.}
+6. Bf4 {Develops the bishop to f4, where it controls e5.}
+6... Bg4 {Active development. The bishop on g4 controls f5 and e6. It attacks the queen on d1.}
+7. Qb3 {[%cal Gb3b7] Hits b7. Moves the queen out of attack to b3 and eyes the pawn on d5. It attacks the pawn on b7, which is undefended.}
+7... Qd7 {The queen goes to d7 and supports the pawn on d5.}
+8. Nd2 {Develops the knight to d2, where it controls e4.}
+8... e6 {Supports the centre: the pawn on e6 controls f5 and supports the pawn on d5. It also opens a line for the bishop on f8.} *
 
 [Event "Caro-Kann: Two Knights"]
 
 {White develops fast with Nc3 and Nf3. Black's ...Bg4 and ...Bxf3 lines give a solid structure.}
-1. e4 {Takes the centre.}
-1... c6 {Prepares ...d5.}
-2. Nc3 {Development.}
-2... d5 {Challenges e4.}
-3. Nf3 {Development.}
-3... Bg4 {[%cal Gg4f3] Pins.}
-4. h3 {Questions the bishop.}
-4... Bxf3 {Trades.}
-5. Qxf3 {Recaptures. White has the bishop pair.}
-5... e6 {Solid.}
-6. d4 {Takes the centre.}
-6... Nf6 {Development.}
-7. Bd3 {Development.}
-7... dxe4 {Captures.}
-8. Nxe4 {Recaptures.}
-8... Qxd4 {Takes a pawn.}
-9. c3 {[%csl Gd4] Gambit play.}
-9... Qd8 {Retreats.} *
+1. e4 {Takes the centre. The pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... c6 {Prepares ...d5. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
+2. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
+2... d5 {Challenges e4. Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
+3. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
+3... Bg4 {[%cal Gg4f3] Pins. Develops the bishop to g4, where it controls f5 and e6. White's last move put a knight on f3, which this now pressures.}
+4. h3 {Questions the bishop. The pawn on h3 eyes the bishop on g4. That bishop is currently undefended.}
+4... Bxf3 {Takes the knight on f3; White will want to recapture.}
+5. Qxf3 {Recaptures. White has the bishop pair. Recaptures on f3, restoring the material balance.}
+5... e6 {Supports the centre: the pawn on e6 controls f5 and supports the pawn on d5. It also opens a line for the queen on d8 and the bishop on f8.}
+6. d4 {Takes the centre. The pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1.}
+6... Nf6 {Develops the knight to f6, where it supports the pawn on d5 and eyes the pawn on e4.}
+7. Bd3 {Develops the bishop to d3, where it supports the pawn on e4. That clears the way to castle kingside.}
+7... dxe4 {Takes the pawn on e4; White will want to recapture.}
+8. Nxe4 {Recaptures on e4, restoring the material balance.}
+8... Qxd4 {Takes a pawn. Takes the pawn on d4, and it cannot be taken back at once.}
+9. c3 {[%csl Gd4] Gambit play. Supports the centre: the pawn on c3 controls b4 and eyes the queen on d4. That queen is currently undefended.}
+9... Qd8 {Moves the queen out of attack to d8 and controls d5 and d4.} *
 
 [Event "Caro-Kann: Fantasy 3.f3"]
 
 {The Fantasy Variation (3.f3) supports e4 with a pawn. Black's most reliable reply is 3...e6, preparing ...c5 or ...Bb4, while 3...dxe4 4.fxe4 e5 is the direct counter.}
-1. e4 {White takes the centre. The pawn on e4 controls d5.}
+1. e4 {White takes the centre. The pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
 1... c6 {[%csl Gd5] The Caro-Kann: prepares ...d5 without blocking the c8-bishop.}
-2. d4 {Builds the ideal centre. The pawn on d4 controls e5.}
-2... d5 {[%cal Gd5e4] Challenges e4. The pawn on d5 eyes the pawn on e4.}
+2. d4 {Builds the ideal centre. The pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+2... d5 {[%cal Gd5e4] Challenges e4. Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
 3. f3 {[%csl Ge4] The Fantasy: e4 is held by a pawn, but the f3 pawn takes the knight's best square and weakens e3 and the a7–g1 diagonal.}
 3... e6 {Solid. Black prepares ...Bb4 or ...c5, and ...Qb6 can target the weak diagonal toward g1.}
- (3... dxe4 {The direct approach. The pawn on e4 eyes the pawn on f3.}
-4. fxe4 {Recaptures with a big centre. The pawn on e4 controls d5.}
+ (3... dxe4 {The direct approach. Takes the pawn on e4; White will want to recapture.}
+4. fxe4 {Recaptures with a big centre. Recaptures on e4, restoring the material balance.}
 4... e5 {[%cal Ge5d4] Hits the centre at once, exploiting White's loose kingside.}
-5. Nf3 {Develops and attacks e5. The knight on f3 eyes the pawn on e5.}
-5... exd4 {Takes.}
+5. Nf3 {Develops and attacks e5. The knight on f3 supports the pawn on d4 and eyes the pawn on e5. That pawn is currently undefended.}
+5... exd4 {Takes the pawn on d4; White will want to recapture.}
 6. Bc4 {[%cal Gc4f7] White plays for development and the f-file, offering a pawn for activity.}
 )
-4. Nc3 {Defends e4. The knight on c3 eyes the pawn on d5.}
+4. Nc3 {Defends e4. Develops the knight to c3, where it supports the pawn on e4 and eyes the pawn on d5.}
 4... Bb4 {[%cal Gb4c3] Pins the knight, putting more pressure on e4.}
-5. a3 {Asks the bishop. The pawn on a3 eyes the bishop on b4.}
+5. a3 {Asks the bishop. The pawn on a3 eyes the bishop on b4. That bishop is currently undefended.}
 5... Bxc3+ {Gives up the bishop pair to double the c-pawns.}
-6. bxc3 {Recaptures toward the centre.}
-6... dxe4 {Takes on e4. The pawn on e4 eyes the pawn on f3.}
-7. fxe4 {Recaptures. The pawn on e4 controls d5.}
+6. bxc3 {Recaptures toward the centre. Recaptures on c3, restoring the material balance.}
+6... dxe4 {Takes on e4. Takes the pawn on e4; White will want to recapture.}
+7. fxe4 {Recaptures on e4, restoring the material balance.}
 7... e5 {[%cal Ge5d4] Strikes the overextended centre. Black has a solid game against White's loose pawns.} *

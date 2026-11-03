@@ -1,65 +1,65 @@
 [Event "Queen's Indian: 4.g3"]
 
 {The Queen's Indian (3...b6) controls e4 with the b7-bishop.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
-2. c4 {Space. The pawn on c4 controls d5.}
-2... e6 {Solid. The pawn on e6 controls d5.}
-3. Nf3 {Develops. The knight on f3 controls e5.}
-3... b6 {[%csl Gb7] The Queen's Indian.}
-4. g3 {Fianchetto.}
-4... Ba6 {Hits c4. The bishop on a6 eyes the pawn on c4.}
- (4... Bb7 {Classical development. The bishop on b7 eyes the knight on f3 and controls d5 and e4.}
-5. Bg2 {Long diagonal.}
-5... Be7 {Develops.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2. c4 {Space. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
+2... e6 {Supports the centre: the pawn on e6 controls d5 and f5. It also opens a line for the bishop on f8.}
+3. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+3... b6 {[%csl Gb7] The Queen's Indian. The pawn on b6 controls a5 and c5.}
+4. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
+4... Ba6 {Hits c4. Develops the bishop to a6, where it eyes the pawn on c4. That pawn is currently undefended.}
+ (4... Bb7 {Classical development. Fianchettoes the bishop on b7, where it rakes the long diagonal through c6, d5 and e4.}
+5. Bg2 {Long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
+5... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
 6. O-O {Castles. The king is safe and the rook comes into play.}
 6... O-O {Castles. The king is safe and the rook comes into play.}
 )
-5. b3 {Defends c4.}
-5... Bb4+ {Checks. It is check, so the reply is forced.}
-6. Bd2 {Blocks. The bishop on d2 eyes the bishop on b4.}
-6... Be7 {Retreats.}
-7. Bg2 {Long diagonal.}
-7... c6 {Prepares ...d5. The pawn on c6 controls d5.}
-8. Bc3 {Develops.}
-8... d5 {Centre. The pawn on d5 eyes the pawn on c4 and controls e4.}
-9. Ne5 {Central. The knight on e5 eyes the pawn on f7 and the pawn on c6.}
-9... Nfd7 {Challenges. The knight on d7 eyes the knight on e5.} *
+5. b3 {Defends c4. The pawn on b3 controls a4 and supports the pawn on c4.}
+5... Bb4+ {Checks. It is check, so the reply is forced. Develops the bishop to b4, where it controls c5 and d6. That clears the way to castle kingside.}
+6. Bd2 {Blocks. Develops the bishop to d2, where it controls e3 and f4. It attacks the bishop on b4, which is undefended.}
+6... Be7 {Moves the bishop out of attack to e7.}
+7. Bg2 {Long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
+7... c6 {Prepares ...d5. Supports the centre: the pawn on c6 controls b5 and d5.}
+8. Bc3 {The bishop goes to c3 and supports the pawn on d4.}
+8... d5 {Claims the centre: the pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the queen on d8.}
+9. Ne5 {Central. The knight goes to e5.}
+9... Nfd7 {Challenges. Regroups the knight to d7 and eyes the knight on e5. White's last move put a knight on e5, which this now pressures.} *
 
 [Event "Queen's Indian: Petrosian & 4.e3"]
 
 {4.a3 stops ...Bb4.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
-2. c4 {Space. The pawn on c4 controls d5.}
-2... e6 {Solid. The pawn on e6 controls d5.}
-3. Nf3 {Develops. The knight on f3 controls e5.}
-3... b6 {QID.}
-4. a3 {The Petrosian.}
- (4. e3 {Solid.}
-4... Bb7 {Develops. The bishop on b7 eyes the knight on f3 and controls d5 and e4.}
-5. Bd3 {Develops. The bishop on d3 eyes the pawn on h7 and controls e4.}
-5... d5 {Centre. The pawn on d5 eyes the pawn on c4 and controls e4.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2. c4 {Space. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
+2... e6 {Supports the centre: the pawn on e6 controls d5 and f5. It also opens a line for the bishop on f8.}
+3. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+3... b6 {QID. The pawn on b6 controls a5 and c5.}
+4. a3 {The Petrosian. The pawn on a3 controls b4.}
+ (4. e3 {Supports the centre: the pawn on e3 controls f4 and supports the pawn on d4. It also opens a line for the bishop on f1.}
+4... Bb7 {Fianchettoes the bishop on b7, where it rakes the long diagonal through c6, d5 and e4.}
+5. Bd3 {Develops the bishop to d3, where it controls e4. That clears the way to castle kingside.}
+5... d5 {Claims the centre: the pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the queen on d8.}
 6. O-O {Castles. The king is safe and the rook comes into play.}
-6... Bd6 {Develops. The bishop on d6 eyes the pawn on h2 and controls e5.}
-7. b3 {Solid.}
+6... Bd6 {Develops the bishop to d6, where it controls e5. That clears the way to castle kingside.}
+7. b3 {The pawn on b3 controls a4 and supports the pawn on c4.}
 7... O-O {Castles. The king is safe and the rook comes into play.}
 )
- (4. Nc3 {Develops. The knight on c3 controls d5 and e4.}
-4... Bb4 {Pins. The bishop on b4 eyes the knight on c3.}
-5. Bg5 {Pins. The bishop on g5 eyes the knight on f6.}
-5... Bb7 {Develops. The bishop on b7 eyes the knight on f3 and controls d5 and e4.}
-6. e3 {Solid.}
+ (4. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+4... Bb4 {Pins. Develops the bishop to b4, where it controls c5 and d6. That clears the way to castle kingside.}
+5. Bg5 {Pins. Develops the bishop to g5, where it controls f4 and eyes the knight on f6.}
+5... Bb7 {Fianchettoes the bishop on b7, where it rakes the long diagonal through c6, d5 and e4.}
+6. e3 {Supports the centre: the pawn on e3 controls f4 and supports the pawn on d4. It also opens a line for the bishop on f1.}
 6... h6 {Asks. The pawn on h6 eyes the bishop on g5.}
-7. Bh4 {Keeps the pin. The bishop on h4 eyes the knight on f6.}
-7... g5 {Breaks the pin. The pawn on g5 eyes the bishop on h4.}
-8. Bg3 {Retreats. The bishop on g3 eyes the pawn on c7 and controls e5.}
-8... Ne4 {Central. The knight on e4 eyes the knight on c3 and the bishop on g3.}
+7. Bh4 {Keeps the pin. Moves the bishop out of attack to h4.}
+7... g5 {Breaks the pin. Gains space on the kingside; the pawn on g5 takes f4 and h4 away from the opponent. It attacks the bishop on h4.}
+8. Bg3 {Moves the bishop out of attack to g3 and controls e5.}
+8... Ne4 {Central. The knight goes to e4. White's last move put a bishop on g3, which this now pressures.}
 )
-4... Bb7 {Develops. The bishop on b7 eyes the knight on f3 and controls d5 and e4.}
-5. Nc3 {Develops. The knight on c3 controls d5 and e4.}
-5... d5 {Centre. The pawn on d5 eyes the pawn on c4 and controls e4.}
-6. cxd5 {Takes. The pawn on d5 eyes the pawn on e6.}
-6... Nxd5 {Recaptures. The knight on d5 eyes the knight on c3.}
-7. Qc2 {Prepares e4. The queen on c2 eyes the pawn on h7 and controls e4.}
-7... Nd7 {Develops. The knight on d7 controls e5.} *
+4... Bb7 {Fianchettoes the bishop on b7, where it rakes the long diagonal through c6, d5 and e4.}
+5. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+5... d5 {Claims the centre: the pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the queen on d8.}
+6. cxd5 {Takes the pawn on d5; Black will want to recapture.}
+6... Nxd5 {Recaptures on d5, restoring the material balance.}
+7. Qc2 {Prepares e4. The queen goes to c2 and controls e4.}
+7... Nd7 {Develops the knight to d7, where it controls e5.} *

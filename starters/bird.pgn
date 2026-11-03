@@ -1,54 +1,54 @@
 [Event "Bird vs 1...d5"]
 
 {The Bird (1.f4) is a reversed Dutch. White controls e5, fianchettoes the queen's bishop and often plays for a kingside attack.}
-1. f4 {[%csl Ge5] The Bird: grabs e5. The pawn on f4 controls e5.}
-1... d5 {Classical centre. The pawn on d5 controls e4.}
-2. Nf3 {Develops and covers e5. The knight on f3 controls d4 and e5.}
-2... Nf6 {Develops. The knight on f6 controls e4.}
-3. e3 {Opens the f1-bishop. The pawn on e3 controls d4.}
-3... g6 {Fianchetto.}
- (3... Bg4 {Pins. The bishop on g4 eyes the knight on f3.}
-4. Be2 {Breaks the pin.}
-4... e6 {Solid.}
+1. f4 {[%csl Ge5] The Bird: grabs e5. Supports the centre: the pawn on f4 controls e5 and g5.}
+1... d5 {Classical centre. The pawn on d5 controls c4 and e4. It also opens a line for the bishop on c8 and the queen on d8.}
+2. Nf3 {Develops and covers e5. The knight on f3 controls e5 and d4.}
+2... Nf6 {Develops the knight to f6, where it controls e4 and supports the pawn on d5.}
+3. e3 {Opens the f1-bishop. Supports the centre: the pawn on e3 controls d4 and supports the pawn on f4. It also opens a line for the bishop on f1.}
+3... g6 {Fianchetto. The pawn on g6 controls f5 and h5.}
+ (3... Bg4 {Pins. Develops the bishop to g4, where it controls f5 and e6.}
+4. Be2 {Breaks the pin. Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
+4... e6 {Supports the centre: the pawn on e6 controls f5 and supports the pawn on d5. It also opens a line for the bishop on f8.}
 5. O-O {Castles. The king is safe and the rook comes into play.}
 )
-4. b3 {Prepares Bb2.}
-4... Bg7 {Fianchetto.}
-5. Bb2 {[%cal Gb2g7] The bishop fights for the long diagonal.}
+4. b3 {Prepares Bb2. The pawn on b3 controls a4 and c4.}
+4... Bg7 {Fianchetto. The bishop on g7 rakes the long diagonal through f6. That clears the way to castle kingside.}
+5. Bb2 {[%cal Gb2g7] The bishop fights for the long diagonal. Fianchettoes the bishop on b2, where it rakes the long diagonal through c3, d4 and e5.}
 5... O-O {Castles. The king is safe and the rook comes into play.}
-6. Be2 {Develops.}
-6... c5 {Space. The pawn on c5 controls d4.}
+6. Be2 {Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
+6... c5 {Space. Supports the centre: the pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
 7. O-O {Castles. The king is safe and the rook comes into play.}
-7... Nc6 {Develops. The knight on c6 controls d4 and e5.}
-8. Ne5 {[%csl Ge5] The thematic outpost. The knight on e5 eyes the pawn on f7 and the knight on c6.} *
+7... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+8. Ne5 {[%csl Ge5] The thematic outpost. The knight goes to e5. Black's last move put a knight on c6, which this now pressures.} *
 
 [Event "Bird vs From's Gambit & 1...Nf6"]
 
 {Know the From's Gambit (1...e5) and the quiet 1...Nf6.}
-1. f4 {The Bird. The pawn on f4 controls e5.}
-1... e5 {From's Gambit. The pawn on e5 eyes the pawn on f4 and controls d4.}
- (1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
-2. Nf3 {Develops. The knight on f3 controls d4 and e5.}
-2... g6 {Fianchetto.}
-3. g3 {Double fianchetto setup.}
-3... Bg7 {Fianchetto.}
-4. Bg2 {Long diagonal.}
+1. f4 {The Bird. Supports the centre: the pawn on f4 controls e5 and g5.}
+1... e5 {From's Gambit. Claims the centre: the pawn on e5 controls d4 and eyes the pawn on f4. It also opens a line for the queen on d8 and the bishop on f8.}
+ (1... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
+2... g6 {Fianchetto. The pawn on g6 controls f5 and h5.}
+3. g3 {Double fianchetto setup. The pawn on g3 controls h4 and supports the pawn on f4.}
+3... Bg7 {Fianchetto. The bishop on g7 rakes the long diagonal through f6. That clears the way to castle kingside.}
+4. Bg2 {Long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
 4... O-O {Castles. The king is safe and the rook comes into play.}
 5. O-O {Castles. The king is safe and the rook comes into play.}
-5... d6 {Prepares ...e5. The pawn on d6 controls e5.}
-6. d3 {Supports e4. The pawn on d3 controls e4.}
+5... d6 {Prepares ...e5. Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
+6. d3 {Supports e4. Supports the centre: the pawn on d3 controls c4 and e4. It also opens a line for the bishop on c1.}
 )
-2. fxe5 {Accepts.}
-2... d6 {Sacrifices a pawn for development. The pawn on d6 eyes the pawn on e5.}
-3. exd6 {Takes. The pawn on d6 eyes the pawn on c7.}
-3... Bxd6 {Recaptures, aiming at g3. The bishop on d6 eyes the pawn on h2 and controls e5.}
-4. Nf3 {[%csl Gh4] Stops ...Qh4+. The knight on f3 controls d4 and e5.}
-4... Nf6 {Develops; ...Ng4 is coming. The knight on f6 controls d5 and e4.}
- (4... g5 {Aggressive.}
-5. d4 {Centre. The pawn on d4 controls e5.}
-5... g4 {Kicks the knight. The pawn on g4 eyes the knight on f3.}
-6. Ne5 {Central outpost. The knight on e5 eyes the pawn on f7 and the pawn on g4.}
+2. fxe5 {Accepts. Takes the pawn on e5, and it cannot be taken back at once.}
+2... d6 {Sacrifices a pawn for development. Supports the centre: the pawn on d6 controls c5 and eyes the pawn on e5. It also opens a line for the bishop on c8.}
+3. exd6 {Takes the pawn on d6; Black will want to recapture.}
+3... Bxd6 {Recaptures, aiming at g3. Recaptures on d6, restoring the material balance.}
+4. Nf3 {[%csl Gh4] Stops ...Qh4+. Develops the knight to f3, where it controls e5 and d4.}
+4... Nf6 {Develops; ...Ng4 is coming. The knight on f6 controls e4 and d5. That clears the way to castle kingside.}
+ (4... g5 {Aggressive. Gains space on the kingside; the pawn on g5 takes f4 and h4 away from the opponent.}
+5. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+5... g4 {Kicks the knight. The pawn on g4 controls h3 and eyes the knight on f3.}
+6. Ne5 {Central outpost. Moves the knight out of attack to e5. Black's last move put a pawn on g4, which this now pressures.}
 )
-5. d4 {[%csl Gd4] Centre. The pawn on d4 controls e5.}
-5... Ng4 {Threatens ...Nxh2 and ...Bxh2. The knight on g4 eyes the pawn on h2 and controls e5.}
-6. Qd3 {[%cal Gd3h7] Covers g3 and h7. The queen on d3 eyes the pawn on h7 and controls e4.} *
+5. d4 {[%csl Gd4] Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+5... Ng4 {Threatens ...Nxh2 and ...Bxh2. The knight goes to g4 and controls e5.}
+6. Qd3 {[%cal Gd3h7] Covers g3 and h7. The queen goes to d3 and controls e4 and supports the pawn on d4.} *

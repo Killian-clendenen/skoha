@@ -1,50 +1,50 @@
 [Event "Vienna: 2...Nf6 3.f4"]
 
 {The Vienna develops the queen's knight first so that f2-f4 can come with more support. It is aggressive but sound.}
-1. e4 {Centre. The pawn on e4 controls d5.}
-1... e5 {Classical. The pawn on e5 controls d4.}
+1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... e5 {Claims the centre: the pawn on e5 controls d4 and f4. It also opens a line for the queen on d8 and the bishop on f8.}
 2. Nc3 {[%csl Gd5] The Vienna: supports e4 and keeps the f-pawn free for f4.}
-2... Nf6 {Develops and hits e4. The knight on f6 eyes the pawn on e4 and controls d5.}
-3. f4 {[%cal Gf4e5] The Vienna Gambit: White attacks e5 at once.}
-3... d5 {The principled reply: counter in the centre.}
- (3... exf4 {Grabs the pawn but cedes the centre.}
-4. e5 {[%cal Ge5f6] Kicks the knight. The pawn on e5 eyes the knight on f6.}
+2... Nf6 {Develops and hits e4. The knight on f6 controls d5 and eyes the pawn on e4.}
+3. f4 {[%cal Gf4e5] The Vienna Gambit: White attacks e5 at once. Supports the centre: the pawn on f4 controls g5 and eyes the pawn on e5. That pawn is currently undefended.}
+3... d5 {The principled reply: counter in the centre. The pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
+ (3... exf4 {Grabs the pawn but cedes the centre. Takes the pawn on f4, and it cannot be taken back at once.}
+4. e5 {[%cal Ge5f6] Kicks the knight. Claims the centre: the pawn on e5 controls d6 and eyes the knight on f6.}
 4... Ng8 {Back home; Black accepts a loss of time to keep the pawn.}
-5. Nf3 {Develops and stops ...Qh4+. The knight on f3 controls d4.}
-5... d6 {Strikes at e5. The pawn on d6 eyes the pawn on e5.}
+5. Nf3 {Develops and stops ...Qh4+. The knight on f3 controls d4 and supports the pawn on e5.}
+5... d6 {Strikes at e5. Supports the centre: the pawn on d6 controls c5 and eyes the pawn on e5. It also opens a line for the bishop on c8.}
 6. d4 {[%csl Ge5,Gd4] Builds a big centre and opens the c1-bishop to take f4.}
 )
 4. fxe5 {Gains space and drives the knight once ...Nxe4.}
-4... Nxe4 {The knight jumps to a central outpost. The knight on e4 eyes the knight on c3 and the pawn on d2.}
-5. Nf3 {Develops and covers d4/h4. The knight on f3 controls d4.}
-5... Be7 {Develops calmly.}
- (5... Nc6 {Develops and eyes e5. The knight on c6 eyes the pawn on e5 and controls d4.}
-6. Bb5 {[%cal Gb5c6] Pins and pressures the defender of e5. The bishop on b5 eyes the knight on c6.}
+4... Nxe4 {The knight jumps to a central outpost. Takes the pawn on e4; White will want to recapture.}
+5. Nf3 {Develops and covers d4/h4. The knight on f3 controls d4 and supports the pawn on e5.}
+5... Be7 {Develops calmly. The bishop on e7 controls f6 and d6. That clears the way to castle kingside.}
+ (5... Nc6 {Develops and eyes e5. The knight on c6 controls d4 and eyes the pawn on e5.}
+6. Bb5 {[%cal Gb5c6] Pins and pressures the defender of e5. Develops the bishop to b5, where it controls c4 and eyes the knight on c6. That clears the way to castle kingside.}
 )
-6. d4 {[%csl Ge5,Gd4] Strong centre. White will play Bd3 and O-O.}
+6. d4 {[%csl Ge5,Gd4] Strong centre. White will play Bd3 and O-O. The pawn on d4 controls c5 and supports the pawn on e5. It also opens a line for the bishop on c1 and the queen on d1.}
 6... O-O {Castles. The king is safe and the rook comes into play.}
-7. Bd3 {[%cal Gd3e4] Challenges the e4 knight. The bishop on d3 eyes the knight on e4.} *
+7. Bd3 {[%cal Gd3e4] Challenges the e4 knight. Develops the bishop to d3, where it eyes the knight on e4. That clears the way to castle kingside.} *
 
 [Event "Vienna: 2...Nc6 & 2...Bc5"]
 
 {The Vienna can also be played positionally with Bc4, d3 and f4.}
-1. e4 {Centre. The pawn on e4 controls d5.}
-1... e5 {Classical. The pawn on e5 controls d4.}
-2. Nc3 {The Vienna. The knight on c3 controls d5.}
-2... Nc6 {Symmetrical development. The knight on c6 controls d4.}
- (2... Bc5 {Active bishop. The bishop on c5 eyes the pawn on f2 and controls d4.}
-3. Nf3 {Develops and attacks e5. The knight on f3 eyes the pawn on e5 and controls d4.}
-3... d6 {Supports e5.}
-4. Na4 {[%cal Ga4c5] Goes after the bishop. The knight on a4 eyes the bishop on c5.}
-4... Bb6 {Keeps the bishop on the diagonal. The bishop on b6 eyes the pawn on f2 and controls d4.}
-5. Nxb6 {Wins the bishop pair. The knight on b6 eyes the rook on a8 and the bishop on c8 and controls d5.}
-5... axb6 {Black gets the half-open a-file.}
-6. d4 {[%csl Gd4] Opens lines for the bishops. The pawn on d4 eyes the pawn on e5.}
+1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... e5 {Claims the centre: the pawn on e5 controls d4 and f4. It also opens a line for the queen on d8 and the bishop on f8.}
+2. Nc3 {The Vienna. Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
+2... Nc6 {Symmetrical development. The knight on c6 controls d4 and supports the pawn on e5.}
+ (2... Bc5 {Active bishop. Develops the bishop to c5, where it controls d4.}
+3. Nf3 {Develops and attacks e5. The knight on f3 controls d4 and eyes the pawn on e5. That pawn is currently undefended.}
+3... d6 {Supports e5. Supports the centre: the pawn on d6 supports the bishop on c5 and the pawn on e5. It also opens a line for the bishop on c8.}
+4. Na4 {[%cal Ga4c5] Goes after the bishop. The knight goes to a4.}
+4... Bb6 {Keeps the bishop on the diagonal. Regroups the bishop to b6 and controls d4.}
+5. Nxb6 {Wins the bishop pair. Takes the bishop on b6; Black will want to recapture.}
+5... axb6 {Black gets the half-open a-file. Recaptures on b6, restoring the material balance.}
+6. d4 {[%csl Gd4] Opens lines for the bishops. Claims the centre: the pawn on d4 controls c5 and eyes the pawn on e5. It also opens a line for the bishop on c1 and the queen on d1.}
 )
-3. Bc4 {[%cal Gc4f7] Aims at f7. The bishop on c4 eyes the pawn on f7 and controls d5.}
-3... Nf6 {Develops. The knight on f6 eyes the pawn on e4 and controls d5.}
-4. d3 {[%csl Ge4] Solid: protects e4 and prepares f4.}
-4... Bc5 {Active development. The bishop on c5 eyes the pawn on f2 and controls d4.}
-5. f4 {[%cal Gf4e5] The thematic break, now well prepared. The pawn on f4 eyes the pawn on e5.}
-5... d6 {Holds e5.}
-6. Nf3 {Develops with pressure on e5. The knight on f3 eyes the pawn on e5 and controls d4.} *
+3. Bc4 {[%cal Gc4f7] Aims at f7. Develops the bishop to c4, where it controls d5.}
+3... Nf6 {Develops the knight to f6, where it controls d5 and eyes the pawn on e4.}
+4. d3 {[%csl Ge4] Solid: protects e4 and prepares f4. Supports the centre: the pawn on d3 supports the bishop on c4 and the pawn on e4. It also opens a line for the bishop on c1.}
+4... Bc5 {Active development. The bishop on c5 controls d4. That clears the way to castle kingside.}
+5. f4 {[%cal Gf4e5] The thematic break, now well prepared. Supports the centre: the pawn on f4 controls g5 and eyes the pawn on e5.}
+5... d6 {Holds e5. Supports the centre: the pawn on d6 supports the bishop on c5 and the pawn on e5. It also opens a line for the bishop on c8.}
+6. Nf3 {Develops with pressure on e5. The knight on f3 controls d4 and eyes the pawn on e5. That clears the way to castle kingside.} *

@@ -1,56 +1,56 @@
 [Event "Dutch: Leningrad"]
 
 {The Dutch (1...f5) grabs e4 and aims for a kingside attack. The Leningrad combines it with a g7 fianchetto.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... f5 {[%csl Ge4] The Dutch. The pawn on f5 controls e4.}
-2. g3 {Fianchetto.}
-2... Nf6 {Develops. The knight on f6 controls d5 and e4.}
-3. Bg2 {Long diagonal. The bishop on g2 eyes the pawn on b7 and controls d5 and e4.}
-3... g6 {Fianchetto.}
-4. Nf3 {Develops. The knight on f3 controls e5.}
-4... Bg7 {Develops.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... f5 {[%csl Ge4] The Dutch. Supports the centre: the pawn on f5 controls e4 and g4.}
+2. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
+2... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+3. Bg2 {Long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3, e4 and d5.}
+3... g6 {Fianchetto. The pawn on g6 controls h5 and supports the pawn on f5.}
+4. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4. That clears the way to castle kingside.}
+4... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
 5. O-O {Castles. The king is safe and the rook comes into play.}
 5... O-O {Castles. The king is safe and the rook comes into play.}
-6. c4 {Space. The pawn on c4 controls d5.}
-6... d6 {Prepares ...e5. The pawn on d6 controls e5.}
-7. Nc3 {Develops. The knight on c3 controls d5 and e4.}
-7... Qe8 {Prepares ...e5 and ...Qh5.}
- (7... c6 {Flexible: prepares ...Qa5 or ...Na6. The pawn on c6 controls d5.}
-8. d5 {Gains space. The pawn on d5 eyes the pawn on c6.}
+6. c4 {Space. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
+6... d6 {Prepares ...e5. Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
+7. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+7... Qe8 {Prepares ...e5 and ...Qh5. The queen goes to e8.}
+ (7... c6 {Flexible: prepares ...Qa5 or ...Na6. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
+8. d5 {Gains space. Claims the centre: the pawn on d5 controls e6 and eyes the pawn on c6. Black's last move put a pawn on c6, which this now pressures.}
 )
-8. d5 {Gains space.}
-8... a5 {Stops b4.} *
+8. d5 {Gains space. Claims the centre: the pawn on d5 controls c6 and e6.}
+8... a5 {Stops b4. Gains space on the queenside; the pawn on a5 takes b4 away from the opponent.} *
 
 [Event "Dutch: Anti-Dutch lines"]
 
 {2.Bg5, 2.Nc3, 2.e4 and the London.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... f5 {Dutch. The pawn on f5 controls e4.}
-2. Bf4 {The London. The bishop on f4 eyes the pawn on c7 and controls e5.}
- (2. e4 {The Staunton Gambit. The pawn on e4 eyes the pawn on f5 and controls d5.}
-2... fxe4 {Takes.}
-3. Nc3 {Develops. The knight on c3 eyes the pawn on e4 and controls d5.}
-3... Nf6 {Develops. The knight on f6 controls d5.}
-4. Bg5 {Pins. The bishop on g5 eyes the knight on f6.}
-4... g6 {Fianchetto.}
-5. f3 {Opens lines. The pawn on f3 eyes the pawn on e4.}
-5... exf3 {Takes. The pawn on f3 eyes the pawn on g2.}
-6. Nxf3 {Recaptures. The knight on f3 controls e5.}
-6... Bg7 {Develops.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... f5 {Dutch. Supports the centre: the pawn on f5 controls e4 and g4.}
+2. Bf4 {The London. Develops the bishop to f4, where it controls e5.}
+ (2. e4 {The Staunton Gambit. Claims the centre: the pawn on e4 controls d5 and eyes the pawn on f5. It also opens a line for the queen on d1 and the bishop on f1.}
+2... fxe4 {Takes the pawn on e4, and it cannot be taken back at once.}
+3. Nc3 {Develops the knight to c3, where it controls d5 and eyes the pawn on e4. That pawn is currently undefended.}
+3... Nf6 {Develops the knight to f6, where it controls d5 and supports the pawn on e4.}
+4. Bg5 {Pins. Develops the bishop to g5, where it controls f4 and eyes the knight on f6. Black's last move put a knight on f6, which this now pressures.}
+4... g6 {Fianchetto. The pawn on g6 controls f5 and h5.}
+5. f3 {Opens lines. Supports the centre: the pawn on f3 controls g4 and eyes the pawn on e4.}
+5... exf3 {Takes the pawn on f3; White will want to recapture.}
+6. Nxf3 {Recaptures on f3, restoring the material balance.}
+6... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
 )
- (2. Nc3 {Develops. The knight on c3 controls d5 and e4.}
-2... Nf6 {Develops. The knight on f6 controls d5 and e4.}
-3. Bg5 {Pins. The bishop on g5 eyes the knight on f6.}
-3... d5 {Centre. The pawn on d5 controls e4.}
-4. Bxf6 {Trades. The bishop on f6 eyes the pawn on e7 and the pawn on g7 and controls e5.}
-4... exf6 {Recaptures. The pawn on f6 controls e5.}
-5. e3 {Solid.}
-5... c6 {Solid.}
+ (2. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+2... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+3. Bg5 {Pins. Develops the bishop to g5, where it controls f4 and eyes the knight on f6. Black's last move put a knight on f6, which this now pressures.}
+3... d5 {Claims the centre: the pawn on d5 controls c4 and e4. It also opens a line for the bishop on c8 and the queen on d8.}
+4. Bxf6 {Takes the knight on f6; Black will want to recapture.}
+4... exf6 {Recaptures on f6, restoring the material balance.}
+5. e3 {Supports the centre: the pawn on e3 controls f4 and supports the pawn on d4. It also opens a line for the queen on d1 and the bishop on f1.}
+5... c6 {Supports the centre: the pawn on c6 controls b5 and supports the pawn on d5. It also opens a line for the queen on d8.}
 )
-2... Nf6 {Develops. The knight on f6 controls d5 and e4.}
-3. e3 {Solid.}
-3... g6 {Fianchetto.}
-4. Nf3 {Develops. The knight on f3 controls e5.}
-4... Bg7 {Develops.}
-5. h3 {Prepares Be2.}
+2... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+3. e3 {Supports the centre: the pawn on e3 supports the pawn on d4 and the bishop on f4. It also opens a line for the queen on d1 and the bishop on f1.}
+3... g6 {Fianchetto. The pawn on g6 controls h5 and supports the pawn on f5.}
+4. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+4... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+5. h3 {Prepares Be2. The pawn on h3 controls g4.}
 5... O-O {Castles. The king is safe and the rook comes into play.} *

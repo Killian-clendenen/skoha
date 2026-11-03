@@ -1,86 +1,86 @@
 [Event "KID: Classical"]
 
 {The King's Indian lets White build a big centre, then strikes with ...e5 (or ...c5) and storms the kingside with ...f5–f4–g5. Sharp, double-edged, a favourite of Fischer and Kasparov.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
-2. c4 {Space. The pawn on c4 controls d5.}
-2... g6 {[%csl Gg7] The King's Indian fianchetto.}
-3. Nc3 {Develops. The knight on c3 controls d5 and e4.}
-3... Bg7 {[%cal Gg7d4] The bishop eyes d4 and the long diagonal.}
-4. e4 {The big centre. The pawn on e4 controls d5.}
-4... d6 {Controls e5, prepares ...e5. The pawn on d6 controls e5.}
-5. Nf3 {The Classical. The knight on f3 controls e5.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2. c4 {Space. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
+2... g6 {[%csl Gg7] The King's Indian fianchetto. The pawn on g6 controls f5 and h5.}
+3. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+3... Bg7 {[%cal Gg7d4] The bishop eyes d4 and the long diagonal. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+4. e4 {The big centre. The pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+4... d6 {Controls e5, prepares ...e5. Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
+5. Nf3 {The Classical. Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
 5... O-O {Castles. The king is safe and the rook comes into play.}
-6. Be2 {Develops.}
-6... e5 {[%cal Ge5d4] The thematic strike. The pawn on e5 eyes the pawn on d4.}
+6. Be2 {Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
+6... e5 {[%cal Ge5d4] The thematic strike. Claims the centre: the pawn on e5 controls f4 and eyes the pawn on d4.}
 7. O-O {Castles. The king is safe and the rook comes into play.}
-7... Nc6 {[%cal Gc6d4] Pressure on d4, forcing a decision. The knight on c6 eyes the pawn on d4.}
+7... Nc6 {[%cal Gc6d4] Pressure on d4, forcing a decision. Develops the knight to c6, where it supports the pawn on e5 and eyes the pawn on d4.}
 8. d5 {Closes the centre; White will attack on the queenside.}
-8... Ne7 {Heads for the kingside. The knight on e7 eyes the pawn on d5.}
-9. Ne1 {Re-routes to d3 to support c5 and f4.}
- (9. b4 {The Bayonet Attack.}
-9... Nh5 {Prepares ...f5 and eyes f4.}
-10. Re1 {Prepares Bf1 and keeps e4 solid.}
+8... Ne7 {Heads for the kingside. Moves the knight out of attack to e7 and eyes the pawn on d5. White's last move put a pawn on d5, which this now pressures.}
+9. Ne1 {Re-routes to d3 to support c5 and f4. Regroups the knight to e1.}
+ (9. b4 {The Bayonet Attack. Gains space on the queenside; the pawn on b4 takes a5 and c5 away from the opponent.}
+9... Nh5 {Prepares ...f5 and eyes f4. The knight goes to h5.}
+10. Re1 {Prepares Bf1 and keeps e4 solid. The rook goes to e1.}
 )
-9... Nd7 {Clears the f-pawn.}
-10. Nd3 {Supports c5. The knight on d3 eyes the pawn on e5.}
-10... f5 {[%cal Gf5e4] The kingside storm begins. The pawn on f5 eyes the pawn on e4.} *
+9... Nd7 {Clears the f-pawn. Regroups the knight to d7 and supports the pawn on e5.}
+10. Nd3 {Supports c5. Develops the knight to d3, where it eyes the pawn on e5.}
+10... f5 {[%cal Gf5e4] The kingside storm begins. Supports the centre: the pawn on f5 controls g4 and eyes the pawn on e4.} *
 
 [Event "KID: Sämisch, Four Pawns & Fianchetto"]
 
 {The other main White systems against the King's Indian.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
-2. c4 {Space. The pawn on c4 controls d5.}
-2... g6 {KID.}
-3. Nc3 {Develops. The knight on c3 controls d5 and e4.}
- (3. Nf3 {Fianchetto system coming. The knight on f3 controls e5.}
-3... Bg7 {Develops.}
-4. g3 {Fianchetto.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2. c4 {Space. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
+2... g6 {KID. The pawn on g6 controls f5 and h5.}
+3. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+ (3. Nf3 {Fianchetto system coming. Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+3... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+4. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
 4... O-O {Castles. The king is safe and the rook comes into play.}
-5. Bg2 {Long diagonal.}
-5... d6 {Solid. The pawn on d6 controls e5.}
+5. Bg2 {Long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
+5... d6 {Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
 6. O-O {Castles. The king is safe and the rook comes into play.}
-6... Nbd7 {Prepares ...e5. The knight on d7 controls e5.}
-7. Nc3 {Develops. The knight on c3 controls d5 and e4.}
-7... e5 {Strikes the centre. The pawn on e5 eyes the pawn on d4.}
-8. e4 {Classical centre. The pawn on e4 controls d5.}
+6... Nbd7 {Prepares ...e5. Develops the knight to d7, where it controls e5.}
+7. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+7... e5 {Strikes the centre. The pawn on e5 controls f4 and eyes the pawn on d4.}
+8. e4 {Classical centre. The pawn on e4 controls d5 and f5.}
 )
-3... Bg7 {Develops.}
-4. e4 {Centre. The pawn on e4 controls d5.}
-4... d6 {Solid. The pawn on d6 controls e5.}
-5. f3 {The Sämisch.}
- (5. f4 {The Four Pawns. The pawn on f4 controls e5.}
+3... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+4. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+4... d6 {Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
+5. f3 {The Sämisch. Supports the centre: the pawn on f3 controls g4 and supports the pawn on e4.}
+ (5. f4 {The Four Pawns. Supports the centre: the pawn on f4 controls e5 and g5.}
 5... O-O {Castles. The king is safe and the rook comes into play.}
-6. Nf3 {Develops. The knight on f3 controls e5.}
-6... c5 {[%cal Gc5d4] Hits the overextended centre. The pawn on c5 eyes the pawn on d4.}
-7. d5 {Gains space.}
-7... e6 {Opens lines. The pawn on e6 eyes the pawn on d5.}
-8. Be2 {Develops.}
-8... exd5 {Takes. The pawn on d5 eyes the pawn on c4 and the pawn on e4.}
-9. cxd5 {Recaptures.}
+6. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+6... c5 {[%cal Gc5d4] Hits the overextended centre. The pawn on c5 controls b4 and eyes the pawn on d4. It also opens a line for the queen on d8.}
+7. d5 {Gains space. Claims the centre: the pawn on d5 controls c6 and e6.}
+7... e6 {Opens lines. Supports the centre: the pawn on e6 controls f5 and eyes the pawn on d5. White's last move put a pawn on d5, which this now pressures.}
+8. Be2 {Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
+8... exd5 {Takes the pawn on d5; White will want to recapture.}
+9. cxd5 {Recaptures on d5, restoring the material balance.}
 )
 5... O-O {Castles. The king is safe and the rook comes into play.}
-6. Be3 {Develops.}
-6... e5 {Strikes. The pawn on e5 eyes the pawn on d4.}
-7. Nge2 {Develops.}
-7... c6 {Prepares ...b5 or ...cxd5. The pawn on c6 controls d5.}
-8. Qd2 {Prepares O-O-O.}
-8... Nbd7 {Develops.} *
+6. Be3 {Develops the bishop to e3, where it supports the pawn on d4.}
+6... e5 {Strikes. Claims the centre: the pawn on e5 controls f4 and eyes the pawn on d4.}
+7. Nge2 {Develops the knight to e2, where it supports the pawn on d4.}
+7... c6 {Prepares ...b5 or ...cxd5. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
+8. Qd2 {Prepares O-O-O. The queen goes to d2 and supports the pawn on d4.}
+8... Nbd7 {Develops the knight to d7, where it supports the pawn on e5.} *
 
 [Event "KID vs London"]
 
 {Against the London, Black plays a King's Indian setup with ...c5.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
-2. Nf3 {Develops. The knight on f3 controls e5.}
-2... g6 {KID setup.}
-3. Bf4 {The London. The bishop on f4 eyes the pawn on c7 and controls e5.}
-3... Bg7 {Develops.}
-4. e3 {Solid.}
-4... d6 {Prepares ...Nbd7 and ...e5. The pawn on d6 controls e5.}
-5. h3 {Keeps the bishop safe from ...Nh5.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+2... g6 {KID setup. The pawn on g6 controls f5 and h5.}
+3. Bf4 {The London. Develops the bishop to f4, where it controls e5.}
+3... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+4. e3 {Supports the centre: the pawn on e3 supports the pawn on d4 and the bishop on f4. It also opens a line for the bishop on f1.}
+4... d6 {Prepares ...Nbd7 and ...e5. Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
+5. h3 {Keeps the bishop safe from ...Nh5. The pawn on h3 controls g4.}
 5... O-O {Castles. The king is safe and the rook comes into play.}
-6. Be2 {Develops.}
-6... c5 {[%cal Gc5d4] Hits the centre. The pawn on c5 eyes the pawn on d4.}
-7. c3 {Supports d4.} *
+6. Be2 {Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
+6... c5 {[%cal Gc5d4] Hits the centre. The pawn on c5 controls b4 and eyes the pawn on d4. It also opens a line for the queen on d8.}
+7. c3 {Supports d4. Supports the centre: the pawn on c3 controls b4 and supports the pawn on d4. It also opens a line for the queen on d1.} *

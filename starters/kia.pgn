@@ -1,71 +1,71 @@
 [Event "KIA vs the French"]
 
 {The King's Indian Attack is a system: e4, d3, Nd2, Ngf3, g3, Bg2, O-O, Re1. White attacks on the kingside with e5 and h4.}
-1. e4 {Centre. The pawn on e4 controls d5.}
-1... e6 {The French. The pawn on e6 controls d5.}
-2. d3 {[%csl Ge4] The KIA: avoid the French theory.}
-2... d5 {Centre. The pawn on d5 eyes the pawn on e4.}
- (2... c5 {Black delays ...d5. The pawn on c5 controls d4.}
-3. Nf3 {Develops. The knight on f3 controls d4 and e5.}
-3... Nc6 {Develops. The knight on c6 controls d4 and e5.}
-4. g3 {Same KIA setup: Bg2, O-O, Re1.}
+1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... e6 {The French. Supports the centre: the pawn on e6 controls d5 and f5. It also opens a line for the queen on d8 and the bishop on f8.}
+2. d3 {[%csl Ge4] The KIA: avoid the French theory. Supports the centre: the pawn on d3 controls c4 and supports the pawn on e4. It also opens a line for the bishop on c1.}
+2... d5 {Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the queen on d8.}
+ (2... c5 {Black delays ...d5. Supports the centre: the pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
+3. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
+3... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+4. g3 {Same KIA setup: Bg2, O-O, Re1. The pawn on g3 controls f4 and h4.}
 )
-3. Nd2 {Supports e4.}
-3... Nf6 {Develops. The knight on f6 eyes the pawn on e4.}
-4. Ngf3 {Develops. The knight on f3 controls d4 and e5.}
-4... c5 {Space. The pawn on c5 controls d4.}
-5. g3 {Fianchetto.}
-5... Nc6 {Develops. The knight on c6 controls d4 and e5.}
-6. Bg2 {The bishop on the long diagonal.}
-6... Be7 {Develops.}
+3. Nd2 {Supports e4. Develops the knight to d2, where it supports the pawn on e4.}
+3... Nf6 {Develops the knight to f6, where it supports the pawn on d5 and eyes the pawn on e4.}
+4. Ngf3 {Develops the knight to f3, where it controls e5 and d4.}
+4... c5 {Space. Supports the centre: the pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
+5. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
+5... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+6. Bg2 {The bishop on the long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
+6... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
 7. O-O {Castles. The king is safe and the rook comes into play.}
 7... O-O {Castles. The king is safe and the rook comes into play.}
-8. Re1 {[%csl Ge5] Supports e5.}
-8... b5 {The queenside attack begins.}
- (8... Qc7 {Black adds pressure to e5 in advance. The queen on c7 eyes the pawn on g3 and controls e5.}
-9. Qe2 {[%csl Ge5] Over-protects e5 before pushing.}
+8. Re1 {[%csl Ge5] Supports e5. The rook goes to e1 and supports the pawn on e4.}
+8... b5 {The queenside attack begins. Gains space on the queenside; the pawn on b5 takes a4 and c4 away from the opponent.}
+ (8... Qc7 {Black adds pressure to e5 in advance. The queen goes to c7 and controls e5.}
+9. Qe2 {[%csl Ge5] Over-protects e5 before pushing. The queen goes to e2 and supports the pawn on e4.}
 )
-9. e5 {[%cal Ge5f6] Kicks the knight and gains kingside space.}
-9... Nd7 {Retreats. The knight on d7 eyes the pawn on e5.}
+9. e5 {[%cal Ge5f6] Kicks the knight and gains kingside space. Claims the centre: the pawn on e5 controls d6 and eyes the knight on f6.}
+9... Nd7 {Moves the knight out of attack to d7 and eyes the pawn on e5. White's last move put a pawn on e5, which this now pressures.}
 10. Nf1 {[%csl Gh2,Gg3] The knight heads for h2 or g3 to support h4–h5.} *
 
 [Event "KIA vs the Sicilian & Caro-Kann"]
 
 {The same setup works against 1...c5 and 1...c6.}
-1. e4 {Centre. The pawn on e4 controls d5.}
-1... c5 {The Sicilian. The pawn on c5 controls d4.}
- (1... c6 {The Caro-Kann. The pawn on c6 controls d5.}
-2. d3 {The KIA approach.}
-2... d5 {Centre. The pawn on d5 eyes the pawn on e4.}
-3. Nd2 {Supports e4.}
-3... e5 {Black builds a centre. The pawn on e5 controls d4.}
-4. Ngf3 {Develops. The knight on f3 eyes the pawn on e5 and controls d4.}
-4... Bd6 {Develops.}
-5. g3 {Fianchetto.}
-5... Nf6 {Develops. The knight on f6 eyes the pawn on e4.}
-6. Bg2 {Long diagonal.}
+1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... c5 {The Sicilian. Supports the centre: the pawn on c5 controls b4 and d4. It also opens a line for the queen on d8.}
+ (1... c6 {The Caro-Kann. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
+2. d3 {The KIA approach. Supports the centre: the pawn on d3 controls c4 and supports the pawn on e4. It also opens a line for the bishop on c1.}
+2... d5 {Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
+3. Nd2 {Supports e4. Develops the knight to d2, where it supports the pawn on e4.}
+3... e5 {Black builds a centre. The pawn on e5 controls d4 and f4. It also opens a line for the queen on d8 and the bishop on f8.}
+4. Ngf3 {Develops the knight to f3, where it controls d4 and eyes the pawn on e5. That pawn is currently undefended.}
+4... Bd6 {Develops the bishop to d6, where it supports the pawn on e5.}
+5. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
+5... Nf6 {Develops the knight to f6, where it supports the pawn on d5 and eyes the pawn on e4. That clears the way to castle kingside.}
+6. Bg2 {Long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
 6... O-O {Castles. The king is safe and the rook comes into play.}
 7. O-O {Castles. The king is safe and the rook comes into play.}
-7... Re8 {Supports ...e4 ideas and e5.}
-8. Re1 {Supports e4; e4xd5 or Qe2 next.}
+7... Re8 {Supports ...e4 ideas and e5. The rook goes to e8 and supports the pawn on e5.}
+8. Re1 {Supports e4; e4xd5 or Qe2 next. The rook goes to e1 and supports the pawn on e4.}
 )
-2. Nf3 {Develops. The knight on f3 controls d4 and e5.}
-2... e6 {Flexible. The pawn on e6 controls d5.}
- (2... Nc6 {Develops. The knight on c6 controls d4 and e5.}
-3. d3 {KIA setup.}
-3... g6 {Closed-Sicilian style fianchetto.}
-4. g3 {Mirrors.}
-4... Bg7 {Long diagonal. The bishop on g7 eyes the pawn on b2 and controls d4 and e5.}
-5. Bg2 {Long diagonal.}
+2. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
+2... e6 {Supports the centre: the pawn on e6 controls d5 and f5. It also opens a line for the queen on d8 and the bishop on f8.}
+ (2... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+3. d3 {KIA setup. Supports the centre: the pawn on d3 controls c4 and supports the pawn on e4. It also opens a line for the bishop on c1.}
+3... g6 {Closed-Sicilian style fianchetto. The pawn on g6 controls f5 and h5.}
+4. g3 {Mirrors. The pawn on g3 controls f4 and h4.}
+4... Bg7 {Long diagonal. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6, e5 and d4.}
+5. Bg2 {Long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
 )
-3. d3 {The KIA setup.}
-3... Nc6 {Develops. The knight on c6 controls d4 and e5.}
-4. g3 {Fianchetto.}
-4... d5 {Centre. The pawn on d5 eyes the pawn on e4.}
-5. Nbd2 {Supports e4.}
-5... Nf6 {Develops. The knight on f6 eyes the pawn on e4.}
-6. Bg2 {Long diagonal.}
-6... Be7 {Develops.}
+3. d3 {The KIA setup. Supports the centre: the pawn on d3 controls c4 and supports the pawn on e4. It also opens a line for the bishop on c1.}
+3... Nc6 {Develops the knight to c6, where it controls d4 and e5.}
+4. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
+4... d5 {Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the queen on d8.}
+5. Nbd2 {Supports e4. Develops the knight to d2, where it supports the pawn on e4.}
+5... Nf6 {Develops the knight to f6, where it supports the pawn on d5 and eyes the pawn on e4.}
+6. Bg2 {Long diagonal. Fianchettoes the bishop on g2, where it rakes the long diagonal through f3. That clears the way to castle kingside.}
+6... Be7 {Develops the bishop to e7, where it controls d6 and supports the knight on f6. That clears the way to castle kingside.}
 7. O-O {Castles. The king is safe and the rook comes into play.}
 7... O-O {Castles. The king is safe and the rook comes into play.}
-8. Re1 {[%csl Ge5] Prepares e5.} *
+8. Re1 {[%csl Ge5] Prepares e5. The rook goes to e1 and supports the pawn on e4.} *

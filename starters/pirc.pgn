@@ -1,56 +1,56 @@
 [Event "Pirc: Austrian Attack"]
 
 {The Pirc lets White build a big centre and then attacks it with ...c5, ...e5 and the g7-bishop.}
-1. e4 {Centre. The pawn on e4 controls d5.}
-1... d6 {The Pirc. The pawn on d6 controls e5.}
-2. d4 {Centre. The pawn on d4 controls e5.}
-2... Nf6 {Hits e4. The knight on f6 eyes the pawn on e4 and controls d5.}
-3. Nc3 {Defends. The knight on c3 controls d5.}
-3... g6 {[%csl Gg7] Fianchetto.}
-4. f4 {The Austrian Attack. The pawn on f4 controls e5.}
-4... Bg7 {Develops.}
-5. Nf3 {Develops. The knight on f3 controls e5.}
+1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... d6 {The Pirc. Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
+2. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+2... Nf6 {Hits e4. Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That pawn is currently undefended.}
+3. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
+3... g6 {[%csl Gg7] Fianchetto. The pawn on g6 controls f5 and h5.}
+4. f4 {The Austrian Attack. Supports the centre: the pawn on f4 controls e5 and g5.}
+4... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+5. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
 5... O-O {Castles. The king is safe and the rook comes into play.}
- (5... c5 {The immediate strike at d4. The pawn on c5 eyes the pawn on d4.}
-6. dxc5 {Takes. The pawn on c5 eyes the pawn on d6.}
-6... Qa5 {[%cal Ga5c5] Pins the knight and regains c5. The queen on a5 eyes the pawn on c5 and the knight on c3.}
+ (5... c5 {The immediate strike at d4. Supports the centre: the pawn on c5 controls b4 and eyes the pawn on d4. It also opens a line for the queen on d8.}
+6. dxc5 {Takes the pawn on c5; Black will want to recapture.}
+6... Qa5 {[%cal Ga5c5] Pins the knight and regains c5. The queen goes to a5. It attacks the pawn on c5, which is undefended.}
 )
-6. Bd3 {Develops.}
-6... Na6 {Prepares ...c5.}
+6. Bd3 {Develops the bishop to d3, where it supports the pawn on e4. That clears the way to castle kingside.}
+6... Na6 {Prepares ...c5. Develops the knight to a6, where it controls c5.}
 7. O-O {Castles. The king is safe and the rook comes into play.}
-7... c5 {[%cal Gc5d4] Hits the centre. The pawn on c5 eyes the pawn on d4.}
-8. d5 {Gains space.} *
+7... c5 {[%cal Gc5d4] Hits the centre. The pawn on c5 controls b4 and eyes the pawn on d4. It also opens a line for the queen on d8.}
+8. d5 {Gains space. Claims the centre: the pawn on d5 controls c6 and e6.} *
 
 [Event "Pirc: 150 Attack & Classical"]
 
 {Against Be3/Qd2 Black plays ...c6 and ...b5. Against the Classical, develop calmly.}
-1. e4 {Centre. The pawn on e4 controls d5.}
-1... d6 {Pirc. The pawn on d6 controls e5.}
-2. d4 {Centre. The pawn on d4 controls e5.}
-2... Nf6 {Hits e4. The knight on f6 eyes the pawn on e4 and controls d5.}
-3. Nc3 {Defends. The knight on c3 controls d5.}
-3... g6 {Fianchetto.}
-4. Be3 {The 150 Attack.}
- (4. Nf3 {The Classical. The knight on f3 controls e5.}
-4... Bg7 {Develops.}
-5. Be2 {Develops.}
+1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... d6 {Pirc. Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
+2. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+2... Nf6 {Hits e4. Develops the knight to f6, where it controls d5 and eyes the pawn on e4. That pawn is currently undefended.}
+3. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.}
+3... g6 {Fianchetto. The pawn on g6 controls f5 and h5.}
+4. Be3 {The 150 Attack. Develops the bishop to e3, where it supports the pawn on d4.}
+ (4. Nf3 {The Classical. Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+4... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+5. Be2 {Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
 5... O-O {Castles. The king is safe and the rook comes into play.}
 6. O-O {Castles. The king is safe and the rook comes into play.}
-6... c6 {Prepares ...b5 or ...Qc7. The pawn on c6 controls d5.}
-7. a4 {Stops ...b5.}
-7... Nbd7 {Develops. The knight on d7 controls e5.}
+6... c6 {Prepares ...b5 or ...Qc7. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
+7. a4 {Stops ...b5. Gains space on the queenside; the pawn on a4 takes b5 away from the opponent.}
+7... Nbd7 {Develops the knight to d7, where it controls e5.}
 )
- (4. Bg5 {The Byrne. The bishop on g5 eyes the knight on f6.}
-4... Bg7 {Develops.}
-5. Qd2 {Prepares Bh6.}
+ (4. Bg5 {The Byrne. Develops the bishop to g5, where it controls f4 and eyes the knight on f6.}
+4... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+5. Qd2 {Prepares Bh6. The queen goes to d2 and supports the pawn on d4.}
 5... h6 {Kicks the bishop. The pawn on h6 eyes the bishop on g5.}
-6. Bh4 {Keeps the pin. The bishop on h4 eyes the knight on f6.}
-6... c6 {Flexible. The pawn on c6 controls d5.}
+6. Bh4 {Keeps the pin. Moves the bishop out of attack to h4.}
+6... c6 {Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
 )
-4... c6 {Prepares ...b5. The pawn on c6 controls d5.}
-5. Qd2 {Prepares Bh6.}
-5... b5 {[%cal Gb5b4] Queenside counterplay.}
-6. Bd3 {Develops. The bishop on d3 eyes the pawn on b5.}
-6... Nbd7 {Develops. The knight on d7 controls e5.}
-7. Nf3 {Develops. The knight on f3 controls e5.}
-7... e5 {Hits the centre. The pawn on e5 eyes the pawn on d4.} *
+4... c6 {Prepares ...b5. Supports the centre: the pawn on c6 controls b5 and d5. It also opens a line for the queen on d8.}
+5. Qd2 {Prepares Bh6. The queen goes to d2 and supports the pawn on d4.}
+5... b5 {[%cal Gb5b4] Queenside counterplay. Gains space on the queenside; the pawn on b5 takes a4 and c4 away from the opponent.}
+6. Bd3 {Develops the bishop to d3, where it supports the pawn on e4. Black's last move put a pawn on b5, which this now pressures.}
+6... Nbd7 {Develops the knight to d7, where it controls e5.}
+7. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4. That clears the way to castle kingside.}
+7... e5 {Hits the centre. The pawn on e5 controls f4 and eyes the pawn on d4.} *

@@ -1,65 +1,65 @@
 [Event "Evans Gambit Accepted"]
 
 {In the Italian, 4.b4 sacrifices a pawn to gain time for c3 and d4. Kasparov and Morphy both used it.}
-1. e4 {Centre. The pawn on e4 controls d5.}
-1... e5 {Classical. The pawn on e5 controls d4.}
-2. Nf3 {Attacks e5. The knight on f3 eyes the pawn on e5 and controls d4.}
-2... Nc6 {Defends. The knight on c6 controls d4.}
-3. Bc4 {[%cal Gc4f7] Aims at f7. The bishop on c4 eyes the pawn on f7 and controls d5.}
-3... Bc5 {The Giuoco Piano. The bishop on c5 eyes the pawn on f2 and controls d4.}
+1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... e5 {Claims the centre: the pawn on e5 controls d4 and f4. It also opens a line for the queen on d8 and the bishop on f8.}
+2. Nf3 {Attacks e5. Develops the knight to f3, where it controls d4 and eyes the pawn on e5. That pawn is currently undefended.}
+2... Nc6 {Develops the knight to c6, where it controls d4 and supports the pawn on e5.}
+3. Bc4 {[%cal Gc4f7] Aims at f7. Develops the bishop to c4, where it controls d5. That clears the way to castle kingside.}
+3... Bc5 {The Giuoco Piano. Develops the bishop to c5, where it controls d4.}
 4. b4 {[%cal Gb4c5] The Evans Gambit: decoys the bishop to win time.}
-4... Bxb4 {Accepts. The bishop on b4 eyes the pawn on d2.}
-5. c3 {[%cal Gc3b4] Gains a tempo on the bishop and prepares d4.}
+4... Bxb4 {Accepts. Takes the pawn on b4, and it cannot be taken back at once.}
+5. c3 {[%cal Gc3b4] Gains a tempo on the bishop and prepares d4. Supports the centre: the pawn on c3 controls d4 and eyes the bishop on b4. It also opens a line for the queen on d1.}
 5... Ba5 {The main line, keeping the bishop on the diagonal.}
- (5... Bc5 {Back to c5. The bishop on c5 eyes the pawn on f2 and controls d4.}
-6. d4 {[%cal Gd4c5] Centre with tempo. The pawn on d4 eyes the bishop on c5 and the pawn on e5.}
-6... exd4 {Takes. The pawn on d4 eyes the pawn on c3.}
-7. cxd4 {Recaptures; a big centre. The pawn on d4 eyes the bishop on c5 and controls e5.}
-7... Bb4+ {Check. It is check, so the reply is forced.}
-8. Bd2 {Blocks and offers a trade. The bishop on d2 eyes the bishop on b4.}
+ (5... Bc5 {Back to c5. Moves the bishop out of attack to c5 and controls d4.}
+6. d4 {[%cal Gd4c5] Centre with tempo. The pawn on d4 eyes the bishop on c5 and the pawn on e5. It also opens a line for the bishop on c1 and the queen on d1.}
+6... exd4 {Takes the pawn on d4; White will want to recapture.}
+7. cxd4 {Recaptures; a big centre. Recaptures on d4, restoring the material balance.}
+7... Bb4+ {Check. It is check, so the reply is forced. Moves the bishop out of attack to b4. It gives check.}
+8. Bd2 {Blocks and offers a trade. Develops the bishop to d2, where it controls e3 and f4. Black's last move put a bishop on b4, which this now pressures.}
 )
 6. d4 {[%csl Gd4,Ge4] The point: a big centre and fast development.}
-6... exd4 {Takes. The pawn on d4 eyes the pawn on c3.}
- (6... d6 {Holds e5.}
-7. Qb3 {[%cal Gb3f7] Hits f7. The queen on b3 eyes the pawn on b7.}
-7... Qd7 {Defends f7.}
-8. dxe5 {Opens lines. The pawn on e5 eyes the pawn on d6.}
-8... dxe5 {Recaptures. The pawn on e5 controls d4.}
+6... exd4 {Takes the pawn on d4; White will want to recapture.}
+ (6... d6 {Holds e5. Supports the centre: the pawn on d6 controls c5 and supports the pawn on e5. It also opens a line for the bishop on c8.}
+7. Qb3 {[%cal Gb3f7] Hits f7. The queen goes to b3.}
+7... Qd7 {Defends f7. The queen goes to d7.}
+8. dxe5 {Opens lines. Takes the pawn on e5; Black will want to recapture.}
+8... dxe5 {Recaptures on e5, restoring the material balance.}
 9. O-O {Castles; Black's king is stuck in the centre for now.}
-9... Bb6 {Re-routes the bishop. The bishop on b6 eyes the pawn on f2 and controls d4.}
-10. a4 {[%cal Ga4a5] Harasses the bishop.}
+9... Bb6 {Re-routes the bishop. Regroups the bishop to b6 and controls d4.}
+10. a4 {[%cal Ga4a5] Harasses the bishop. Gains space on the queenside; the pawn on a4 takes b5 away from the opponent.}
 )
 7. O-O {Castles, with a lead in development. The king is safe and the rook comes into play.}
-7... Nge7 {Supports a quick ...d5. The knight on e7 controls d5.}
-8. cxd4 {Restores the centre. The pawn on d4 controls e5.}
-8... d5 {Returns the pawn to free the game. The pawn on d5 eyes the bishop on c4 and the pawn on e4.}
-9. exd5 {Takes. The pawn on d5 eyes the knight on c6.}
-9... Nxd5 {Recaptures.} *
+7... Nge7 {Supports a quick ...d5. Develops the knight to e7, where it controls d5. That clears the way to castle kingside.}
+8. cxd4 {Restores the centre. Takes the pawn on d4; Black will want to recapture.}
+8... d5 {Returns the pawn to free the game. Claims the centre: the pawn on d5 eyes the bishop on c4 and the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
+9. exd5 {Takes the pawn on d5; Black will want to recapture.}
+9... Nxd5 {Recaptures on d5, restoring the material balance.} *
 
 [Event "Evans Gambit Declined & Lasker"]
 
 {Black can decline with 4...Bb6 or return the pawn with 5...Be7.}
-1. e4 {Centre. The pawn on e4 controls d5.}
-1... e5 {Classical. The pawn on e5 controls d4.}
-2. Nf3 {Attacks e5. The knight on f3 eyes the pawn on e5 and controls d4.}
-2... Nc6 {Defends. The knight on c6 controls d4.}
-3. Bc4 {Italian. The bishop on c4 eyes the pawn on f7 and controls d5.}
-3... Bc5 {Piano. The bishop on c5 eyes the pawn on f2 and controls d4.}
-4. b4 {Evans Gambit. The pawn on b4 eyes the bishop on c5.}
-4... Bb6 {Declines. The bishop on b6 eyes the pawn on f2 and controls d4.}
- (4... Bxb4 {Accepts. The bishop on b4 eyes the pawn on d2.}
-5. c3 {Gains time. The pawn on c3 eyes the bishop on b4 and controls d4.}
-5... Be7 {The safe retreat.}
-6. d4 {Centre. The pawn on d4 eyes the pawn on e5.}
-6... Na5 {Hits the c4-bishop. The knight on a5 eyes the bishop on c4.}
-7. Nxe5 {[%cal Ge5f7] White takes e5 with threats on f7. The knight on e5 eyes the pawn on d7 and the pawn on f7.}
-7... Nxc4 {Takes the bishop. The knight on c4 eyes the knight on e5.}
-8. Nxc4 {Recaptures. The knight on c4 controls e5.}
-8... d5 {Black returns the pawn to develop. The pawn on d5 eyes the knight on c4 and the pawn on e4.}
-9. exd5 {Takes.}
-9... Qxd5 {Recaptures. The queen on d5 eyes the knight on c4 and the pawn on d4 and controls e4 and e5.}
-10. Ne3 {[%cal Ge3d5] Hits the queen. The knight on e3 eyes the queen on d5.}
+1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... e5 {Claims the centre: the pawn on e5 controls d4 and f4. It also opens a line for the queen on d8 and the bishop on f8.}
+2. Nf3 {Attacks e5. Develops the knight to f3, where it controls d4 and eyes the pawn on e5. That pawn is currently undefended.}
+2... Nc6 {Develops the knight to c6, where it controls d4 and supports the pawn on e5.}
+3. Bc4 {Italian. Develops the bishop to c4, where it controls d5. That clears the way to castle kingside.}
+3... Bc5 {Piano. Develops the bishop to c5, where it controls d4.}
+4. b4 {Evans Gambit. Gains space on the queenside; the pawn on b4 takes a5 and c5 away from the opponent. It attacks the bishop on c5, which is undefended.}
+4... Bb6 {Declines. Moves the bishop out of attack to b6 and controls d4.}
+ (4... Bxb4 {Accepts. Takes the pawn on b4, and it cannot be taken back at once.}
+5. c3 {Gains time. Supports the centre: the pawn on c3 controls d4 and eyes the bishop on b4. It also opens a line for the queen on d1.}
+5... Be7 {The safe retreat. The bishop goes to e7.}
+6. d4 {Claims the centre: the pawn on d4 controls c5 and eyes the pawn on e5. It also opens a line for the bishop on c1 and the queen on d1.}
+6... Na5 {Hits the c4-bishop. The knight goes to a5. It attacks the bishop on c4, which is undefended.}
+7. Nxe5 {[%cal Ge5f7] White takes e5 with threats on f7. Takes the pawn on e5, and it cannot be taken back at once.}
+7... Nxc4 {Takes the bishop. Takes the bishop on c4; White will want to recapture.}
+8. Nxc4 {Recaptures on c4, restoring the material balance.}
+8... d5 {Black returns the pawn to develop. Claims the centre: the pawn on d5 eyes the knight on c4 and the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
+9. exd5 {Takes the pawn on d5; Black will want to recapture.}
+9... Qxd5 {Recaptures on d5, restoring the material balance.}
+10. Ne3 {[%cal Ge3d5] Hits the queen. Moves the knight out of attack to e3 and eyes the queen on d5. That queen is currently undefended.}
 )
-5. a4 {[%cal Ga4a5] Gains queenside space and threatens a5.}
-5... a6 {Makes room for the bishop on a7.}
-6. Nc3 {Develops. The knight on c3 controls d5.} *
+5. a4 {[%cal Ga4a5] Gains queenside space and threatens a5. The pawn on a4 takes b5 away from the opponent.}
+5... a6 {Makes room for the bishop on a7. The pawn on a6 controls b5.}
+6. Nc3 {Develops the knight to c3, where it controls d5 and supports the pawn on e4.} *

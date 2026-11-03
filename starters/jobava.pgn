@@ -1,42 +1,42 @@
 [Event "Jobava London vs ...d5"]
 
 {The Jobava London (1.d4 d5 2.Nc3 + Bf4) is the aggressive cousin of the London. The knight on c3 eyes b5, and White can castle long and push the kingside pawns.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... d5 {Symmetry. The pawn on d5 controls e4.}
-2. Nc3 {[%cal Gc3b5] The Jobava: the knight eyes b5. The knight on c3 eyes the pawn on d5 and controls e4.}
-2... Nf6 {Develops. The knight on f6 controls e4.}
-3. Bf4 {[%cal Gf4c7] The bishop eyes c7. The bishop on f4 eyes the pawn on c7 and controls e5.}
-3... e6 {Solid.}
- (3... Bf5 {Mirrors the bishop. The bishop on f5 eyes the pawn on c2 and controls e4.}
-4. f3 {Prepares e4 or g4. The pawn on f3 controls e4.}
-4... e6 {Solid.}
-5. g4 {[%cal Gg4f5] Hunts the bishop. The pawn on g4 eyes the bishop on f5.}
-5... Bg6 {Retreats. The bishop on g6 eyes the pawn on c2 and controls e4.}
-6. h4 {[%cal Gh4h5] Threatens h5.}
-6... h6 {Makes room.}
-7. e3 {Solid.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... d5 {Claims the centre: the pawn on d5 controls c4 and e4. It also opens a line for the bishop on c8 and the queen on d8.}
+2. Nc3 {[%cal Gc3b5] The Jobava: the knight eyes b5. Develops the knight to c3, where it controls e4 and eyes the pawn on d5. Black's last move put a pawn on d5, which this now pressures.}
+2... Nf6 {Develops the knight to f6, where it controls e4 and supports the pawn on d5.}
+3. Bf4 {[%cal Gf4c7] The bishop eyes c7. Develops the bishop to f4, where it controls e5.}
+3... e6 {Supports the centre: the pawn on e6 controls f5 and supports the pawn on d5. It also opens a line for the bishop on f8.}
+ (3... Bf5 {Mirrors the bishop. Develops the bishop to f5, where it controls e4.}
+4. f3 {Prepares e4 or g4. Supports the centre: the pawn on f3 controls e4 and g4.}
+4... e6 {Supports the centre: the pawn on e6 supports the pawn on d5 and the bishop on f5. It also opens a line for the bishop on f8.}
+5. g4 {[%cal Gg4f5] Hunts the bishop. Gains space on the kingside; the pawn on g4 takes f5 and h5 away from the opponent. It attacks the bishop on f5.}
+5... Bg6 {Moves the bishop out of attack to g6 and controls e4.}
+6. h4 {[%cal Gh4h5] Threatens h5. Gains space on the kingside; the pawn on h4 takes g5 away from the opponent.}
+6... h6 {Makes room. The pawn on h6 controls g5.}
+7. e3 {Supports the centre: the pawn on e3 supports the pawn on d4 and the bishop on f4. It also opens a line for the bishop on f1.}
 )
- (3... c5 {Counters at once. The pawn on c5 eyes the pawn on d4.}
-4. e3 {Solid.}
-4... Nc6 {Develops. The knight on c6 eyes the pawn on d4 and controls e5.}
-5. Nb5 {[%cal Gb5c7] Threatens Nc7+. The knight on b5 eyes the pawn on a7.}
+ (3... c5 {Counters at once. Supports the centre: the pawn on c5 controls b4 and eyes the pawn on d4. It also opens a line for the queen on d8.}
+4. e3 {Supports the centre: the pawn on e3 supports the pawn on d4 and the bishop on f4. It also opens a line for the queen on d1 and the bishop on f1.}
+4... Nc6 {Develops the knight to c6, where it controls e5 and eyes the pawn on d4.}
+5. Nb5 {[%cal Gb5c7] Threatens Nc7+. The knight goes to b5 and supports the pawn on d4.}
 )
-4. e3 {Solid.}
-4... Bd6 {Offers a trade. The bishop on d6 eyes the bishop on f4 and controls e5.}
-5. Nb5 {[%cal Gb5d6] Wins the bishop pair. The knight on b5 eyes the pawn on a7 and the pawn on c7.} *
+4. e3 {Supports the centre: the pawn on e3 supports the pawn on d4 and the bishop on f4. It also opens a line for the queen on d1 and the bishop on f1.}
+4... Bd6 {Offers a trade. Develops the bishop to d6, where it controls e5. That clears the way to castle kingside.}
+5. Nb5 {[%cal Gb5d6] Wins the bishop pair. The knight goes to b5 and supports the pawn on d4. Black's last move put a bishop on d6, which this now pressures.} *
 
 [Event "Jobava London vs King's Indian setups"]
 
 {Against ...g6, White pushes h4.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
-2. Nc3 {Jobava. The knight on c3 controls d5 and e4.}
-2... g6 {Fianchetto.}
-3. Bf4 {Develops. The bishop on f4 eyes the pawn on c7 and controls e5.}
-3... Bg7 {Fianchetto.}
-4. e3 {Solid.}
-4... d6 {Solid. The pawn on d6 controls e5.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2. Nc3 {Jobava. Develops the knight to c3, where it controls d5 and e4.}
+2... g6 {Fianchetto. The pawn on g6 controls f5 and h5.}
+3. Bf4 {Develops the bishop to f4, where it controls e5.}
+3... Bg7 {Fianchetto. The bishop on g7 rakes the long diagonal through f6. That clears the way to castle kingside.}
+4. e3 {Supports the centre: the pawn on e3 supports the pawn on d4 and the bishop on f4. It also opens a line for the queen on d1 and the bishop on f1.}
+4... d6 {Supports the centre: the pawn on d6 controls c5 and e5. It also opens a line for the bishop on c8.}
  (4... O-O {Castles early. The king is safe and the rook comes into play.}
-5. h4 {[%cal Gh4h5] Attacks the castled king right away.}
+5. h4 {[%cal Gh4h5] Attacks the castled king right away. Gains space on the kingside; the pawn on h4 takes g5 away from the opponent.}
 )
-5. h4 {[%cal Gh4h5] The kingside push.} *
+5. h4 {[%cal Gh4h5] The kingside push. Gains space on the kingside; the pawn on h4 takes g5 away from the opponent.} *

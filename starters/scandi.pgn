@@ -1,54 +1,54 @@
 [Event "Scandinavian: 3...Qa5"]
 
 {The Scandinavian (1...d5) challenges e4 at once. Black accepts some loss of time with the queen for a clear, solid structure.}
-1. e4 {Centre. The pawn on e4 controls d5.}
-1... d5 {[%cal Gd5e4] The Scandinavian. The pawn on d5 eyes the pawn on e4.}
-2. exd5 {Takes.}
-2... Qxd5 {Recaptures. The queen on d5 eyes the pawn on a2 and the pawn on d2 and controls d4 and e4 and e5.}
-3. Nc3 {Gains time on the queen. The knight on c3 eyes the queen on d5 and controls e4.}
-3... Qa5 {[%cal Ga5c3] The queen pins the knight. The queen on a5 eyes the knight on c3 and the pawn on a2 and controls d5 and e5.}
- (3... Qd6 {The modern retreat. The queen on d6 eyes the pawn on d2 and the pawn on h2 and controls d4 and d5 and e5.}
-4. d4 {Centre. The pawn on d4 controls e5.}
-4... Nf6 {Develops. The knight on f6 controls d5 and e4.}
-5. Nf3 {Develops. The knight on f3 controls e5.}
-5... a6 {Stops Nb5.}
-6. g3 {Fianchetto.}
-6... Bg4 {Develops. The bishop on g4 eyes the knight on f3.}
+1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... d5 {[%cal Gd5e4] The Scandinavian. Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
+2. exd5 {Takes the pawn on d5; Black will want to recapture.}
+2... Qxd5 {Recaptures on d5, restoring the material balance.}
+3. Nc3 {Gains time on the queen. Develops the knight to c3, where it controls e4 and eyes the queen on d5. That queen is currently undefended.}
+3... Qa5 {[%cal Ga5c3] The queen pins the knight. Moves the queen out of attack to a5 and controls d5 and e5. White's last move put a knight on c3, which this now pressures.}
+ (3... Qd6 {The modern retreat. The queen goes to d6 and controls e5, d5 and d4.}
+4. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+4... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+5. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+5... a6 {Stops Nb5. The pawn on a6 controls b5.}
+6. g3 {Fianchetto. The pawn on g3 controls f4 and h4.}
+6... Bg4 {Develops the bishop to g4, where it controls f5 and e6.}
 )
-4. d4 {Centre. The pawn on d4 controls e5.}
-4... Nf6 {Develops. The knight on f6 controls d5 and e4.}
-5. Nf3 {Develops. The knight on f3 controls e5.}
-5... c6 {Gives the queen d8 and stops Nb5. The pawn on c6 controls d5.}
- (5... Bf5 {Develops the bishop before ...c6. The bishop on f5 eyes the pawn on c2 and controls e4.}
+4. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+4... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+5. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+5... c6 {Gives the queen d8 and stops Nb5. Supports the centre: the pawn on c6 controls b5 and d5.}
+ (5... Bf5 {Develops the bishop before ...c6. The bishop on f5 controls e4.}
 6. Bd2 {[%cal Gd2a5] Unpins, with Nd5 or Bc4 ideas against the queen.}
-6... c6 {Now covers d5 and b5. The pawn on c6 controls d5.}
+6... c6 {Now covers d5 and b5. Supports the centre: the pawn on c6 controls b5 and d5.}
 )
-6. Bc4 {Develops. The bishop on c4 eyes the pawn on f7 and controls d5.}
-6... Bf5 {Develops outside the chain. The bishop on f5 eyes the pawn on c2 and controls e4.}
-7. Bd2 {Unpins.}
-7... e6 {Solid. The pawn on e6 controls d5.} *
+6. Bc4 {Develops the bishop to c4, where it controls d5. That clears the way to castle kingside.}
+6... Bf5 {Develops outside the chain. The bishop on f5 controls e4.}
+7. Bd2 {Unpins. Develops the bishop to d2, where it controls e3 and f4.}
+7... e6 {Supports the centre: the pawn on e6 controls d5 and supports the bishop on f5. It also opens a line for the bishop on f8.} *
 
 [Event "Scandinavian: 3.Nf3 & 3.d4"]
 
 {White can delay Nc3.}
-1. e4 {Centre. The pawn on e4 controls d5.}
-1... d5 {Scandinavian. The pawn on d5 eyes the pawn on e4.}
-2. exd5 {Takes.}
-2... Qxd5 {Recaptures. The queen on d5 eyes the pawn on a2 and the pawn on d2 and controls d4 and e4 and e5.}
-3. Nf3 {Develops. The knight on f3 controls d4 and e5.}
- (3. d4 {Centre. The pawn on d4 controls e5.}
-3... Nf6 {Develops. The knight on f6 controls e4.}
-4. Nf3 {Develops. The knight on f3 controls e5.}
-4... Bf5 {Develops. The bishop on f5 eyes the pawn on c2 and controls e4.}
-5. c4 {Gains time. The pawn on c4 eyes the queen on d5.}
-5... Qd8 {Safe retreat. The queen on d8 eyes the pawn on d4 and controls d5.}
+1. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the queen on d1 and the bishop on f1.}
+1... d5 {Scandinavian. Claims the centre: the pawn on d5 controls c4 and eyes the pawn on e4. It also opens a line for the bishop on c8 and the queen on d8.}
+2. exd5 {Takes the pawn on d5; Black will want to recapture.}
+2... Qxd5 {Recaptures on d5, restoring the material balance.}
+3. Nf3 {Develops the knight to f3, where it controls e5 and d4.}
+ (3. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+3... Nf6 {Develops the knight to f6, where it controls e4 and supports the queen on d5.}
+4. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+4... Bf5 {Develops the bishop to f5, where it controls e4.}
+5. c4 {Gains time. Supports the centre: the pawn on c4 controls b5 and eyes the queen on d5. It also opens a line for the queen on d1.}
+5... Qd8 {Safe retreat. The queen goes to d8 and controls d5 and eyes the pawn on d4.}
 )
-3... Nf6 {Develops. The knight on f6 controls e4.}
-4. d4 {Centre. The pawn on d4 controls e5.}
-4... Bg4 {Pins. The bishop on g4 eyes the knight on f3.}
-5. Be2 {Unpins.}
-5... e6 {Solid.}
+3... Nf6 {Develops the knight to f6, where it controls e4 and supports the queen on d5.}
+4. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+4... Bg4 {Pins. Develops the bishop to g4, where it controls f5 and e6.}
+5. Be2 {Unpins. Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
+5... e6 {Supports the centre: the pawn on e6 controls f5 and supports the queen on d5. It also opens a line for the bishop on f8.}
 6. O-O {Castles. The king is safe and the rook comes into play.}
-6... Nc6 {Develops. The knight on c6 eyes the pawn on d4 and controls e5.}
-7. c4 {Gains time. The pawn on c4 eyes the queen on d5.}
-7... Qh5 {Retreats. The queen on h5 eyes the pawn on h2 and controls d5 and e5.} *
+6... Nc6 {Develops the knight to c6, where it controls e5 and eyes the pawn on d4.}
+7. c4 {Gains time. Supports the centre: the pawn on c4 controls b5 and eyes the queen on d5. It also opens a line for the queen on d1.}
+7... Qh5 {Moves the queen out of attack to h5 and controls e5 and d5.} *

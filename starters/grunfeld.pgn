@@ -1,67 +1,67 @@
 [Event "Grünfeld: Exchange"]
 
 {The Grünfeld (3...d5) lets White build a big centre and then attacks it with ...c5, ...Nc6 and the g7-bishop.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
-2. c4 {Space. The pawn on c4 controls d5.}
-2... g6 {Fianchetto.}
-3. Nc3 {Develops. The knight on c3 controls d5 and e4.}
-3... d5 {[%cal Gd5c4] The Grünfeld. The pawn on d5 eyes the pawn on c4 and controls e4.}
-4. cxd5 {The Exchange.}
-4... Nxd5 {Recaptures. The knight on d5 eyes the knight on c3.}
-5. e4 {Kicks the knight. The pawn on e4 eyes the knight on d5.}
-5... Nxc3 {Trades. The knight on c3 eyes the pawn on e4 and the pawn on a2 and controls d5.}
-6. bxc3 {Recaptures toward the centre.}
-6... Bg7 {[%cal Gg7c3] Hits c3 and d4. The bishop on g7 eyes the pawn on d4 and controls e5.}
-7. Bc4 {Develops. The bishop on c4 eyes the pawn on f7 and controls d5.}
- (7. Nf3 {The modern Rb1 line. The knight on f3 controls e5.}
-7... c5 {Hits d4. The pawn on c5 eyes the pawn on d4.}
-8. Rb1 {Prepares to take b7. The rook on b1 eyes the pawn on b7.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2. c4 {Space. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
+2... g6 {Fianchetto. The pawn on g6 controls f5 and h5.}
+3. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+3... d5 {[%cal Gd5c4] The Grünfeld. Claims the centre: the pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the bishop on c8 and the queen on d8.}
+4. cxd5 {The Exchange. Takes the pawn on d5; Black will want to recapture.}
+4... Nxd5 {Recaptures on d5, restoring the material balance.}
+5. e4 {Kicks the knight. Claims the centre: the pawn on e4 controls f5 and eyes the knight on d5. It also opens a line for the queen on d1 and the bishop on f1.}
+5... Nxc3 {Takes the knight on c3; White will want to recapture.}
+6. bxc3 {Recaptures toward the centre. Recaptures on c3, restoring the material balance.}
+6... Bg7 {[%cal Gg7c3] Hits c3 and d4. Fianchettoes the bishop on g7, where it rakes the long diagonal through f6, e5 and d4. That clears the way to castle kingside.}
+7. Bc4 {Develops the bishop to c4, where it controls d5.}
+ (7. Nf3 {The modern Rb1 line. Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+7... c5 {Hits d4. Supports the centre: the pawn on c5 controls b4 and eyes the pawn on d4. It also opens a line for the queen on d8.}
+8. Rb1 {Prepares to take b7. The rook goes to b1.}
 8... O-O {Castles. The king is safe and the rook comes into play.}
-9. Be2 {Develops.}
-9... cxd4 {Takes. The pawn on d4 eyes the pawn on c3.}
-10. cxd4 {Recaptures. The pawn on d4 controls e5.}
-10... Qa5+ {Checks. The queen on a5 eyes the pawn on a2 and controls d5 and e5. It is check, so the reply is forced.}
-11. Bd2 {Blocks. The bishop on d2 eyes the queen on a5.}
-11... Qxa2 {Takes a2. The queen on a2 eyes the bishop on d2 and the rook on b1 and controls d5.}
+9. Be2 {Develops the bishop to e2, where it controls d3 and supports the knight on f3. That clears the way to castle kingside.}
+9... cxd4 {Takes the pawn on d4; White will want to recapture.}
+10. cxd4 {Recaptures on d4, restoring the material balance.}
+10... Qa5+ {Checks. It is check, so the reply is forced. The queen goes to a5 and controls d5 and e5. It gives check and attacks the pawn on a2, which is undefended.}
+11. Bd2 {Blocks. Develops the bishop to d2, where it controls e3 and f4. It attacks the queen on a5, which is undefended.}
+11... Qxa2 {Takes a2. Takes the pawn on a2, and it cannot be taken back at once.}
 12. O-O {Castles. The king is safe and the rook comes into play.}
 )
-7... c5 {Hits d4. The pawn on c5 eyes the pawn on d4.}
+7... c5 {Hits d4. Supports the centre: the pawn on c5 controls b4 and eyes the pawn on d4. It also opens a line for the queen on d8.}
  (7... O-O {Castles first. The king is safe and the rook comes into play.}
-8. Ne2 {Develops; f3 can support e4 later.}
-8... c5 {Now hits d4. The pawn on c5 eyes the pawn on d4.}
+8. Ne2 {Develops; f3 can support e4 later. The knight on e2 supports the pawn on d4. That clears the way to castle kingside.}
+8... c5 {Now hits d4. Supports the centre: the pawn on c5 controls b4 and eyes the pawn on d4. It also opens a line for the queen on d8.}
 )
-8. Ne2 {Develops.}
-8... Nc6 {More pressure on d4. The knight on c6 eyes the pawn on d4 and controls e5.}
-9. Be3 {Defends d4.}
+8. Ne2 {Develops the knight to e2, where it supports the pawn on d4. That clears the way to castle kingside.}
+8... Nc6 {More pressure on d4. Develops the knight to c6, where it controls e5 and eyes the pawn on d4.}
+9. Be3 {Defends d4. Develops the bishop to e3, where it supports the pawn on d4.}
 9... O-O {Castles. The king is safe and the rook comes into play.}
 10. O-O {Castles. The king is safe and the rook comes into play.} *
 
 [Event "Grünfeld: 4.Bf4 & Russian"]
 
 {Other main systems.}
-1. d4 {Centre. The pawn on d4 controls e5.}
-1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
-2. c4 {Space. The pawn on c4 controls d5.}
-2... g6 {Fianchetto.}
-3. Nc3 {Develops. The knight on c3 controls d5 and e4.}
-3... d5 {Grünfeld. The pawn on d5 eyes the pawn on c4 and controls e4.}
-4. Bf4 {Develops. The bishop on f4 eyes the pawn on c7 and controls e5.}
- (4. Nf3 {Develops. The knight on f3 controls e5.}
-4... Bg7 {Develops.}
-5. Qb3 {The Russian System. The queen on b3 eyes the pawn on b7.}
-5... dxc4 {Takes. The pawn on c4 eyes the queen on b3.}
-6. Qxc4 {Recaptures. The queen on c4 eyes the pawn on c7 and the pawn on f7 and controls d5.}
+1. d4 {Claims the centre: the pawn on d4 controls c5 and e5. It also opens a line for the bishop on c1 and the queen on d1.}
+1... Nf6 {Develops the knight to f6, where it controls e4 and d5.}
+2. c4 {Space. Supports the centre: the pawn on c4 controls b5 and d5. It also opens a line for the queen on d1.}
+2... g6 {Fianchetto. The pawn on g6 controls f5 and h5.}
+3. Nc3 {Develops the knight to c3, where it controls d5 and e4.}
+3... d5 {Grünfeld. Claims the centre: the pawn on d5 controls e4 and eyes the pawn on c4. It also opens a line for the bishop on c8 and the queen on d8.}
+4. Bf4 {Develops the bishop to f4, where it controls e5.}
+ (4. Nf3 {Develops the knight to f3, where it controls e5 and supports the pawn on d4.}
+4... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+5. Qb3 {The Russian System. The queen goes to b3.}
+5... dxc4 {Takes the pawn on c4; White will want to recapture.}
+6. Qxc4 {Recaptures on c4, restoring the material balance.}
 6... O-O {Castles. The king is safe and the rook comes into play.}
-7. e4 {Centre. The pawn on e4 controls d5.}
-7... a6 {The Hungarian.}
+7. e4 {Claims the centre: the pawn on e4 controls d5 and f5. It also opens a line for the bishop on f1.}
+7... a6 {The Hungarian. The pawn on a6 controls b5.}
 )
-4... Bg7 {Develops.}
-5. e3 {Solid.}
-5... c5 {Hits d4. The pawn on c5 eyes the pawn on d4.}
-6. dxc5 {Takes.}
-6... Qa5 {Pins. The queen on a5 eyes the pawn on c5 and the knight on c3.}
-7. Rc1 {Defends.}
-7... dxc4 {Takes.}
-8. Bxc4 {Recaptures. The bishop on c4 eyes the pawn on f7 and controls d5.}
+4... Bg7 {Fianchettoes the bishop on g7, where it rakes the long diagonal through f6. That clears the way to castle kingside.}
+5. e3 {Supports the centre: the pawn on e3 supports the pawn on d4 and the bishop on f4. It also opens a line for the queen on d1 and the bishop on f1.}
+5... c5 {Hits d4. Supports the centre: the pawn on c5 controls b4 and eyes the pawn on d4. It also opens a line for the queen on d8.}
+6. dxc5 {Takes the pawn on c5, and it cannot be taken back at once.}
+6... Qa5 {Pins. The queen goes to a5. It attacks the pawn on c5, which is undefended.}
+7. Rc1 {The rook goes to c1.}
+7... dxc4 {Takes the pawn on c4; White will want to recapture.}
+8. Bxc4 {Recaptures on c4, restoring the material balance.}
 8... O-O {Castles. The king is safe and the rook comes into play.} *
