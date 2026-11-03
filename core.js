@@ -320,3 +320,43 @@ export function lastDays(hist = {}, n = 14, now = new Date()) {
   for (let i = 0; i < n; i++) { const k = dayKey(d); out.push({ k, n: hist[k] || 0 }); d.setDate(d.getDate() + 1); }
   return out;
 }
+
+// ---------- game import: compare real games with your repertoire ----------
+// SAN moves from a PGN game (headers, comments, NAGs, move numbers and result stripped)
+export function gameMoves(pgn) {
+  return String(pgn || '').replace(/^\s*\[[^\]]*\]\s*$/gm, '').replace(/\{[^}]*\}/g, ' ').replace(/\([^()]*\)/g, ' ').replace(/\$\d+/g, ' ')
+    .split(/\s+/).map(t => t.replace(/^\d+\.(\.\.)?/, '').replace(/[!?]+$/, '')).filter(t => t && !/^\d+\.*$/.test(t) && !/^(1-0|0-1|1\/2-1\/2|\*)$/.test(t));
+}
+// position -> what your repertoires play there: { mine: Map(san -> spot), opp: Set(san) }
+export function bookIndex(reps) {
+  const ix = { w: new Map(), b: new Map() };
+  for (const rep of reps) {
+    const M = ix[rep.color]; if (!M) continue;
+    (rep.lines || []).forEach((l, li) => {
+      const c = new Chess();
+      for (let ply = 0; ply < l.m.length; ply++) {
+        const k = fenKey(c.fen()); let e = M.get(k); if (!e) M.set(k, e = { mine: new Map(), opp: new Set() });
+        const side = c.turn(); let mv; try { mv = c.move(l.m[ply]); } catch { break; }
+        if (side === rep.color) { if (!e.mine.has(mv.san)) e.mine.set(mv.san, { rep: rep.id, li, ply }); } else e.opp.add(mv.san);
+      }
+    });
+  }
+  return ix;
+}
+// first place a game leaves your book. who: 'you' (you played something else: drill spot given), 'opponent' (they left your prep),
+// 'end' (you reached the end of your lines), or null when the game never touched your repertoire.
+export function firstDeviation(moves, color, ix) {
+  const M = ix[color], c = new Chess(); let inBook = false;
+  for (let ply = 0; ply < moves.length; ply++) {
+    const e = M.get(fenKey(c.fen())), side = c.turn(); let mv; try { mv = c.move(moves[ply]); } catch { return { who: null, ply, error: 'illegal ' + moves[ply] }; }
+    if (side === color) {
+      if (!e || !e.mine.size) return { who: inBook ? 'end' : null, ply };
+      if (!e.mine.has(mv.san)) return { who: 'you', ply, played: mv.san, expected: [...e.mine.keys()], spot: [...e.mine.values()][0] };
+    } else {
+      if (!e || !e.opp.size) return { who: inBook ? 'end' : null, ply };
+      if (!e.opp.has(mv.san)) return { who: inBook || ply ? 'opponent' : null, ply, played: mv.san, expected: [...e.opp] };
+    }
+    inBook = true;
+  }
+  return { who: 'end', ply: moves.length };
+}

@@ -1,7 +1,7 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { lastDays, mistakeSpots, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
+import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
 import { KB } from '../kb.js';
 const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
@@ -150,4 +150,15 @@ ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Google US English', lang
     ok(s && legal && (t.b % 2 === 0 ? 'w' : 'b') !== s.color && t.n[t.b], `trap ${t.rep}: ${t.name} legal, opponent errs at ply ${t.b}, annotated`); }
 }
 { const d = lastDays({ [dayKey(new Date())]: 3 }, 14); ok(d.length === 14 && d.at(-1).n === 3 && d[0].n === 0, 'lastDays: 14 days, today last'); }
+{ // game import
+  const mv = gameMoves('[Event "Live"]\n[White "a"]\n\n1. e4 {[%clk 0:03:00]} 1... c5 2. Nf3 d6 3. Bb5+ $6 Bd7 1-0');
+  ok(mv.join(' ') === 'e4 c5 Nf3 d6 Bb5+ Bd7', 'gameMoves strips headers, clocks, NAGs, result');
+  const rep = { id: 'r', color: 'b', lines: [{ m: ['e4', 'c5', 'Nf3', 'd6', 'd4', 'cxd4'] }, { m: ['e4', 'c5', 'Nf3', 'd6', 'Bb5+', 'Bd7'] }] }, ix = bookIndex([rep]);
+  const y = firstDeviation(['e4', 'c5', 'Nf3', 'd6', 'd4', 'Nf6'], 'b', ix);
+  ok(y.who === 'you' && y.ply === 5 && y.expected[0] === 'cxd4' && y.spot.li === 0 && y.spot.ply === 5, 'firstDeviation: you left book, with drill spot');
+  ok(firstDeviation(['e4', 'c5', 'Nf3', 'd6', 'c3'], 'b', ix).who === 'opponent', 'firstDeviation: opponent left book');
+  ok(firstDeviation(['e4', 'c5', 'Nf3', 'd6', 'Bb5+', 'Bd7', 'Bxd7+'], 'b', ix).who === 'end', 'firstDeviation: end of prep');
+  ok(firstDeviation(['d4', 'd5'], 'b', ix).who === null, 'firstDeviation: not your opening');
+  ok(firstDeviation(['e4', 'e5'], 'b', ix).who === 'you', 'firstDeviation: your first move differs');
+}
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

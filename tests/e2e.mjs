@@ -439,4 +439,21 @@ await retiMoves('everything learned, nothing due', FX('ls-c2e3afe.json'), { lear
   ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'progress page fits a 360px phone');
   await p.screenshot({ path: '/workspace/skoha-feat-progress.png', fullPage: true }); ok(!errs.length, 'no page errors on progress ' + errs.join());
   await c.close(); }
+{ const c = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+  const pgn = (w, bl, m) => `[White "${w}"]\n[Black "${bl}"]\n\n${m} 1-0`;
+  await p.route('https://api.chess.com/**', r => { const u = r.request().url();
+    if (u.endsWith('/archives')) return r.fulfill({ json: { archives: [u.replace('/archives', '/2026/10'), u.replace('/archives', '/2026/11')] }, headers: { 'access-control-allow-origin': '*' } });
+    if (/nosuchuser/.test(u)) return r.fulfill({ status: 404, json: {} });
+    const me = u.split('/player/')[1].split('/')[0];
+    return r.fulfill({ headers: { 'access-control-allow-origin': '*' }, json: { games: [{ url: 'https://www.chess.com/game/live/1' + me + u.slice(-2), rules: 'chess', end_time: 1790000000, white: { username: me, result: 'win' }, black: { username: 'opp', result: 'resigned' }, pgn: pgn(me, 'opp', '1. Nf3 d5 2. c4 e6 3. e3 Nf6') }] } }); });
+  await p.goto('http://localhost:8765/#/progress'); await p.waitForTimeout(1200); if (await p.isVisible('#gSkip')) { await p.click('#gSkip'); await p.goto('http://localhost:8765/#/progress'); await p.waitForTimeout(500); }
+  await p.fill('#ccUsers', 'userone, UserTwo nosuchuser'); await p.click('#ccGo'); await p.waitForSelector('#ccOut .pstats', { timeout: 10000 });
+  const t = await p.textContent('#ccOut');
+  ok(/4\s*games checked/.test(t) && /no such chess.com user/.test(t), 'import merges games from several usernames and reports a bad one: ' + t.slice(0, 80));
+  ok(/You left book at 3\. e3/.test(t), 'import shows where you left book');
+  ok(JSON.parse(await p.evaluate(() => localStorage.getItem('skoha.chesscom'))).users.length === 3 && !(await p.evaluate(() => localStorage.getItem('freereps.v2'))).includes('userone'), 'usernames stored locally, separate from synced data');
+  await p.screenshot({ path: '/workspace/skoha-feat-import.png', fullPage: true });
+  await p.click('#ccDrill'); await p.waitForTimeout(700);
+  ok(await p.evaluate(() => { const d = window.__freereps.drill; return d.mode === 'spots' && d.ply === 4 && d.rep.starter === 'reti'; }), 'Drill my spots jumps to the game position');
+  ok(!errs.length, 'no page errors in import ' + errs.join()); await c.close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

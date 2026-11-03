@@ -1,10 +1,10 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261103f';
-import { TRAPS } from './traps.js?v=20261103f';
-import { KB } from './kb.js?v=20261103f';
-import { Engine } from './engine.js?v=20261103f';
-import { Narrator } from './narrator.js?v=20261103f';
+import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261103g';
+import { TRAPS } from './traps.js?v=20261103g';
+import { KB } from './kb.js?v=20261103g';
+import { Engine } from './engine.js?v=20261103g';
+import { Narrator } from './narrator.js?v=20261103g';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -221,8 +221,48 @@ function renderProgress() {
   $('#progressBody').innerHTML = `<div class="pstats"><div class="stat"><div class="n">🔥 ${goalStreak(h, 1)}</div><div class="l">day streak</div></div><div class="stat"><div class="n">${goalStreak(h, goal)}</div><div class="l">days hitting goal (${goal})</div></div><div class="stat"><div class="n">${today}</div><div class="l">reviews today</div></div><div class="stat"><div class="n">${st.reviews ? Math.round(100 * st.correct / st.reviews) + '%' : '–'}</div><div class="l">accuracy</div></div></div>
     <h2 class="sect">Last 14 days</h2><div class="pchart" role="img" aria-label="Reviews per day, last 14 days">${days.map(d => `<div class="pcol${d.n >= goal ? ' hit' : ''}" title="${d.k}: ${d.n}"><i style="height:${Math.round(100 * d.n / max)}%"></i><span>${+d.k.slice(8)}</span></div>`).join('')}</div>
     <h2 class="sect">Your openings</h2>${started.length ? `<div class="plist">${started.map(row).join('')}</div>` : '<p class="muted">Nothing practised yet. Pick an opening on Home and press Start training.</p>'}
-    ${fresh.length ? `<details class="pmore"><summary>Not started (${fresh.length})</summary><div class="plist">${fresh.map(row).join('')}</div></details>` : ''}`;
+    ${fresh.length ? `<details class="pmore"><summary>Not started (${fresh.length})</summary><div class="plist">${fresh.map(row).join('')}</div></details>` : ''}
+    <h2 class="sect">Your chess.com games</h2>
+    <div class="gimport"><p class="muted">See where your real games left your repertoire, then drill those spots. Enter one or more chess.com usernames (comma-separated). They are saved only on this device.</p>
+      <div class="row"><input id="ccUsers" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="chess.com username(s)" aria-label="chess.com usernames" value="${esc(ccUsers().join(', '))}"><select id="ccMonths" aria-label="How far back"><option value="1">Last month</option><option value="3" selected>Last 3 months</option><option value="6">Last 6 months</option></select><button id="ccGo" class="primary">Check my games</button></div>
+      <div id="ccOut" aria-live="polite"></div></div>`;
+  $('#ccGo').onclick = () => importGames();
 }
+// ---------- chess.com import (public API, CORS-enabled; usernames kept in their own localStorage key, never synced) ----------
+const CCKEY = 'skoha.chesscom';
+const ccUsers = () => { try { return JSON.parse(localStorage.getItem(CCKEY) || '{}').users || []; } catch { return []; } };
+async function ccJson(url) { const r = await fetch(url, { headers: { accept: 'application/json' } }); if (r.status === 404) throw new Error('not found'); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
+async function importGames() {
+  const users = [...new Set($('#ccUsers').value.split(/[\s,;]+/).map(u => u.trim().toLowerCase()).filter(u => /^[a-z0-9_-]{3,25}$/.test(u)))];
+  const out = $('#ccOut'); if (!users.length) { out.innerHTML = '<p class="msg bad">Enter a chess.com username.</p>'; return; }
+  localStorage.setItem(CCKEY, JSON.stringify({ users }));
+  const months = +$('#ccMonths').value || 3; out.innerHTML = '<p class="muted">Fetching games…</p>'; $('#ccGo').disabled = true;
+  const games = new Map(), errs = [];
+  try {
+    for (const u of users) {
+      try { const a = (await ccJson(`https://api.chess.com/pub/player/${encodeURIComponent(u)}/games/archives`)).archives || [];
+        for (const m of a.slice(-months)) { const g = (await ccJson(m)).games || [];
+          g.forEach(x => { if (x.rules === 'chess' && x.pgn && !/\[SetUp "1"\]/.test(x.pgn)) games.set(x.url || x.uuid, { ...x, me: u }); }); }
+      } catch (e) { errs.push(`${u}: ${e.message === 'not found' ? 'no such chess.com user' : 'could not load (' + e.message + ')'}`); }
+    }
+    const practised = db.reps.filter(r => Object.keys(cardsOf(r)).length), reps = practised.length ? practised : db.reps, ix = bookIndex(reps);
+    const res = [...games.values()].sort((a, b) => (b.end_time || 0) - (a.end_time || 0)).slice(0, 300).map(g => {
+      const color = g.white?.username?.toLowerCase() === g.me ? 'w' : 'b', opp = color === 'w' ? g.black : g.white, mine = color === 'w' ? g.white : g.black;
+      const mv = gameMoves(g.pgn); return { g, color, opp: opp?.username || '?', result: mine?.result, mv, d: firstDeviation(mv, color, ix) }; });
+    const yours = res.filter(x => x.d.who === 'you'), theirs = res.filter(x => x.d.who === 'opponent'), ends = res.filter(x => x.d.who === 'end'), none = res.filter(x => !x.d.who);
+    const spots = [], seen = new Set(); yours.forEach(x => { const k = x.d.spot.rep + '|' + x.d.spot.li + '|' + x.d.spot.ply; if (!seen.has(k)) { seen.add(k); spots.push(x.d.spot); } });
+    ccLast = spots;
+    const num = p => Math.floor(p / 2) + 1 + (p % 2 ? '...' : '.');
+    const item = x => `<li><a href="${esc(x.g.url || '#')}" target="_blank" rel="noopener">${x.color === 'w' ? '⚪' : '⚫'} vs ${esc(x.opp)}</a> <span class="muted">${x.g.end_time ? new Date(x.g.end_time * 1000).toLocaleDateString() : ''} · ${esc(x.result || '')}</span><br>${x.d.who === 'you' ? `You left book at <b>${num(x.d.ply)} ${esc(x.d.played)}</b>; your line plays <b>${esc(x.d.expected.join(' / '))}</b> <span class="muted">(${esc(repById(x.d.spot.rep)?.name || '')})</span>` : x.d.who === 'opponent' ? `Opponent left your prep at <b>${num(x.d.ply)} ${esc(x.d.played)}</b>` : x.d.who === 'end' ? `Followed your lines to the end (${num(Math.max(0, x.d.ply - 1))})` : 'Not one of your openings'}</li>`;
+    out.innerHTML = `${errs.length ? `<p class="msg bad">${errs.map(esc).join('<br>')}</p>` : ''}
+      <div class="pstats"><div class="stat"><div class="n">${res.length}</div><div class="l">games checked</div></div><div class="stat"><div class="n">${yours.length}</div><div class="l">you left book</div></div><div class="stat"><div class="n">${theirs.length}</div><div class="l">opponent left book</div></div><div class="stat"><div class="n">${ends.length}</div><div class="l">reached end of prep</div></div></div>
+      ${spots.length ? `<div class="row"><button class="primary" id="ccDrill">🎯 Drill my ${spots.length} spot${spots.length > 1 ? 's' : ''} from these games</button></div>` : res.length ? '<p class="msg ok">You never left your lines first in these games. 🎉</p>' : ''}
+      ${!practised.length && res.length ? '<p class="muted">Compared with every opening in your library, since you have not trained any yet.</p>' : ''}
+      ${res.length ? `<ul class="glist">${[...yours, ...theirs, ...ends].slice(0, 40).map(item).join('')}</ul>${none.length ? `<p class="muted">${none.length} game(s) used openings outside your repertoire.</p>` : ''}` : errs.length ? '' : '<p class="muted">No games found in that period.</p>'}`;
+    if ($('#ccDrill')) $('#ccDrill').onclick = () => { go('#/train'); startSpots(ccLast, 'Spots from my games'); };
+  } finally { $('#ccGo').disabled = false; }
+}
+let ccLast = [];
 
 // ---------- opening page ----------
 let openingTab = 'lines';
@@ -631,7 +671,7 @@ function startSpots(spots, label) {
   drill.rep = repById(drill.queue[0].rep); drill.alts = repMoves(drill.rep); $('#drillRep').value = drill.rep.id; nextLine();
 }
 const recentMistakes = reps => mistakeSpots(reps, cardsOf);
-window.__freereps.startSpots = startSpots; window.__freereps.mistakeSpots = () => recentMistakes(db.reps);
+window.__freereps.startSpots = startSpots; window.__freereps.importGames = importGames; window.__freereps.mistakeSpots = () => recentMistakes(db.reps);
 $('#homeFix').onclick = () => { go('#/train'); startSpots(recentMistakes(db.reps), 'Fix my mistakes'); };
 $('#drillNext').onclick = () => nextLine();
 function nextLine() {
