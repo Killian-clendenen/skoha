@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261102i">
+<link rel="stylesheet" href="style.css?v=20261102j">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♞</text></svg>">
 </head><body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -91,7 +91,7 @@
         <div class="tfoot">
           <div id="drillInfo" class="muted"></div>
           <div id="drillMoves" class="moves"></div>
-          <div class="tbtns"><button id="drillHint" title="Hint (H)">💡 Hint</button><button id="drillFlip" title="Flip (F)">⇅ Flip</button><button id="drillStudy" title="Open this line in study view">📖 Explain line</button><button id="drillNext" class="primary" hidden>Next line →</button></div>
+          <div class="tbtns"><button id="drillHint" title="Hint (H)">💡 Hint</button><button id="drillFlip" title="Flip (F)">⇅ Flip</button><button id="drillSpeak" aria-label="Narrator" aria-pressed="false">🔇</button><button id="drillStudy" title="Open this line in study view">📖 Explain line</button><button id="drillNext" class="primary" hidden>Next line →</button></div>
         </div>
       </div>
     </div>
@@ -135,6 +135,14 @@
       <label>Opponent speed <select id="sDelay"><option value="150">Instant</option><option value="400">Normal</option><option value="800">Relaxed</option></select></label>
       <label>New lines per session <input type="number" id="sNew" min="0" max="100"></label>
       <label>Daily goal (reviews per day) <input type="number" id="sGoal" min="1" max="500"></label></div>
+      <div class="sgroup" id="narrBox"><h2>Narrator</h2>
+      <label><input type="checkbox" id="sNarr"> Read each move and its explanation aloud</label>
+      <label><input type="checkbox" id="sNarrOpp"> Also read the opponent's moves</label>
+      <label>Voice <select id="sVoice"></select></label>
+      <label>Speed <input type="range" id="sRate" min="0.6" max="1.6" step="0.05"></label>
+      <label>Pitch <input type="range" id="sPitch" min="0.6" max="1.4" step="0.05"></label>
+      <div class="row"><button id="testVoice">Hear a sample</button></div>
+      <p class="muted">Uses the voices installed on your device (free, works offline). Quality varies by device; “Natural”, “Enhanced” or Google voices sound best.</p></div>
       <div class="sgroup"><h2>Sound</h2>
       <label><input type="checkbox" id="sSound"> Sounds on</label>
       <label>Volume <input type="range" id="sVolume" min="0" max="1" step="0.05"></label>
@@ -180,5 +188,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2).</footer>
-<script type="module" src="app.js?v=20261102i"></script>
+<script type="module" src="app.js?v=20261102j"></script>
 </body></html>

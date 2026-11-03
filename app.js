@@ -1,11 +1,12 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg } from './core.js?v=20261102i';
-import { KB } from './kb.js?v=20261102i';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg } from './core.js?v=20261102j';
+import { KB } from './kb.js?v=20261102j';
+import { Narrator } from './narrator.js?v=20261102j';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
-const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false, dailyGoal: 10 };
+const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false, dailyGoal: 10, narrator: false, voice: '', voiceRate: 1, voicePitch: 1, narrOpp: true };
 let db = load();
 function load() {
   try {
@@ -249,6 +250,7 @@ function studyGo(p, silent) {
   $('#lnMoves').querySelectorAll('button').forEach(b => b.classList.toggle('cur', Number(b.dataset.p) === p));
   $('#lnMoves').querySelector('button.cur')?.scrollIntoView({ block: 'nearest' });
   if (!silent && v && fwd) Sound.play(soundFor(v.m, v.check));
+  if (!silent) { if (v) Narrator.say(v.m.san, line.n?.[p - 1]?.t || ''); else Narrator.cancel(); }
 }
 $('#lnFirst').onclick = () => studyGo(0); $('#lnPrev').onclick = () => studyGo(study.ply - 1); $('#lnNext').onclick = () => studyGo(study.ply + 1); $('#lnLast').onclick = () => studyGo(99);
 $('#lnDrill').onclick = () => { const r = study.rep, li = study.li; go('#/train'); $('#drillRep').value = r.id; fillPickers(); $('#drillLine').value = li; setMode('line'); };
@@ -265,7 +267,7 @@ function download(name, text, type) {
 }
 
 // ---------- settings ----------
-const SET = { sSound: 'sound', sVolume: 'volume', sAnim: 'anim', sDelay: 'delay', sPremove: 'premove', sDests: 'dests', sCoords: 'coords', sAutoNext: 'autoNext', sAutoReply: 'autoReply', sFlip: 'flip', sNew: 'newLimit', sNotes: 'notes', sGoal: 'dailyGoal' };
+const SET = { sSound: 'sound', sVolume: 'volume', sAnim: 'anim', sDelay: 'delay', sPremove: 'premove', sDests: 'dests', sCoords: 'coords', sAutoNext: 'autoNext', sAutoReply: 'autoReply', sFlip: 'flip', sNew: 'newLimit', sNotes: 'notes', sGoal: 'dailyGoal', sNarr: 'narrator', sRate: 'voiceRate', sPitch: 'voicePitch', sNarrOpp: 'narrOpp' };
 function renderSettings() {
   $('#sTheme').value = S().theme || 'brown';
   for (const [id, k] of Object.entries(SET)) { const el = $('#' + id); if (el.type === 'checkbox') el.checked = S()[k]; else el.value = S()[k]; }
@@ -346,6 +348,7 @@ function coach(ply, upcoming = false) {
   }
   el.innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${num} ${esc(l.m[ply])}${esc(n?.g || '')}</span><span class="who ${mine ? 'you' : 'opp'}">${label}</span></div>${body}</div>`;
   el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+  if ($('#drill').classList.contains('active') && (mine || upcoming || S().narrOpp)) Narrator.say(upcoming ? null : l.m[ply], upcoming ? `New move: ${playLead(mv)}. ${S().notes ? text : ''}` : (S().notes ? text : ''));
   if ($('#drill').classList.contains('active')) {
     const sh = shapesOf(n);
     if (upcoming) sh.push(...cueShapes(mv));
@@ -372,7 +375,16 @@ function cueNew() {
   let el = p; if (!el) { el = document.createElement('div'); el.id = 'drillPulse'; el.className = 'pulse'; $('#drillBoard').parentElement.append(el); }
   Object.assign(el.style, { left: bd.left - st.left + x + 'px', top: bd.top - st.top + y + 'px', width: w + 'px', height: w + 'px' }); el.hidden = false; el.dataset.sq = m.to;
 }
-window.__freereps.cueNew = () => cueNew();
+window.__freereps.cueNew = () => cueNew(); window.__freereps.narrator = Narrator;
+Narrator.init(S);
+function fillVoices() { const sel = $('#sVoice'); if (!sel) return; const vs = Narrator.voices(), best = Narrator.voice();
+  sel.innerHTML = `<option value="">Automatic${best ? ' (' + esc(best.name) + ')' : ''}</option>` + vs.map(v => `<option value="${esc(v.voiceURI)}">${esc(v.name)} · ${esc(v.lang)}</option>`).join(''); sel.value = S().voice || ''; }
+if (Narrator.supported()) { fillVoices(); speechSynthesis.addEventListener?.('voiceschanged', fillVoices); } else { $('#narrBox') && ($('#narrBox').hidden = false, $('#narrBox').querySelector('.muted').textContent = 'This browser has no speech support.'); }
+$('#sVoice').onchange = e => { S().voice = e.target.value; save(); Narrator.say('Nf3', 'This is how the narrator sounds.', 0); };
+$('#testVoice').onclick = () => { const o = S().narrator; S().narrator = true; Narrator.say('Nf3', 'Develops the knight and controls the centre.', 0); S().narrator = o; };
+function speakUi() { const b = $('#drillSpeak'); b.textContent = S().narrator ? '🔊' : '🔇'; b.setAttribute('aria-pressed', S().narrator); b.title = S().narrator ? 'Narrator on (click to mute)' : 'Narrator off (click to turn on)'; }
+$('#drillSpeak').onclick = () => { S().narrator = !S().narrator; save(); speakUi(); renderSettings(); if (!S().narrator) Narrator.cancel(); }; speakUi();
+$('#sNarr').addEventListener('change', () => { speakUi(); if (!S().narrator) Narrator.cancel(); });
 // keep the explanation box exactly as tall as the board beside it
 { const fit = () => [['#drillBoard', '#drill .tnote'], ['#lineBoard', '#line .tnote']].forEach(([b, n]) => { const bd = $(b), nt = $(n); if (bd && nt) nt.style.setProperty('--bh', innerWidth > 900 ? bd.getBoundingClientRect().height + 'px' : 'auto'); });
   const ro = new ResizeObserver(fit); ro.observe($('#drillBoard')); ro.observe($('#lineBoard')); addEventListener('resize', fit); } addEventListener('resize', () => cueNew());
@@ -389,6 +401,7 @@ function navUi() {
   $('#drill').classList.toggle('browsing', drill.view != null);
 }
 function navGo(v) {
+  Narrator.cancel();
   if (v > 0 && drill.view == null) {                 // live "Next": opponent's reply, or the next line
     if (drill.waiting) { drill.waiting = false; drillCg.set({ movable: { color: S().premove ? cname(userColor()) : undefined, dests: new Map() } }); drill.busy = true; drill.timer = setTimeout(playReply, 60); navUi(); return; }
     if (drill.line && drill.ply >= drill.line.length && !$('#drillNext').hidden) return nextLine();
@@ -453,7 +466,7 @@ function nextLine() {
   }
   drill.view = null; drill.paused = false; drill.waiting = false; $('#drillNote').className = 'bnote empty';
   drill.li = drill.queue[drill.qi++]; drill.line = drill.rep.lines[drill.li].m; drill.ply = 0; drill.chess = new Chess(); drill.lineMiss = 0;
-  drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = ''; if ($('#drillPulse')) $('#drillPulse').hidden = true;
+  Narrator.cancel(); drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = ''; if ($('#drillPulse')) $('#drillPulse').hidden = true;
   drillCg.set({ fen: drill.chess.fen(), lastMove: undefined, check: false, turnColor: 'white' }); setOrientation();
   $('#drillInfo').textContent = `${drill.rep.lines[drill.li].ch} · line ${drill.qi}/${drill.queue.length}`; drillStats();
   msg(`Your move as ${userColor() === 'w' ? 'White' : 'Black'}.`); navUi();

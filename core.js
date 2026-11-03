@@ -231,3 +231,29 @@ export function ringSvg(done, goal, size = 92) {
   const r = size / 2 - 7, c = 2 * Math.PI * r, f = Math.min(1, done / Math.max(1, goal));
   return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${done} of ${goal} reviews today"><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="8"/><circle class="ringfg" cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="url(#ringg)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${(c * f).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 ${size / 2} ${size / 2})"/><defs><linearGradient id="ringg"><stop offset="0" stop-color="#3ef0d0"/><stop offset="1" stop-color="#8a7dff"/></linearGradient></defs><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="${size / 4.6}" font-weight="700">${done}/${goal}</text></svg>`;
 }
+
+// ---------- narrator text ----------
+const PN = { N: 'Knight', B: 'Bishop', R: 'Rook', Q: 'Queen', K: 'King' };
+export function sanToWords(san) {
+  let s = String(san || '').replace(/[!?]+$/, ''); const mate = s.endsWith('#'), chk = s.endsWith('+'); s = s.replace(/[+#]$/, '');
+  let w;
+  if (/^O-O-O/.test(s)) w = 'castles queenside'; else if (/^O-O/.test(s)) w = 'castles kingside';
+  else {
+    const m = s.match(/^([NBRQK])?([a-h])?([1-8])?(x)?([a-h][1-8])(?:=([NBRQ]))?$/); if (!m) return s;
+    const [, pc, ff, fr, x, to, pr] = m; const piece = pc ? PN[pc] : (x ? ff + ' pawn' : 'pawn');
+    w = pc ? `${piece}${ff || fr ? ' ' + (ff || '') + (fr || '') : ''} ${x ? 'takes' : 'to'} ${to}` : x ? `${ff} takes ${to}` : to;
+    if (pr) w += `, promotes to ${PN[pr]}`;
+  }
+  return w + (mate ? ', checkmate' : chk ? ', check' : '');
+}
+export function speechText(t) {
+  return String(t || '').replace(/\[%[^\]]*\]/g, '').replace(/[{}]/g, '').replace(/<[^>]+>/g, '').replace(/[!?]{1,2}(?=\s|$)/g, '')
+    .replace(/\b(\d+)\.\.\.\s?/g, '').replace(/\b(\d+)\.\s?(?=[NBRQKa-hO])/g, '').replace(/\.\.\./g, ' ')
+    .replace(/\b(O-O-O|O-O|[NBRQK]?[a-h]?[1-8]?x?[a-h][1-8](?:=[NBRQ])?[+#]?)(?=[\s,.;:)!?]|$)/g, m => /^[a-h][1-8]$/.test(m) ? m : sanToWords(m))
+    .replace(/[–—]/g, ', ').replace(/\s+/g, ' ').trim();
+}
+export function pickVoice(voices, lang = 'en-US') {
+  const base = lang.split('-')[0].toLowerCase(); const L = voices.filter(v => (v.lang || '').toLowerCase().startsWith(base)); const pool = L.length ? L : voices;
+  const score = v => (/natural|neural|enhanced|premium/i.test(v.name) ? 4 : 0) + (/google/i.test(v.name) ? 3 : 0) + ((v.lang || '').toLowerCase() === lang.toLowerCase() ? 1 : 0) + (v.localService === false ? .5 : 0);
+  return pool.slice().sort((a, b) => score(b) - score(a))[0] || null;
+}

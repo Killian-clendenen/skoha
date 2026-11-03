@@ -1,7 +1,7 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
+import { sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
 import { KB } from '../kb.js';
 const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
@@ -107,4 +107,10 @@ for (const l of ['beginner','intermediate','advanced']) for (const sd of ['w','b
   ok(goalStreak({ [d(0)]: 3, [d(2)]: 10 }, 10, now) === 0, 'gap breaks streak');
   ok(goalStreak({}, 10, now) === 0, 'empty streak');
   ok(/3\/10/.test(ringSvg(3, 10)) && /stroke-dasharray/.test(ringSvg(30, 10)), 'ring svg'); }
+ok(sanToWords('Nf3') === 'Knight to f3', 'say Nf3'); ok(sanToWords('Bxe5') === 'Bishop takes e5', 'say Bxe5'); ok(sanToWords('O-O') === 'castles kingside', 'say O-O');
+ok(sanToWords('O-O-O+') === 'castles queenside, check', 'say O-O-O+'); ok(sanToWords('exd5') === 'e takes d5', 'say exd5'); ok(sanToWords('e4') === 'e4', 'say e4'); ok(sanToWords('Qh5+') === 'Queen to h5, check', 'say check');
+ok(sanToWords('e8=Q#') === 'e8, promotes to Queen, checkmate', 'say promo mate'); ok(sanToWords('Nbd2') === 'Knight b to d2', 'say disambig');
+ok(speechText('[%cal Gf3e5] Hits e5; prepares 3.Bb5! and ...Nf6') === 'Hits e5; prepares Bishop to b5 and Nf6'.replace('Nf6', 'Knight to f6'), 'speech text strips tags/symbols: ' + speechText('[%cal Gf3e5] Hits e5; prepares 3.Bb5! and ...Nf6'));
+ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Microsoft Aria Online (Natural)', lang: 'en-US' }, { name: 'Google français', lang: 'fr-FR' }], 'en-US').name.includes('Natural'), 'prefers natural voice in language');
+ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Google US English', lang: 'en-US' }], 'en-GB').name.startsWith('Google'), 'prefers Google voice');
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

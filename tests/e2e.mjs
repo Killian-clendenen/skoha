@@ -215,4 +215,22 @@ const clickSq = async (p, s, white = true) => { const bb = await p.locator('#dri
 { const p = await fresh(); await p.click('#gSkip'); await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active #lnNote'); await p.waitForTimeout(400);
   const g = await p.evaluate(() => { const b = document.querySelector('#lineBoard').getBoundingClientRect(), n = document.querySelector('#lnNote').getBoundingClientRect(); return { left: n.right <= b.left, h: Math.abs(n.height - b.height) < 4 }; });
   ok(g.left && g.h, 'study page: explanation box left of board ' + JSON.stringify(g)); await p.screenshot({ path: '/workspace/skoha-line-leftbox.png' }); await p.context().close(); }
+{ // narrator with a speechSynthesis stub
+  const c = await b.newContext({ viewport: { width: 1200, height: 820 } });
+  await c.addInitScript(() => { window.__spoken = []; window.__cancels = 0;
+    class U { constructor(t) { this.text = t; } } Object.defineProperty(window, 'SpeechSynthesisUtterance', { value: U, configurable: true });
+    Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: { speak: u => { if (u.text.trim()) window.__spoken.push({ t: u.text, v: u.voice?.name, r: u.rate }); }, cancel: () => window.__cancels++, addEventListener() {},
+      getVoices: () => [{ name: 'Fred', lang: 'en-US', voiceURI: 'f' }, { name: 'Google US English', lang: 'en-US', voiceURI: 'g' }] } }); });
+  const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message)); await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden])'); await p.click('#gSkip');
+  await p.evaluate(() => { const s = window.__freereps.db().settings; s.autoReply = false; s.narrator = true; s.narrOpp = true; s.voiceRate = 1.2; });
+  await p.goto('http://localhost:8765/#/opening/carokann'); await p.waitForSelector('#opening.active [data-act=due]'); await p.click('[data-act=due]'); await p.waitForTimeout(1300);
+  const sp = await p.evaluate(() => window.__spoken); ok(sp.some(x => /^New move: Play c6: move the pawn from c7 to c6/.test(x.t)) && sp.every(x => x.v === 'Google US English' && x.r === 1.2), 'narrator reads the new move with the Google voice: ' + JSON.stringify(sp.slice(-1)));
+  ok(sp.every(x => !/[\[\]{}%]/.test(x.t)), 'narration has no PGN tags');
+  const c0 = await p.evaluate(() => window.__cancels); await p.click('#navBack'); ok(await p.evaluate(() => window.__cancels) > c0, 'Back cancels speech');
+  await p.click('#drillSpeak'); ok(await p.textContent('#drillSpeak') === '🔇' && !(await p.evaluate(() => window.__freereps.db().settings.narrator)), 'speaker toggle mutes');
+  await p.click('#drillSpeak');
+  await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active'); await p.evaluate(() => window.__spoken.length = 0); await p.click('#lnNext'); await p.waitForTimeout(500);
+  const s2 = await p.evaluate(() => window.__spoken); ok(s2.length === 1 && /^Knight to f3\. /.test(s2[0].t), 'study page reads Knight to f3 + note: ' + JSON.stringify(s2));
+  await p.click('nav [data-nav=settings]'); ok((await p.textContent('#sVoice')).includes('Automatic (Google US English)'), 'voice picker lists voices, auto picks Google');
+  await p.screenshot({ path: '/workspace/skoha-settings-narrator.png', fullPage: true }); await c.close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
