@@ -1,9 +1,10 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261103c';
-import { KB } from './kb.js?v=20261103c';
-import { Engine } from './engine.js?v=20261103c';
-import { Narrator } from './narrator.js?v=20261103c';
+import { mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261103d';
+import { TRAPS } from './traps.js?v=20261103d';
+import { KB } from './kb.js?v=20261103d';
+import { Engine } from './engine.js?v=20261103d';
+import { Narrator } from './narrator.js?v=20261103d';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -219,7 +220,7 @@ function renderOpening(rep) {
     <div class="row"><button class="primary" data-act="due">Train due (${s.due + Math.min(s.fresh, 999)} to go)</button><button data-act="random">Random lines</button><button data-act="fix">🎯 Fix mistakes (${recentMistakes([rep]).length})</button>
       <details class="omore"><summary aria-label="More actions">⋯</summary><div class="omenu"><button data-act="mistakes">Replay lines with mistakes</button><button data-act="edit">Edit lines</button><button data-act="pgn">Export PGN</button><button data-act="reset">Reset this opening's progress</button><button data-act="del" class="danger">Remove from library</button></div></details></div>
     <div class="muted">${Object.keys(byCh).length} chapters · ${rep.lines.length} lines · ${s.total} of your moves · ${s.learned} learned · ${s.mistakes} with mistakes</div></div>
-  <div class="otabs"><button data-t="lines" class="${openingTab === 'lines' ? 'on' : ''}">Lines</button>${kb ? `<button data-t="kb" class="${openingTab === 'kb' ? 'on' : ''}">Knowledge base</button>` : ''}</div>
+  <div class="otabs"><button data-t="lines" class="${openingTab === 'lines' ? 'on' : ''}">Lines</button>${kb ? `<button data-t="kb" class="${openingTab === 'kb' ? 'on' : ''}">Knowledge base</button>` : ''}${trapsOf(rep).length ? `<button data-t="traps" class="${openingTab === 'traps' ? 'on' : ''}">Punish this (${trapsOf(rep).length})</button>` : ''}</div>
   <div id="oBody"></div>`;
   el.querySelectorAll('.otabs button').forEach(b => b.onclick = () => { openingTab = b.dataset.t; renderOpening(rep); });
   el.querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
@@ -232,7 +233,12 @@ function renderOpening(rep) {
     if (a === 'del' && confirm('Remove ' + rep.name + ' and its progress?')) { db.reps = db.reps.filter(q => q !== rep); delete db.cards[rep.id]; if (rep.starter) (db.removed ||= []).push(rep.starter); save(); go('#/'); }
   });
   const body = $('#oBody');
-  if (openingTab === 'kb' && kb) {
+  if (openingTab === 'traps' && trapsOf(rep).length) {
+    const tr = trapRep(rep);
+    body.innerHTML = `<p class="muted">Common mistakes your opponents make in this opening, and how to punish them. Every line is checked with Stockfish.</p><div class="row"><button class="primary" data-trap="all">Practise all</button></div>` +
+      tr.lines.map((l, i) => `<div class="chapter trap"><h3>${esc(trapsOf(rep)[i].name)}</h3><p class="mono">${fmt(l.m)}</p><p class="muted">${esc(l.n[trapsOf(rep)[i].b]?.t || '')}</p><div class="row"><button data-trap="${i}">Practise</button></div></div>`).join('');
+    body.querySelectorAll('[data-trap]').forEach(b => b.onclick = () => startTraps(rep, b.dataset.trap === 'all' ? null : +b.dataset.trap));
+  } else if (openingTab === 'kb' && kb) {
     const list = a => a?.length ? `<ul>${a.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '<p class="muted">—</p>';
     body.innerHTML = `<div class="kb"><div class="box wide"><h3>Overview</h3><p>${esc(kb.overview)}</p></div>
       <div class="box wide"><h3>History</h3><p>${esc(kb.history)}</p></div>
@@ -576,6 +582,20 @@ function startSession(mode) {
   }
   nextLine();
 }
+// "Punish this": engine-verified trap lines per opening, drilled like normal lines (own progress bucket)
+const trapsOf = rep => TRAPS.filter(t => t.rep === rep.starter);
+const TRAPREP = {};
+function trapRep(rep) {
+  return TRAPREP[rep.id] ||= { id: rep.id + '~traps', name: rep.name + ' · Punish this', color: rep.color, intros: {}, trap: true,
+    lines: trapsOf(rep).map(t => { const m = t.m.split(' '); return { m, ch: 'Punish this: ' + t.name, n: m.map((_, i) => t.n[i] || i === t.b ? { t: t.n[i] || '', cal: [], csl: [], g: i === t.b ? '?' : '' } : null) }; }) };
+}
+function startTraps(rep, i) {
+  const r = trapRep(rep); go('#/train'); endPlay(true); $('#playBar').hidden = true; clearTimeout(drill.timer);
+  drill.rep = r; drill.mode = 'traps'; drill.alts = repMoves(r); drill.done = drill.perfect = 0; drill.qi = 0;
+  drill.queue = i == null ? r.lines.map((_, k) => k) : [i]; drill.notice = 'Punish this: your opponent is about to go wrong.';
+  $('#modeLabel').textContent = 'Punish this'; document.querySelectorAll('#modes button').forEach(x => x.classList.remove('primary')); nextLine();
+}
+window.__freereps.startTraps = (id, i) => startTraps(repById(id), i);
 // drill single positions (recent mistakes, or spots from imported games) across one or many openings
 function startSpots(spots, label) {
   endPlay(true); $('#playBar').hidden = true; clearTimeout(drill.timer);

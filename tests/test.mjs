@@ -142,4 +142,11 @@ ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Google US English', lang
   ok(sp.length === 1 && sp[0].ply === 2 && sp[0].rep === 'r', 'mistakeSpots: one spot for a recent mistake, deduped across lines, old fixed ones skipped');
   ok(mistakeSpots([{ id: 'x', color: 'b', lines: [{ m: ['e4', 'Kxe8'] }] }], () => ({}), { now }).length === 0, 'mistakeSpots tolerates broken lines');
 }
+{ // traps: legal, attached to a real opening, blunder is the opponent's move
+  const { TRAPS } = await import('../traps.js');
+  ok(TRAPS.length >= 10, `${TRAPS.length} verified trap lines`);
+  for (const t of TRAPS) { const s = idx.find(x => x.id === t.rep); const m = t.m.split(' ');
+    let legal = true; try { validateLine(m); } catch { legal = false; }
+    ok(s && legal && (t.b % 2 === 0 ? 'w' : 'b') !== s.color && t.n[t.b], `trap ${t.rep}: ${t.name} legal, opponent errs at ply ${t.b}, annotated`); }
+}
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

@@ -321,3 +321,4 @@ footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
 @media(max-width:600px){.lineitem .muted{display:none}}
 @media (orientation:landscape) and (max-height:500px){.tsplit>.boardwrap,.lsplit>.boardwrap{max-width:calc(100svh - 24px);margin-inline:auto}}
 .crumbs a{display:inline-block;padding:10px 2px}
+.mono{font-family:ui-monospace,monospace;font-size:13px;overflow-wrap:anywhere}

@@ -408,4 +408,17 @@ await retiMoves('everything learned, nothing due', FX('ls-c2e3afe.json'), { lear
   await p.goto('http://localhost:8765/#/opening/sicilian'); await p.waitForTimeout(500);
   ok(/Fix mistakes/.test(await p.textContent('#opening [data-act=fix]')), 'opening page has Fix mistakes');
   await c.close(); }
+{ const c = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+  await p.goto('http://localhost:8765/#/opening/italian'); await p.waitForTimeout(1200); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  await p.click('.otabs [data-t=traps]'); ok(/Legal/.test(await p.textContent('#oBody')), 'Italian has a Punish this tab with Legal\'s mate');
+  await p.screenshot({ path: '/workspace/skoha-feat-traps.png' });
+  await p.click('#oBody [data-trap="0"]'); await p.waitForTimeout(600);
+  for (let k = 0; k < 40; k++) { const st = await p.evaluate(() => { const d = window.__freereps.drill; return { ply: d.ply, n: d.line.length, fen: d.chess.fen(), turn: d.chess.turn(), busy: d.busy, waiting: d.waiting }; });
+    if (st.ply >= st.n) break; if (st.busy) { await p.waitForTimeout(150); continue; }
+    if (st.waiting || st.turn !== 'w') { if (await p.isEnabled('#navFwd')) await p.click('#navFwd'); await p.waitForTimeout(250); continue; }
+    const mv = await p.evaluate(() => import('./vendor/chess.js').then(m => { const d = window.__freereps.drill; return new m.Chess(d.chess.fen()).move(d.line[d.ply]); }));
+    const bb = await p.locator('#drillBoard cg-board').boundingBox(), w = bb.width / 8; const pt = q => [bb.x + (q.charCodeAt(0) - 97 + .5) * w, bb.y + (8 - +q[1] + .5) * w];
+    await p.touchscreen.tap(...pt(mv.from)); await p.waitForTimeout(80); await p.touchscreen.tap(...pt(mv.to)); await p.waitForTimeout(400); }
+  ok(await p.evaluate(() => window.__freereps.drill.chess.isCheckmate()), 'Legal\'s mate trap played to checkmate on a phone'); ok(!errs.length, 'no page errors in traps ' + errs.join());
+  await c.close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
