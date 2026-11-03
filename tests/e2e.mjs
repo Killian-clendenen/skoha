@@ -381,4 +381,11 @@ await retiMoves('everything learned, nothing due', FX('ls-c2e3afe.json'), { lear
   await p.click('#opening .omore summary'); await p.click('#opening [data-act=reset]'); await p.waitForTimeout(200);
   ok(await p.evaluate(() => { const db = window.__freereps.db(), r = db.reps.find(x => x.starter === 'reti'); return !db.cards[r.id] || !Object.keys(db.cards[r.id]).length; }), 'Reset this opening\'s progress clears only its cards');
   await c.close(); }
+{ const c = await b.newContext({ viewport: { width: 360, height: 740 }, hasTouch: true, isMobile: true }); const p = await c.newPage();
+  await p.goto('http://localhost:8765/#/opening/reti'); await p.waitForTimeout(1200); if (await p.isVisible('#gSkip')) await p.click('#gSkip'); await p.waitForSelector('#opening.active .lineitem');
+  const w = await p.evaluate(() => Math.max(...[...document.querySelectorAll('#opening .lineitem')].map(e => e.getBoundingClientRect().right)));
+  ok(w <= 360, `phone: opening line list fits the screen (right edge ${Math.round(w)})`);
+  await c.close(); await (async () => { const c2 = await b.newContext({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true }); const q = await c2.newPage();
+    await q.goto('http://localhost:8765/#/opening/reti'); await q.waitForTimeout(1200); if (await q.isVisible('#gSkip')) await q.click('#gSkip'); await q.click('[data-act=due]'); await q.waitForTimeout(800);
+    const bb = await q.locator('#drillBoard').boundingBox(); ok(bb.height <= 390, `landscape phone: board fits screen height (${Math.round(bb.height)})`); await c2.close(); })(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

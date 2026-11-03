@@ -311,3 +311,13 @@ footer{max-width:1200px;margin:0 auto;padding:var(--s6) var(--s5);border-top:1px
 @media(max-width:420px){.stats .stat{padding:var(--s3)}.stats .stat .n{font-size:20px}}
 
 .omore{position:relative}.omore>summary{list-style:none;cursor:pointer;height:40px;min-width:44px;display:grid;place-items:center;border:1px solid var(--line2);border-radius:var(--r);font-size:20px}.omenu{position:absolute;right:0;top:46px;z-index:20;display:flex;flex-direction:column;gap:6px;padding:var(--s2);min-width:240px;background:#11162b;border:1px solid var(--line2);border-radius:var(--r-lg);box-shadow:0 20px 50px -20px #000}.omenu button{justify-content:flex-start}
+/* phone polish: no sideways overflow from long move lists, safe areas, bigger taps */
+.lines{grid-template-columns:minmax(0,1fr)}.lineitem{min-width:0}.lineitem .mv{min-width:0}
+header{padding-left:max(var(--s4),env(safe-area-inset-left));padding-right:max(var(--s4),env(safe-area-inset-right))}
+main{padding-left:max(var(--s4),env(safe-area-inset-left));padding-right:max(var(--s4),env(safe-area-inset-right))}
+footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
+.cg-wrap,cg-board{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+@media (pointer:coarse){.lineitem{min-height:48px}.brand{min-height:44px;display:inline-flex;align-items:center}footer a{display:inline-block;padding:12px 4px}.omore>summary{height:48px;min-width:48px}.omenu button{min-height:48px}}
+@media(max-width:600px){.lineitem .muted{display:none}}
+@media (orientation:landscape) and (max-height:500px){.tsplit>.boardwrap,.lsplit>.boardwrap{max-width:calc(100svh - 24px);margin-inline:auto}}
+.crumbs a{display:inline-block;padding:10px 2px}
