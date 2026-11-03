@@ -1,7 +1,7 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { mistakeSpots, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
+import { lastDays, mistakeSpots, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
 import { KB } from '../kb.js';
 const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
@@ -149,4 +149,5 @@ ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Google US English', lang
     let legal = true; try { validateLine(m); } catch { legal = false; }
     ok(s && legal && (t.b % 2 === 0 ? 'w' : 'b') !== s.color && t.n[t.b], `trap ${t.rep}: ${t.name} legal, opponent errs at ply ${t.b}, annotated`); }
 }
+{ const d = lastDays({ [dayKey(new Date())]: 3 }, 14); ok(d.length === 14 && d.at(-1).n === 3 && d[0].n === 0, 'lastDays: 14 days, today last'); }
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

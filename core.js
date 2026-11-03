@@ -314,3 +314,9 @@ export function mistakeSpots(reps, cardsFor, { now = Date.now(), days = 30, limi
   }
   return out.sort((a, b) => b.t - a.t).slice(0, limit);
 }
+// last n days of review counts, oldest first: [{ k: 'YYYY-MM-DD', n }]
+export function lastDays(hist = {}, n = 14, now = new Date()) {
+  const d = new Date(now); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - (n - 1)); const out = [];
+  for (let i = 0; i < n; i++) { const k = dayKey(d); out.push({ k, n: hist[k] || 0 }); d.setDate(d.getDate() + 1); }
+  return out;
+}

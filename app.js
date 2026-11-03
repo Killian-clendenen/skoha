@@ -1,10 +1,10 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261103e';
-import { TRAPS } from './traps.js?v=20261103e';
-import { KB } from './kb.js?v=20261103e';
-import { Engine } from './engine.js?v=20261103e';
-import { Narrator } from './narrator.js?v=20261103e';
+import { lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261103f';
+import { TRAPS } from './traps.js?v=20261103f';
+import { KB } from './kb.js?v=20261103f';
+import { Engine } from './engine.js?v=20261103f';
+import { Narrator } from './narrator.js?v=20261103f';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -90,7 +90,7 @@ function tryMove(chess, from, to, promo = 'q') { try { return chess.move({ from,
 function showTab(t) {
   if (t !== 'drill') drillCg.setAutoShapes([]); if (t !== 'line') lineCg.setAutoShapes([]);
   document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === t));
-  const nav = { home: 'home', opening: 'home', line: 'home', drill: 'drill', build: 'settings', settings: 'settings', data: 'settings' }[t];
+  const nav = { progress: 'progress', home: 'home', opening: 'home', line: 'home', drill: 'drill', build: 'settings', settings: 'settings', data: 'settings' }[t];
   document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === nav));
   if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); requestAnimationFrame(() => cueNew());
     // opening the Train screen must never leave an idle board: start the selected opening if nothing is running
@@ -107,6 +107,7 @@ function route() {
   else if (p === 'line' && repById(a)) { showTab('line'); openLine(repById(a), Number(b) || 0); }
   else if (p === 'train') showTab('drill');
   else if (p === 'build') showTab('build');
+  else if (p === 'progress') { showTab('progress'); renderProgress(); }
   else if (p === 'settings') showTab('settings');
   else if (p === 'data') showTab('data');
   else if (p === 'sync' && a) { showTab('data'); $('#syncCode').value = decodeURIComponent(location.hash.slice(7)); history.replaceState(null, '', '#/data'); $('#codeStatus').textContent = 'Sync code received: press “Load sync code” to merge it into this device.'; }
@@ -208,6 +209,20 @@ $('#search').addEventListener('keydown', e => {
 });
 document.addEventListener('click', e => { if (!e.target.closest('.searchwrap')) $('#searchResults').hidden = true; });
 addEventListener('keydown', e => { if (e.key === '/' && $('#home').classList.contains('active') && !e.target.matches('input,textarea,select')) { e.preventDefault(); $('#search').focus(); } });
+
+// ---------- progress page ----------
+function renderProgress() {
+  const goal = S().dailyGoal || 10, h = db.history || {}, days = lastDays(h, 14), max = Math.max(goal, ...days.map(d => d.n));
+  const today = h[dayKey()] || 0, st = db.stats || { reviews: 0, correct: 0 };
+  const rows = db.reps.map(r => ({ r, s: repStats(r), fix: recentMistakes([r]).length })).sort((a, b) => (b.s.total - b.s.fresh) - (a.s.total - a.s.fresh) || b.s.due - a.s.due);
+  const started = rows.filter(x => x.s.total > x.s.fresh), fresh = rows.filter(x => x.s.total === x.s.fresh);
+  const row = ({ r, s, fix }) => { const pc = s.total ? Math.round(100 * s.learned / s.total) : 0;
+    return `<a class="prow" href="#/opening/${r.id}"><span class="dot ${r.color}"></span><span class="pname"><b>${esc(r.name)}</b><small>${s.learned}/${s.total} learned${s.due ? ` · <span class="pdue">${s.due} due</span>` : ''}${fix ? ` · ${fix} to fix` : ''}</small></span><span class="pbar"><i style="width:${pc}%"></i></span><span class="ppc">${pc}%</span></a>`; };
+  $('#progressBody').innerHTML = `<div class="pstats"><div class="stat"><div class="n">🔥 ${goalStreak(h, 1)}</div><div class="l">day streak</div></div><div class="stat"><div class="n">${goalStreak(h, goal)}</div><div class="l">days hitting goal (${goal})</div></div><div class="stat"><div class="n">${today}</div><div class="l">reviews today</div></div><div class="stat"><div class="n">${st.reviews ? Math.round(100 * st.correct / st.reviews) + '%' : '–'}</div><div class="l">accuracy</div></div></div>
+    <h2 class="sect">Last 14 days</h2><div class="pchart" role="img" aria-label="Reviews per day, last 14 days">${days.map(d => `<div class="pcol${d.n >= goal ? ' hit' : ''}" title="${d.k}: ${d.n}"><i style="height:${Math.round(100 * d.n / max)}%"></i><span>${+d.k.slice(8)}</span></div>`).join('')}</div>
+    <h2 class="sect">Your openings</h2>${started.length ? `<div class="plist">${started.map(row).join('')}</div>` : '<p class="muted">Nothing practised yet. Pick an opening on Home and press Start training.</p>'}
+    ${fresh.length ? `<details class="pmore"><summary>Not started (${fresh.length})</summary><div class="plist">${fresh.map(row).join('')}</div></details>` : ''}`;
+}
 
 // ---------- opening page ----------
 let openingTab = 'lines';

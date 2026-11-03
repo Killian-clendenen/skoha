@@ -152,7 +152,7 @@ await pg.evaluate(() => document.querySelector('#modeBox').open = true); await p
   ok((await pg.textContent('#navPos')).includes('No moves yet') || /Move 0/.test(await pg.textContent('#navPos')), 'switching lines resets the counter: ' + await pg.textContent('#navPos'));
   ok(await pg.isDisabled('#navBack'), 'Back disabled at line start'); }
 await pg.click('nav [data-nav=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400); await pg.selectOption('#sTheme', 'aurora'); ok(await pg.evaluate(() => document.body.classList.contains('bt-aurora')), 'board theme switch');
-ok(await pg.locator('nav a').count() === 3, 'three-item nav');
+ok(await pg.locator('nav a').count() === 4, 'four-item nav (Home, Train, Progress, Settings)');
 ok(await pg.inputValue('#sGoal') === '10', 'daily goal default 10');
 await pg.fill('#sGoal', '3'); await pg.dispatchEvent('#sGoal', 'change'); await pg.click('nav [data-nav=home]'); await pg.waitForSelector('#goalRing');
 { const t = await pg.textContent('#goalRing'); ok(/\d+\/3/.test(t) && /day streak/.test(t), 'home ring + streak: ' + t.replace(/\s+/g, ' ')); }
@@ -431,5 +431,12 @@ await retiMoves('everything learned, nothing due', FX('ls-c2e3afe.json'), { lear
   await p.click('#lnNext'); await p.waitForTimeout(250); await tap2('c2', 'c4'); ok(/signature Réti move/.test(await p.textContent('#lnNote')), 'study: play the next own move after Next');
   await p.click('#lnPrev'); await p.click('#lnPrev'); await p.click('#lnPrev'); await p.waitForTimeout(200); ok(/Start/.test(await p.textContent('#lnNote')), 'study: Back returns to the start');
   await p.screenshot({ path: '/workspace/skoha-feat-study.png' }); ok(!errs.length, 'no page errors in study ' + errs.join());
+  await c.close(); }
+{ const c = await b.newContext({ viewport: { width: 360, height: 740 }, hasTouch: true, isMobile: true }); const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+  await p.goto('http://localhost:8765/'); await p.waitForTimeout(1200); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  await p.click('nav a[data-nav=progress]'); await p.waitForTimeout(400);
+  ok(/day streak/.test(await p.textContent('#progressBody')) && await p.locator('.pcol').count() === 14, 'progress page: streak + 14-day chart');
+  ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'progress page fits a 360px phone');
+  await p.screenshot({ path: '/workspace/skoha-feat-progress.png', fullPage: true }); ok(!errs.length, 'no page errors on progress ' + errs.join());
   await c.close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
