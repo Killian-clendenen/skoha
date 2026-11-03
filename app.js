@@ -1,7 +1,7 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep } from './core.js?v=20261102c';
-import { KB } from './kb.js?v=20261102c';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep } from './core.js?v=20261102e';
+import { KB } from './kb.js?v=20261102e';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -113,12 +113,13 @@ function ocard(rep, extra = '') {
   el.innerHTML = `<div class="eco">${esc(m.eco || (rep.color === 'w' ? 'White' : 'Black'))}</div>
     <h3>${esc(rep.name)}${m.featured ? '<span class="badge">Featured</span>' : ''}</h3>
     <div class="muted">${esc(KB[rep.starter]?.tagline || m.blurb || '')}</div>
-    <div class="chips">${chaptersOf(rep).map(c => `<a class="chip" href="#/opening/${rep.id}" data-ch="${esc(c)}">${esc(c)}</a>`).join('')}</div>${extra}
+    <div class="chips">${chaptersOf(rep).slice(0, m.featured ? 99 : 4).map(c => `<a class="chip" href="#/opening/${rep.id}" data-ch="${esc(c)}" title="${esc(c)}">${esc(shortCh(rep, c))}</a>`).join('')}${!m.featured && chaptersOf(rep).length > 4 ? `<span class="chip more">+${chaptersOf(rep).length - 4}</span>` : ''}</div>${extra}
     <div class="bar"><i style="width:${s.total ? 100 * s.learned / s.total : 0}%"></i></div>
     <div class="muted">${rep.lines.length} lines · ${s.total} moves · ${s.learned} learned · ${s.due} due</div>`;
   el.onclick = e => { if (e.target.closest('a.chip.vs')) return; e.preventDefault(); const ch = e.target.closest('.chip')?.dataset.ch; go('#/opening/' + rep.id); if (ch) setTimeout(() => document.getElementById('ch-' + slug(ch))?.scrollIntoView({ behavior: 'smooth' }), 50); };
   return el;
 }
+const shortCh = (rep, c) => { const p = c.split(':')[0]; return c.includes(':') && rep.name.toLowerCase().includes(p.toLowerCase().split(/[ ']/)[0]) ? c.slice(p.length + 1).trim() : c; };
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 function renderHome() {
   const T = { total: 0, due: 0, fresh: 0, learned: 0 };
@@ -129,11 +130,12 @@ function renderHome() {
     .map(([n, l]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
   const W = $('#whiteList'), B = $('#blackList'), C = $('#customList'); W.innerHTML = B.innerHTML = C.innerHTML = '';
   const starters = db.reps.filter(r => r.starter).sort((a, b) => STARTERS.findIndex(s => s.id === a.starter) - STARTERS.findIndex(s => s.id === b.starter));
-  const blackFor = w => starters.filter(b => b.color === 'b' && (metaOf(b).answers === metaOf(w).first || (metaOf(b).vs || []).includes(w.starter)));
-  const whiteFor = b => starters.filter(w => w.color === 'w' && (metaOf(b).answers === metaOf(w).first || (metaOf(b).vs || []).includes(w.starter)));
-  const vsChips = (label, list) => list.length ? `<div class="chips"><span class="muted">${label}</span>${list.map(r => `<a class="chip vs" href="#/opening/${r.id}">${esc(r.name)}</a>`).join('')}</div>` : '';
-  starters.filter(r => r.color === 'w').forEach(r => W.append(ocard(r, vsChips('Black answers in your library:', blackFor(r)))));
-  starters.filter(r => r.color === 'b').forEach(r => B.append(ocard(r, vsChips(`Answers 1.${metaOf(r).answers || '?'}${whiteFor(r).length ? ' · meets' : ''}`, whiteFor(r)))));
+  const tied = (b, w) => (metaOf(b).vs || []).includes(w.starter) ? 0 : 1;
+  const blackFor = w => starters.filter(b => b.color === 'b' && (metaOf(b).answers === metaOf(w).first || (metaOf(b).vs || []).includes(w.starter))).sort((a, b) => tied(a, w) - tied(b, w));
+  const whiteFor = b => starters.filter(w => w.color === 'w' && (metaOf(b).answers === metaOf(w).first || (metaOf(b).vs || []).includes(w.starter))).sort((x, y) => tied(b, x) - tied(b, y));
+  const vsChips = (label, list) => list.length ? `<div class="chips vsrow"><span class="vslabel">${label}</span>${list.slice(0, 4).map(r => `<a class="chip vs" href="#/opening/${r.id}">${esc(r.name)}</a>`).join('')}${list.length > 4 ? `<span class="chip more" title="${esc(list.slice(4).map(r => r.name).join(', '))}">+${list.length - 4}</span>` : ''}</div>` : '';
+  starters.filter(r => r.color === 'w').forEach(r => W.append(ocard(r, vsChips('Defences', blackFor(r)))));
+  starters.filter(r => r.color === 'b').forEach(r => B.append(ocard(r, vsChips(`vs 1.${metaOf(r).answers || '?'}`, whiteFor(r)))));
   SIDX = null; if ($('#search').value.trim()) runSearch();
   const custom = db.reps.filter(r => !r.starter); $('#customWrap').hidden = !custom.length; custom.forEach(r => C.append(ocard(r)));
   const removed = STARTERS.filter(s => (db.removed || []).includes(s.id));
