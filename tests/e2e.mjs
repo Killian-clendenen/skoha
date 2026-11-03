@@ -151,6 +151,11 @@ await pg.evaluate(() => document.querySelector('#modeBox').open = true); await p
   ok(await pg.isDisabled('#navBack'), 'Back disabled at line start'); }
 await pg.click('nav [data-nav=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400); await pg.selectOption('#sTheme', 'aurora'); ok(await pg.evaluate(() => document.body.classList.contains('bt-aurora')), 'board theme switch');
 ok(await pg.locator('nav a').count() === 3, 'three-item nav');
+ok(await pg.inputValue('#sGoal') === '10', 'daily goal default 10');
+await pg.fill('#sGoal', '3'); await pg.dispatchEvent('#sGoal', 'change'); await pg.click('nav [data-nav=home]'); await pg.waitForSelector('#goalRing');
+{ const t = await pg.textContent('#goalRing'); ok(/\d+\/3/.test(t) && /day streak/.test(t), 'home ring + streak: ' + t.replace(/\s+/g, ' ')); }
+ok(await pg.evaluate(() => Object.values(window.__freereps.db().history || {})[0] > 0), 'reviews counted today');
+await pg.screenshot({ path: '/workspace/skoha-goal-home.png' }); await pg.click('nav [data-nav=settings]');
 await pg.click('#toData'); await pg.waitForSelector('#data.active #exportBtn'); ok(true, 'Your data page');
 await pg.screenshot({ path: '/workspace/skoha-simple-data.png' });
 await pg.click('nav [data-nav=settings]'); await pg.screenshot({ path: '/workspace/skoha-simple-settings.png', fullPage: true });

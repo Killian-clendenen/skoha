@@ -216,3 +216,18 @@ export function suggestOpenings(side, level = 'beginner') {
   if (side === 'w' || side === 'b') return SUGG[side][L].slice();
   return [SUGG.w[L][0], SUGG.b[L][0], SUGG.b[L][1]];
 }
+
+// ---------- daily goal & streak ----------
+export function dayKey(d = new Date()) { const x = new Date(d); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`; }
+export function addReview(hist = {}, now = new Date()) { const k = dayKey(now); return { ...hist, [k]: (hist[k] || 0) + 1 }; }
+// consecutive days (ending today, or yesterday if today's goal isn't met yet) on which the goal was reached
+export function goalStreak(hist = {}, goal = 10, now = new Date()) {
+  const g = Math.max(1, goal | 0); const d = new Date(now); d.setHours(12, 0, 0, 0);
+  if ((hist[dayKey(d)] || 0) < g) d.setDate(d.getDate() - 1);
+  let n = 0; while ((hist[dayKey(d)] || 0) >= g) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+export function ringSvg(done, goal, size = 92) {
+  const r = size / 2 - 7, c = 2 * Math.PI * r, f = Math.min(1, done / Math.max(1, goal));
+  return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${done} of ${goal} reviews today"><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="8"/><circle class="ringfg" cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="url(#ringg)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${(c * f).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 ${size / 2} ${size / 2})"/><defs><linearGradient id="ringg"><stop offset="0" stop-color="#3ef0d0"/><stop offset="1" stop-color="#8a7dff"/></linearGradient></defs><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="${size / 4.6}" font-weight="700">${done}/${goal}</text></svg>`;
+}

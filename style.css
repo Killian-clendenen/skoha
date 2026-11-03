@@ -273,3 +273,8 @@ footer{max-width:1200px;margin:0 auto;padding:var(--s6) var(--s5);border-top:1px
 .sgroup{padding:var(--s4) 0;border-bottom:1px solid var(--line)}.sgroup:last-child{border:0}.sgroup h2{margin-top:0}
 .row.center{justify-content:center;margin:var(--s5) 0}
 .trainbar{position:relative;z-index:30}
+/* daily goal ring + streak */
+.stats .goal{grid-column:1/-1;display:flex;align-items:center;gap:var(--s4);padding:var(--s3) var(--s4);border:1px solid var(--line2);border-radius:var(--r-lg);background:rgba(255,255,255,.03)}
+.goal .l{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.goal .gsub{font-weight:600;margin:2px 0 6px}.goal .streak{font-size:14px;color:#ffc58a}
+.ring .ringfg{transition:stroke-dasharray .6s ease}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;z-index:60;padding:12px 18px;border-radius:999px;background:#1b2240;border:1px solid var(--a1);color:#fff;font-weight:600;transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}

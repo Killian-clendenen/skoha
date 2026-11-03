@@ -1,7 +1,7 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
+import { dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
 import { KB } from '../kb.js';
 const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
@@ -99,4 +99,12 @@ ok(search(SI, 'zzzz').length === 0 && search(SI, '').length === 0, 'no false hit
 ok(navStep(null, 5, -1) === 4 && navStep(4, 5, -1) === 3 && navStep(1, 5, -1) === 0 && navStep(0, 5, -1) === 0 && navStep(null, 1, -1) === 0 && navStep(0, 1, 1) === null && navStep(3, 5, 1) === 4 && navStep(4, 5, 1) === null && navStep(null, 5, 1) === null && navStep(null, 0, -1) === null, 'explanation history navStep');
 ok(suggestOpenings('b','advanced').includes('sicilian') && suggestOpenings('w').length === 3 && suggestOpenings('both','intermediate').length === 3 && suggestOpenings('w','x')[0] === 'italian', 'guide suggestions');
 for (const l of ['beginner','intermediate','advanced']) for (const sd of ['w','b','both']) ok(suggestOpenings(sd,l).every(id => idx.some(s => s.id === id)), `suggestions exist ${sd}/${l}`);
+{ const now = new Date(2026, 10, 2, 20); const d = n => dayKey(new Date(2026, 10, 2 - n, 12));
+  ok(dayKey(now) === '2026-11-02', 'dayKey local');
+  let h = {}; for (let i = 0; i < 3; i++) h = addReview(h, now); ok(h['2026-11-02'] === 3, 'addReview counts');
+  ok(goalStreak({ [d(0)]: 10, [d(1)]: 12, [d(2)]: 10, [d(4)]: 10 }, 10, now) === 3, 'streak counts consecutive goal days');
+  ok(goalStreak({ [d(0)]: 3, [d(1)]: 10, [d(2)]: 10 }, 10, now) === 2, 'today unfinished keeps yesterday streak');
+  ok(goalStreak({ [d(0)]: 3, [d(2)]: 10 }, 10, now) === 0, 'gap breaks streak');
+  ok(goalStreak({}, 10, now) === 0, 'empty streak');
+  ok(/3\/10/.test(ringSvg(3, 10)) && /stroke-dasharray/.test(ringSvg(30, 10)), 'ring svg'); }
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

@@ -1,11 +1,11 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings } from './core.js?v=20261102g';
-import { KB } from './kb.js?v=20261102g';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg } from './core.js?v=20261102h';
+import { KB } from './kb.js?v=20261102h';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
-const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false };
+const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false, dailyGoal: 10 };
 let db = load();
 function load() {
   try {
@@ -15,6 +15,7 @@ function load() {
   } catch { return { reps: [], cards: {}, settings: { ...DEF } }; }
 }
 function migrate(d) { d.reps.forEach(r => r.lines = dedupe(r.lines.map(l => Array.isArray(l) ? { m: l, ch: 'Main' } : l))); return d; }
+function toast(t) { let e = document.querySelector('.toast'); if (!e) { e = document.createElement('div'); e.className = 'toast'; e.setAttribute('role', 'status'); document.body.append(e); } e.textContent = t; e.classList.add('show'); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove('show'), 3200); }
 function save() { localStorage.setItem(KEY, JSON.stringify(db)); }
 const S = () => db.settings;
 const cardsOf = rep => db.cards[rep.id] ||= {};
@@ -126,9 +127,10 @@ function renderHome() {
   const T = { total: 0, due: 0, fresh: 0, learned: 0 };
   db.reps.forEach(r => { const s = repStats(r); for (const k in T) T[k] += s[k]; });
   const st = db.stats || { reviews: 0, correct: 0 };
-  $('#stats').innerHTML = [[T.due, 'due now'], [T.learned + '/' + T.total, 'moves learned'],
-    [st.reviews ? Math.round(100 * st.correct / st.reviews) + '%' : '–', 'accuracy'], [db.streak?.n || 0, 'day streak']]
-    .map(([n, l]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+  { const goal = S().dailyGoal || 10, done = (db.history || {})[dayKey()] || 0, sk = goalStreak(db.history, goal);
+  $('#stats').innerHTML = `<div class="goal" id="goalRing">${ringSvg(done, goal)}<div><div class="l">Today's goal</div><div class="gsub">${done >= goal ? 'Done for today ✓' : (goal - done) + ' reviews to go'}</div><div class="streak" id="streakN">🔥 <b>${sk}</b> day streak</div></div></div>` +
+    [[T.due, 'due now'], [T.learned + '/' + T.total, 'moves learned'], [st.reviews ? Math.round(100 * st.correct / st.reviews) + '%' : '–', 'accuracy']]
+    .map(([n, l]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join(''); }
   const W = $('#whiteList'), B = $('#blackList'), C = $('#customList'); W.innerHTML = B.innerHTML = C.innerHTML = '';
   const starters = db.reps.filter(r => r.starter).sort((a, b) => STARTERS.findIndex(s => s.id === a.starter) - STARTERS.findIndex(s => s.id === b.starter));
   const tied = (b, w) => (metaOf(b).vs || []).includes(w.starter) ? 0 : 1;
@@ -263,7 +265,7 @@ function download(name, text, type) {
 }
 
 // ---------- settings ----------
-const SET = { sSound: 'sound', sVolume: 'volume', sAnim: 'anim', sDelay: 'delay', sPremove: 'premove', sDests: 'dests', sCoords: 'coords', sAutoNext: 'autoNext', sAutoReply: 'autoReply', sFlip: 'flip', sNew: 'newLimit', sNotes: 'notes' };
+const SET = { sSound: 'sound', sVolume: 'volume', sAnim: 'anim', sDelay: 'delay', sPremove: 'premove', sDests: 'dests', sCoords: 'coords', sAutoNext: 'autoNext', sAutoReply: 'autoReply', sFlip: 'flip', sNew: 'newLimit', sNotes: 'notes', sGoal: 'dailyGoal' };
 function renderSettings() {
   $('#sTheme').value = S().theme || 'brown';
   for (const [id, k] of Object.entries(SET)) { const el = $('#' + id); if (el.type === 'checkbox') el.checked = S()[k]; else el.value = S()[k]; }
@@ -283,7 +285,7 @@ $('#importFile').onchange = async e => {
     const d = migrate(JSON.parse(await f.text())); if (!Array.isArray(d.reps)) throw new Error('not a Skoha backup');
     d.reps.forEach(r => r.lines.forEach(l => l.m = validateLine(l.m)));
     if (!confirm('Replace current data with this backup?')) return;
-    db = { reps: d.reps, cards: d.cards || {}, stats: d.stats, streak: d.streak, settings: { ...DEF, ...d.settings } }; save(); renderHome(); alert('Backup restored.');
+    db = { reps: d.reps, cards: d.cards || {}, stats: d.stats, streak: d.streak, history: d.history || {}, profile: d.profile, guided: true, removed: d.removed, settings: { ...DEF, ...d.settings } }; save(); renderHome(); alert('Backup restored.');
   } catch (err) { alert('Import failed: ' + err.message); }
   e.target.value = '';
 };
@@ -475,6 +477,7 @@ function record(ok) {
   else if (drill.learning) cs[k] = schedule(card, 4);
   else if (!drill.missed && isDue(card)) cs[k] = schedule(card, 5);
   db.stats ||= { reviews: 0, correct: 0 }; if (!drill.learning) { db.stats.reviews++; if (ok) db.stats.correct++; }
+  { const was = (db.history || {})[dayKey()] || 0; db.history = addReview(db.history); if (was + 1 === (S().dailyGoal || 10)) setTimeout(() => toast('🎯 Daily goal reached! Streak: ' + goalStreak(db.history, S().dailyGoal) + ' day(s)'), 50); }
   const today = new Date().toDateString(); db.streak ||= { n: 0, day: null };
   if (db.streak.day !== today) { db.streak.n = db.streak.day === new Date(Date.now() - 864e5).toDateString() ? db.streak.n + 1 : 1; db.streak.day = today; }
   save();
