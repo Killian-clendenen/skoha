@@ -5,10 +5,13 @@
 
 /*.js
   Content-Type: text/javascript; charset=utf-8
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: no-cache, must-revalidate
 
 /*.css
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: no-cache, must-revalidate
+
+/starters/*.json
+  Cache-Control: no-cache, must-revalidate
 
 /vendor/*
   Cache-Control: public, max-age=604800
@@ -18,7 +21,10 @@
 
 /starters/*.pgn
   Content-Type: text/plain; charset=utf-8
-  Cache-Control: public, max-age=3600
+  Cache-Control: no-cache, must-revalidate
+
+/
+  Cache-Control: no-cache, must-revalidate
 
 /index.html
-  Cache-Control: no-cache
+  Cache-Control: no-cache, must-revalidate

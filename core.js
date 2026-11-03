@@ -199,9 +199,9 @@ export function search(items, q, limit = 12) {
   return out.sort((a, b) => b.score - a.score || (a.type === 'opening' ? -1 : 1) - (b.type === 'opening' ? -1 : 1) || a.name.localeCompare(b.name)).slice(0, limit);
 }
 
-// Explanation-history navigation. view = ply count shown (1..ply) or null = live. d = -1 back, +1 forward.
+// Explanation-history navigation. view = ply count shown (0 = start position .. ply) or null = live. d = -1 back, +1 forward.
 export function navStep(view, ply, d) {
   if (!ply) return null;
-  const cur = view ?? ply, nv = Math.max(1, Math.min(ply, cur + d));
+  const cur = view ?? ply, nv = Math.max(0, Math.min(ply, cur + d));
   return nv >= ply ? null : nv;
 }

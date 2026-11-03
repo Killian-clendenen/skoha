@@ -1,7 +1,7 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep } from './core.js';
-import { KB } from './kb.js';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep } from './core.js?v=20261102c';
+import { KB } from './kb.js?v=20261102c';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -344,7 +344,7 @@ function navUi() {
   const n = drill.line ? drill.ply : 0, v = drill.view ?? n;
   $('#navPos').textContent = n ? `Move ${v} of ${n}${drill.view == null ? '' : ' · browsing'}` : 'No moves yet';
   const done = drill.line && drill.ply >= drill.line.length;
-  $('#navBack').disabled = v <= 1;
+  $('#navBack').disabled = v <= 0;
   $('#navFwd').disabled = !(drill.view != null || drill.waiting || (done && !$('#drillNext').hidden));
   $('#navFwd').classList.toggle('primary', !!drill.waiting || (done && drill.view == null));
   $('#navFwd').textContent = drill.view == null && done ? 'Next line ▶' : 'Next ▶';
@@ -371,6 +371,9 @@ function navGo(v) {
     return;
   }
   const c = new Chess(); drill.line.slice(0, nv).forEach(x => c.move(x)); const h = c.history({ verbose: true }).at(-1);
+  if (!h) { drillCg.set({ fen: c.fen(), lastMove: undefined, check: false, turnColor: 'white', movable: { color: undefined, dests: new Map() } }); drillCg.setAutoShapes([]);
+    const ch = drill.rep.lines[drill.li].ch; $('#drillNote').className = 'bnote at-bottom opp pop';
+    $('#drillNote').innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">Start</span><span class="who opp">${esc(ch)}</span></div><p>${esc(drill.rep.intros?.[ch] || 'Starting position of this line.')}</p></div>`; navUi(); return; }
   drillCg.set({ fen: c.fen(), lastMove: [h.from, h.to], check: c.inCheck(), turnColor: turnColor(c), movable: { color: undefined, dests: new Map() } });
   coach(nv - 1); navUi();
 }
@@ -415,7 +418,7 @@ function nextLine() {
   drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = '';
   drillCg.set({ fen: drill.chess.fen(), lastMove: undefined, check: false, turnColor: 'white' }); setOrientation();
   $('#drillInfo').textContent = `${drill.rep.lines[drill.li].ch} · line ${drill.qi}/${drill.queue.length}`; drillStats();
-  msg(`Your move as ${userColor() === 'w' ? 'White' : 'Black'}.`);
+  msg(`Your move as ${userColor() === 'w' ? 'White' : 'Black'}.`); navUi();
   advance();
 }
 function renderMoves() { $('#drillMoves').innerHTML = fmt(drill.chess.history()); drillStats(); }

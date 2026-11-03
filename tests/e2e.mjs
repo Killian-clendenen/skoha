@@ -35,7 +35,9 @@ await pg.click('.otabs [data-t=kb]'); ok((await pg.textContent('#oBody')).includ
 await pg.click('.otabs [data-t=lines]');
 await pg.click('#opening .lineitem >> nth=0'); await pg.waitForSelector('#line.active');
 ok((await pg.textContent('#lnNote')).length > 40, 'line intro shown');
-await pg.click('#lnNext'); await pg.waitForTimeout(250);
+const lf = () => pg.evaluate(() => window.__freereps.lineCg.getFen()); const lf0 = await lf();
+await pg.click('#lnNext'); await pg.waitForTimeout(250); const lf1 = await lf();
+ok(lf1 !== lf0, 'study page: real click ▶ changes board'); await pg.click('#lnPrev'); await pg.waitForTimeout(200); ok(await lf() === lf0, 'study page: ◀ restores board'); await pg.click('#lnNext'); await pg.waitForTimeout(250);
 ok((await pg.textContent('#lnNote')).includes('Réti starts flexibly'), 'annotation for 1.Nf3 renders');
 ok((await pg.locator('#lineBoard svg circle, #lineBoard cg-auto-pieces, #lineBoard svg g').count()) > 0, 'highlight shapes drawn');
 for (let i = 0; i < 2; i++) { await pg.keyboard.press('ArrowRight'); await pg.waitForTimeout(220); }
@@ -97,6 +99,12 @@ await pg.click('#modes [data-mode=line]'); await pg.selectOption('#drillLine', '
   const play = async p => { const c = new Chess(); ln.slice(0, p).forEach(x => c.move(x)); const m = c.move(ln[p]); await mv(m.from, m.to); await pg.waitForTimeout(250); return m; };
   const m0 = await play(0); await pg.waitForTimeout(500);
   ok((await st()).ply === 1, 'opponent does not reply automatically');
+  const F = () => pg.evaluate(() => window.__freereps.cg.getFen()); const fenAt = k => { const c = new Chess(); ln.slice(0, k).forEach(x => c.move(x)); return c.fen().split(' ')[0]; };
+  ok(!(await pg.isDisabled('#navBack')), 'Back enabled right after the first move');
+  await pg.click('#navBack'); await pg.waitForTimeout(150);
+  ok(await F() === fenAt(0) && (await pg.textContent('#navPos')).includes('Move 0 of 1'), 'real click Back after move 1 -> start position on board');
+  await pg.click('#navFwd'); await pg.waitForTimeout(150);
+  ok(await F() === fenAt(1) && (await st()).ply === 1, 'real click Next -> back to live position, reply still waiting');
   ok((await pg.textContent('#drillNote .who')).includes('Your move') && (await pg.textContent('#drillNote .coach-san')).includes(ln[0]), 'overlay shows your move explanation');
   ok(await pg.evaluate(() => document.querySelector('#navFwd').classList.contains('primary')), 'Next is highlighted while waiting');
   const pos = await pg.evaluate(() => document.querySelector('#drillNote').className);
@@ -117,7 +125,22 @@ await pg.click('#modes [data-mode=line]'); await pg.selectOption('#drillLine', '
   await pg.click('#navFwd'); await pg.keyboard.press('ArrowRight'); await pg.waitForTimeout(150);
   ok((await pg.textContent('#navPos')).includes('Move 6 of 6') && !(await pg.evaluate(() => document.querySelector('#drill').classList.contains('browsing'))), 'Next returns to live');
   await play(6); await pg.screenshot({ path: '/workspace/skoha-annot.png' });
-  ok((await st()).ply === 7, 'live board playable again after browsing'); }
+  ok((await st()).ply === 7, 'live board playable again after browsing');
+  // after a mistake: Back/Next still move the board
+  await pg.click('#navFwd'); await pg.waitForTimeout(500); await mv('a2', 'a3'); await pg.waitForTimeout(250);
+  const pl = (await st()).ply; await pg.click('#navBack'); await pg.waitForTimeout(150);
+  ok(await F() === fenAt(pl - 1), 'after a mistake: Back shows previous position');
+  await pg.click('#navFwd'); await pg.waitForTimeout(150); ok(await F() === fenAt(pl), 'after a mistake: Next returns to live');
+  // finish the line, then Back/Next after completion
+  let g = 0; while ((await st()).ply < ln.length && g++ < 40) { const s5 = await st(); if (s5.ply % 2 === 0) await play(s5.ply); else { await pg.click('#navFwd'); await pg.waitForTimeout(350); } }
+  ok((await st()).ply === ln.length, 'line completed in step mode');
+  await pg.click('#navBack'); await pg.waitForTimeout(150); ok(await F() === fenAt(ln.length - 1), 'after line complete: Back changes board');
+  await pg.click('#navBack'); await pg.waitForTimeout(150); ok(await F() === fenAt(ln.length - 2), 'after line complete: Back again');
+  await pg.click('#navFwd'); await pg.click('#navFwd'); await pg.waitForTimeout(150); ok(await F() === fenAt(ln.length), 'after line complete: Next to final position');
+  // switching lines resets history
+  await pg.selectOption('#drillLine', '1'); await pg.waitForTimeout(500);
+  ok((await pg.textContent('#navPos')).includes('No moves yet') || /Move 0/.test(await pg.textContent('#navPos')), 'switching lines resets the counter: ' + await pg.textContent('#navPos'));
+  ok(await pg.isDisabled('#navBack'), 'Back disabled at line start'); }
 await pg.click('nav [data-nav=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400); await pg.selectOption('#sTheme', 'aurora'); ok(await pg.evaluate(() => document.body.classList.contains('bt-aurora')), 'board theme switch');
 ok(errs.length === 0, 'no page errors ' + errs.join(' | '));
 // mobile

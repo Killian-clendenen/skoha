@@ -96,5 +96,5 @@ ok(top('reti')?.id === 'reti' && top('kings gambit')?.id === 'kingsgambit' && to
 ok(top('1.d4 Nf6 2.c4 e6 3.Nc3 Bb4')?.id === 'nimzo', 'moves search -> Nimzo');
 ok(top('winawer')?.ch?.includes('Winawer') && top('berlin wall')?.id === 'berlin', 'variation search');
 ok(search(SI, 'zzzz').length === 0 && search(SI, '').length === 0, 'no false hits');
-ok(navStep(null, 5, -1) === 4 && navStep(4, 5, -1) === 3 && navStep(1, 5, -1) === 1 && navStep(3, 5, 1) === 4 && navStep(4, 5, 1) === null && navStep(null, 5, 1) === null && navStep(null, 0, -1) === null, 'explanation history navStep');
+ok(navStep(null, 5, -1) === 4 && navStep(4, 5, -1) === 3 && navStep(1, 5, -1) === 0 && navStep(0, 5, -1) === 0 && navStep(null, 1, -1) === 0 && navStep(0, 1, 1) === null && navStep(3, 5, 1) === 4 && navStep(4, 5, 1) === null && navStep(null, 5, 1) === null && navStep(null, 0, -1) === null, 'explanation history navStep');
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);
