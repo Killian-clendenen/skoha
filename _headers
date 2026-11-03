@@ -31,10 +31,9 @@
 
 /vendor/stockfish/*.wasm
   Content-Type: application/wasm
-  Cache-Control: public, max-age=604800
 
 /sw.js
-  Content-Type: text/javascript; charset=utf-8
+  ! Cache-Control
   Cache-Control: no-cache, no-store, must-revalidate
   Service-Worker-Allowed: /
 

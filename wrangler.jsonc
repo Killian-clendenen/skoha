@@ -1,0 +1,10 @@
+// Cloudflare Workers config for Skoha (Workers Builds runs `npx wrangler deploy`).
+// Static files are served from the repo root; worker.js only handles /api/sync.
+{
+  "name": "freereps",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": ".", "binding": "ASSETS", "not_found_handling": "none" }
+  // Optional cloud sync: create a KV namespace in the dashboard and uncomment (put its id here):
+  // , "kv_namespaces": [{ "binding": "SYNC", "id": "<your-namespace-id>" }]
+}

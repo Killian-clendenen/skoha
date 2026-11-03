@@ -307,4 +307,30 @@ const clickSq = async (p, s, white = true) => { const bb = await p.locator('#dri
   global.__marker = '<!--deploy-2-->'; await p.goto('http://localhost:8765/#/'); await p.reload(); await p.waitForSelector('#whiteList .ocard');
   ok((await p.content()).includes('deploy-2'), 'new deploy is picked up on the next online load'); global.__marker = '';
   await c.close(); }
+// ---- regression: the Réti must work for fresh users AND with data saved by older versions ----
+async function retiFlow(tag, seed, vp = { width: 1200, height: 820 }) {
+  const c = await b.newContext({ viewport: vp }); const pe = [];
+  if (seed) await c.addInitScript(s => { if (!localStorage.getItem('freereps.v2')) localStorage.setItem('freereps.v2', s); }, seed);
+  const p = await c.newPage(); p.on('pageerror', e => pe.push(e.message));
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#whiteList .ocard'); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  const card = p.locator('#whiteList .ocard').filter({ hasText: 'Réti Opening' }); ok(await card.count() === 1, tag + ': exactly one Réti card');
+  await card.locator('.chip').first().click(); await p.waitForSelector('#opening.active [data-act=due]');
+  await p.click('#opening [data-act=due]'); await p.waitForTimeout(800);
+  const d = await p.evaluate(() => ({ name: window.__freereps.drill.rep?.name, first: window.__freereps.drill.line?.[0] }));
+  ok(d.name === 'Réti Opening' && d.first === 'Nf3', tag + ': Réti training starts on 1.Nf3 ' + JSON.stringify(d));
+  ok((await cueState(p)).arrows.length === 1, tag + ': guide arrow shown');
+  await p.click('#helpToggle'); await p.waitForTimeout(150); await p.click('#helpToggle');
+  await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active'); await p.click('#lnNext'); await p.waitForTimeout(300);
+  ok((await p.textContent('#lnNote')).length > 20, tag + ': study page works');
+  for (const q of ['Reti', 'Réti', 'Nf3']) { await p.goto('http://localhost:8765/#/'); await p.fill('#search', q); await p.waitForTimeout(200); ok((await p.textContent('#searchResults')).includes('Réti Opening'), tag + ': search ' + q); }
+  ok(pe.length === 0, tag + ': no page errors ' + pe.join(' | '));
+  const db = await p.evaluate(() => window.__freereps.db()); await c.close(); return db;
+}
+await retiFlow('fresh');
+await retiFlow('fresh mobile', null, { width: 390, height: 844 });
+{ const db = await retiFlow('legacy v3 data', fs.readFileSync(root + '/tests/fixtures/legacy-v3.json', 'utf8'));
+  const r = db.reps.find(x => x.starter === 'reti'); ok(r.id === 'rh39tz7m' && Object.values(db.cards[r.id] || {}).some(c => c.reps >= 2), 'legacy: old Réti id + progress kept'); }
+{ const db = await retiFlow('legacy damaged data', fs.readFileSync(root + '/tests/fixtures/legacy-broken.json', 'utf8'));
+  ok(db.reps.filter(x => x.starter === 'reti').length === 1 && Object.values(db.cards).some(cs => cs.k?.reps === 5), 'damaged: duplicate Réti merged, progress kept');
+  ok(db.reps.find(x => x.id === 'c9')?.lines.length === 1, 'damaged: custom repertoire repaired'); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

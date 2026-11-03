@@ -1,0 +1,10 @@
+.git
+.gitignore
+.assetsignore
+node_modules
+tests
+tools
+worker.js
+wrangler.jsonc
+*.md
+screenshot-*.png

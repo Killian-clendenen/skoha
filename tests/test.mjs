@@ -121,7 +121,7 @@ ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Google US English', lang
   ok(M.syncKey === 'SECRET' && M.stats.reviews === 5, 'merge keeps local key + larger stats');
   const code = await encodeSync(P); ok(code.startsWith('SK1.') && JSON.stringify(await decodeSync('https://x/#/sync/' + code)) === JSON.stringify(P), 'sync code round-trips (also from link)');
   let bad = false; try { await decodeSync('hello'); } catch { bad = true; } ok(bad, 'rejects non-codes');
-  const { onRequest } = await import('../functions/api/sync.js'); const store = new Map(); const KV = { get: async k => store.get(k) ?? null, put: async (k, v) => store.set(k, v) };
+  const { handleSync } = await import('../worker.js'); const onRequest = ({ request, env }) => handleSync(request, env); const store = new Map(); const KV = { get: async k => store.get(k) ?? null, put: async (k, v) => store.set(k, v) };
   const rq = (m, q = '', body) => new Request('https://s.test/api/sync' + q, { method: m, body });
   ok((await onRequest({ request: rq('GET'), env: {} })).status === 501, 'function: 501 without KV binding');
   ok((await (await onRequest({ request: rq('GET'), env: { SYNC: KV } })).json()).enabled, 'function: probe enabled');

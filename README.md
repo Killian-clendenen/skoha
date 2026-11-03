@@ -66,13 +66,12 @@ See DEPLOY.md for Cloudflare Pages + custom domain and RESEARCH.md for the Chess
 
 **Works out of the box (no setup): Sync code.** Settings › Your data › *Copy sync code* / *Copy sync link*. Paste the code (or open the link) on the other device and press *Load sync code*. The code is your compressed progress (starter lines are re-downloaded, not included); loading **merges** both devices (per move the more-practised card wins, daily counts take the max).
 
-**Optional cloud sync (Cloudflare free plan).** `functions/api/sync.js` is a Pages Function that stores the same compressed snapshot in Workers KV. It answers `501` and the app silently hides the cloud box when no KV binding exists, so the static site is never broken.
+**Optional cloud sync (Cloudflare free plan).** The site deploys as a Cloudflare **Worker with static assets** (`wrangler.jsonc`). `worker.js` serves `/api/sync` and hands everything else to the static files. Without a KV binding, `/api/sync` answers `501` and the app hides cloud sync, so nothing breaks.
 
 To turn it on:
-1. Cloudflare dashboard › *Storage & Databases* › *KV* › **Create namespace**, e.g. `skoha-sync`.
-2. *Workers & Pages* › the **skoha** Pages project › *Settings* › *Bindings* (older UI: *Functions › KV namespace bindings*) › **Add** › KV namespace. Set the variable name to **`SYNC`** and choose `skoha-sync`. Do this for Production (and Preview if you want).
-3. Redeploy (push any commit, or *Deployments › Retry deployment*).
-4. In the app: Settings › Your data › *New key* › *Sync now*. Enter the same key on the other devices. It syncs on every app start when a key is saved.
+1. Cloudflare dashboard › *Storage & Databases* › *KV* › **Create namespace** named `skoha-sync`, then copy its **ID**.
+2. In `wrangler.jsonc`, uncomment the `kv_namespaces` line and paste the ID: `"kv_namespaces": [{ "binding": "SYNC", "id": "<id>" }]`. Commit and push. Workers Builds redeploys. A binding added only in the dashboard would be removed by the next deploy, because the config file wins.
+3. In the app: Settings › Your data › *New key* › *Sync now*. Enter the same key on your other devices.
 
 Free-plan limits: 100k KV reads and 1k writes per day, 1 GB storage; Pages Functions get 100k requests per day. The server only ever sees a SHA-256 hash of the key as the record id. There is no account or password reset: losing the key means losing the cloud copy (the device copy remains).
 

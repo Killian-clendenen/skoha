@@ -1,10 +1,9 @@
-// Optional cloud sync for Skoha (Cloudflare Pages Function + Workers KV, free plan).
-// Works only when a KV namespace is bound to this Pages project as "SYNC"; otherwise it answers 501
-// and the app falls back to the offline "sync code". The client sends only a SHA-256 hash of the
-// user's secret sync key as the id, so stored data can't be looked up without the key.
+// Skoha Worker: serves the static site (assets) and an optional /api/sync endpoint.
+// Cloud sync works only when a KV namespace is bound as SYNC (see wrangler.jsonc / README); otherwise /api/sync
+// answers 501 and the app hides cloud sync. The client sends only a SHA-256 hash of the user's sync key as the id.
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 const MAX = 900 * 1024;
-export async function onRequest({ request, env }) {
+export async function handleSync(request, env) {
   if (!env.SYNC) return J({ enabled: false, error: 'KV namespace SYNC is not bound' }, 501);
   const url = new URL(request.url), id = url.searchParams.get('id') || '';
   if (request.method === 'GET' && !id) return J({ enabled: true });
@@ -17,3 +16,10 @@ export async function onRequest({ request, env }) {
   }
   return J({ error: 'method not allowed' }, 405);
 }
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.pathname === '/api/sync') return handleSync(request, env);
+    return env.ASSETS ? env.ASSETS.fetch(request) : new Response('Not found', { status: 404 });
+  },
+};

@@ -1,9 +1,9 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102o';
-import { KB } from './kb.js?v=20261102o';
-import { Engine } from './engine.js?v=20261102o';
-import { Narrator } from './narrator.js?v=20261102o';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102p';
+import { KB } from './kb.js?v=20261102p';
+import { Engine } from './engine.js?v=20261102p';
+import { Narrator } from './narrator.js?v=20261102p';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -13,8 +13,26 @@ function load() {
   try {
     let d = JSON.parse(localStorage.getItem(KEY));
     if (!d) { const v1 = JSON.parse(localStorage.getItem('freereps.v1')); if (v1) d = migrate(v1); }
-    d ||= { reps: [], cards: {} }; d.settings = { ...DEF, ...d.settings }; return d;
+    d ||= { reps: [], cards: {} }; d.settings = { ...DEF, ...d.settings }; return repair(d);
   } catch { return { reps: [], cards: {}, settings: { ...DEF } }; }
+}
+// repair data saved by any older version so one bad record can never break an opening
+function repair(d) {
+  if (!d || typeof d !== 'object') d = {};
+  d.reps = Array.isArray(d.reps) ? d.reps.filter(r => r && typeof r === 'object') : []; d.cards = d.cards && typeof d.cards === 'object' ? d.cards : {};
+  const seen = new Map();
+  for (const r of d.reps) {
+    r.id = String(r.id || r.starter || uid()); r.color = r.color === 'b' ? 'b' : 'w'; r.name = String(r.name || 'Repertoire');
+    r.lines = (Array.isArray(r.lines) ? r.lines : []).map(l => Array.isArray(l) ? { m: l, ch: 'Main' } : l).filter(l => l && Array.isArray(l.m) && l.m.length);
+    r.lines.forEach(l => { l.m = l.m.map(String); l.ch = String(l.ch || 'Main'); });
+    if (r.starter) { r.starter = String(r.starter).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      const first = seen.get(r.starter);
+      if (first) { const A = d.cards[first.id] ||= {}, B = d.cards[r.id] || {}; for (const [k, c] of Object.entries(B)) if (!A[k] || (c.reps || 0) > (A[k].reps || 0)) A[k] = c; delete d.cards[r.id]; r._dup = true; }
+      else seen.set(r.starter, r); }
+  }
+  d.reps = d.reps.filter(r => !r._dup);
+  if (!Array.isArray(d.removed)) d.removed = [];
+  return d;
 }
 function migrate(d) { d.reps.forEach(r => r.lines = dedupe(r.lines.map(l => Array.isArray(l) ? { m: l, ch: 'Main' } : l))); return d; }
 function toast(t) { let e = document.querySelector('.toast'); if (!e) { e = document.createElement('div'); e.className = 'toast'; e.setAttribute('role', 'status'); document.body.append(e); } e.textContent = t; e.classList.add('show'); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove('show'), 3200); }
@@ -106,13 +124,14 @@ async function loadStarters() {
     if (pg.errors.length) console.warn(s.id, pg.errors);
     let rep = db.reps.find(r => r.starter === s.id);
     if (!rep && !db.removed.includes(s.id)) { rep = { id: s.id, name: s.name, color: s.color, starter: s.id }; db.reps.push(rep); }
-    if (rep) { rep.lines = pg.lines; rep.intros = pg.intros; }   // refresh annotations; progress is keyed by position so it survives
+    if (rep) { rep.lines = pg.lines; rep.intros = pg.intros; rep.name = s.name; rep.color = s.color; }   // refresh annotations; progress is keyed by position so it survives
   }
   save();
 }
 const metaOf = rep => STARTERS.find(s => s.id === rep.starter) || {};
 const chaptersOf = rep => [...new Set(rep.lines.map(l => l.ch))];
-function ocard(rep, extra = '') {
+function ocard(rep, extra = '') { try { return ocard0(rep, extra); } catch (e) { console.warn('card', rep?.id, e); const el = document.createElement('div'); el.className = 'ocard'; el.innerHTML = `<h3>${esc(rep?.name || '?')}</h3><p class="muted">This repertoire's saved data looks damaged. <a href="#/data">Back up / repair</a></p>`; return el; } }
+function ocard0(rep, extra = '') {
   const s = repStats(rep), m = metaOf(rep), el = document.createElement('div');
   el.className = 'ocard' + (m.featured ? ' featured' : ''); el.dataset.id = rep.id;
   el.innerHTML = `<div class="eco">${esc(m.eco || (rep.color === 'w' ? 'White' : 'Black'))}</div>
@@ -286,7 +305,7 @@ $('#exportBtn').onclick = () => download('skoha-backup-' + new Date().toISOStrin
 $('#importFile').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   try {
-    const d = migrate(JSON.parse(await f.text())); if (!Array.isArray(d.reps)) throw new Error('not a Skoha backup');
+    const d = repair(migrate(JSON.parse(await f.text()))); if (!Array.isArray(d.reps)) throw new Error('not a Skoha backup');
     d.reps.forEach(r => r.lines.forEach(l => l.m = validateLine(l.m)));
     if (!confirm('Replace current data with this backup?')) return;
     db = { reps: d.reps, cards: d.cards || {}, stats: d.stats, streak: d.streak, history: d.history || {}, profile: d.profile, guided: true, removed: d.removed, settings: { ...DEF, ...d.settings } }; save(); renderHome(); alert('Backup restored.');
@@ -424,7 +443,7 @@ function endPlay(silent) {
 $('#playOut').onclick = startPlay; $('#backTrain').onclick = () => endPlay();
 window.__freereps.play = () => play;
 // ---------- sync across devices ----------
-async function applyRemote(remote) { db = mergeData(db, remote); db.settings = { ...DEF, ...db.settings }; save(); await loadStarters(); save(); renderHome(); applyTheme(); renderSettings(); }
+async function applyRemote(remote) { db = repair(mergeData(db, repair(remote))); db.settings = { ...DEF, ...db.settings }; save(); await loadStarters(); save(); renderHome(); applyTheme(); renderSettings(); }
 const copy = async t => { try { await navigator.clipboard.writeText(t); return true; } catch { return false; } };
 $('#codeMake').onclick = async () => { const c = await encodeSync(syncPayload(db)); $('#syncCode').value = c; $('#codeStatus').textContent = (await copy(c) ? 'Copied. ' : 'Select and copy the code above. ') + `${(c.length / 1024).toFixed(1)} KB. Paste it on your other device under Settings › Your data.`; };
 $('#linkMake').onclick = async () => { const l = location.origin + location.pathname + '#/sync/' + await encodeSync(syncPayload(db)); $('#syncCode').value = l; $('#codeStatus').textContent = (await copy(l) ? 'Link copied. ' : 'Copy the link above. ') + 'Open it on the other device to bring your progress over.'; };
