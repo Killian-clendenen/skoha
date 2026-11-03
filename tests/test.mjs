@@ -1,7 +1,7 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { guidedPass, syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
+import { mistakeSpots, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
 import { KB } from '../kb.js';
 const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
@@ -132,4 +132,14 @@ ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Google US English', lang
 { const now = 1e12, D = 864e5, c0 = { ease: 2.5, interval: 6, reps: 2, lapses: 0, due: now - 1 };
   const g = guidedPass(c0, now); ok(g.interval === 6 && g.reps === 2 && g.due === now + D && g.guided === 1, 'guided pass: no interval growth, back tomorrow');
   const n = schedule(c0, 5, now); ok(n.interval > 6 && n.due > now + 6 * D, 'no-help pass grows the interval'); }
+{ // mistake spots
+  const rep = { id: 'r', color: 'w', lines: [{ m: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'] }, { m: ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5'] }] };
+  const k = userCards(rep.lines[0].m, 'w'), now = Date.now(), cs = {};
+  cs[k[1].key] = schedule(undefined, 2, now - 1000);                 // Nf3 wrong just now (shared by both lines -> one spot)
+  cs[k[2].key] = { ...schedule(undefined, 2, now - 90 * 864e5), reps: 5 };   // Bc4 wrong long ago, since re-learned
+  cs[k[0].key] = schedule(undefined, 5, now);                        // e4 fine
+  const sp = mistakeSpots([rep], () => cs, { now });
+  ok(sp.length === 1 && sp[0].ply === 2 && sp[0].rep === 'r', 'mistakeSpots: one spot for a recent mistake, deduped across lines, old fixed ones skipped');
+  ok(mistakeSpots([{ id: 'x', color: 'b', lines: [{ m: ['e4', 'Kxe8'] }] }], () => ({}), { now }).length === 0, 'mistakeSpots tolerates broken lines');
+}
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

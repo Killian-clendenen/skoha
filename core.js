@@ -295,3 +295,22 @@ export function guidedPass(card, now = Date.now()) {
   const c = { ease: 2.5, interval: 0, reps: 0, lapses: 0, ...card };
   c.guided = (c.guided || 0) + 1; c.due = Math.min(c.due ?? Infinity, now + DAY); if (c.due < now) c.due = now + DAY; return c;
 }
+
+// Positions the user got wrong recently: one spot per (position, move) card, newest mistake first.
+// Each spot = { rep: repId, li: lineIndex, ply } where ply is the user's move to find.
+export function mistakeSpots(reps, cardsFor, { now = Date.now(), days = 30, limit = 40 } = {}) {
+  const out = [], seen = new Set();
+  for (const rep of reps) {
+    const cs = cardsFor(rep) || {};
+    (rep.lines || []).forEach((l, li) => {
+      let cards; try { cards = userCards(l.m, rep.color); } catch { return; }
+      for (const c of cards) {
+        const card = cs[c.key]; if (!card || !card.lapses) continue;
+        const recent = card.wrong && now - card.wrong <= days * 864e5, shaky = (card.reps || 0) < 3;
+        if (!(recent || (shaky && !card.wrong)) || seen.has(rep.id + c.key)) continue;
+        seen.add(rep.id + c.key); out.push({ rep: rep.id, li, ply: c.ply, t: card.wrong || card.last || 0 });
+      }
+    });
+  }
+  return out.sort((a, b) => b.t - a.t).slice(0, limit);
+}

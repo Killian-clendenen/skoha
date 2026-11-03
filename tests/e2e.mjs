@@ -388,4 +388,24 @@ await retiMoves('everything learned, nothing due', FX('ls-c2e3afe.json'), { lear
   await c.close(); await (async () => { const c2 = await b.newContext({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true }); const q = await c2.newPage();
     await q.goto('http://localhost:8765/#/opening/reti'); await q.waitForTimeout(1200); if (await q.isVisible('#gSkip')) await q.click('#gSkip'); await q.click('[data-act=due]'); await q.waitForTimeout(800);
     const bb = await q.locator('#drillBoard').boundingBox(); ok(bb.height <= 390, `landscape phone: board fits screen height (${Math.round(bb.height)})`); await c2.close(); })(); }
+{ const c = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); const p = await c.newPage();
+  await p.goto('http://localhost:8765/'); await p.waitForTimeout(1200); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  ok(await p.isHidden('#homeFix'), 'no Fix-mistakes button without mistakes');
+  await p.evaluate(() => { const db = window.__freereps.db(), r = db.reps.find(x => x.starter === 'sicilian'); const l = r.lines[0].m; db.cards[r.id] ||= {};
+    // fake a recent wrong answer at Black's 2nd move
+    import('./core.js').then(m => { const k = m.userCards(l, 'b')[1]; db.cards[r.id][k.key] = m.schedule(undefined, 2); localStorage.setItem('freereps.v2', JSON.stringify(db)); }); });
+  await p.waitForTimeout(300); await p.reload(); await p.waitForTimeout(1200);
+  ok(/Fix my mistakes \(1\)/.test(await p.textContent('#homeFix')), 'home shows Fix my mistakes (1)');
+  await p.click('#homeFix'); await p.waitForTimeout(700);
+  const st = await p.evaluate(() => { const d = window.__freereps.drill; return { ply: d.ply, len: d.line.length, rep: d.rep.starter, turn: d.chess.turn() }; });
+  ok(st.rep === 'sicilian' && st.ply === 3 && st.len === 4 && st.turn === 'b', 'mistake drill jumps straight to the missed position');
+  const exp = await p.evaluate(() => window.__freereps.drill.line.at(-1));
+  const mv = await p.evaluate(s => import('./vendor/chess.js').then(m => { const c = new m.Chess(window.__freereps.drill.chess.fen()); return c.move(s); }), exp);
+  const bb = await p.locator('#drillBoard cg-board').boundingBox(), w = bb.width / 8; const pt = q => [bb.x + (7 - (q.charCodeAt(0) - 97) + .5) * w, bb.y + ((+q[1] - 1) + .5) * w];
+  await p.touchscreen.tap(...pt(mv.from)); await p.waitForTimeout(100); await p.touchscreen.tap(...pt(mv.to)); await p.waitForTimeout(500);
+  ok(/complete/i.test(await p.textContent('#drillMsg')), 'fixing the spot completes it');
+  await p.screenshot({ path: '/workspace/skoha-feat-mistakes.png' });
+  await p.goto('http://localhost:8765/#/opening/sicilian'); await p.waitForTimeout(500);
+  ok(/Fix mistakes/.test(await p.textContent('#opening [data-act=fix]')), 'opening page has Fix mistakes');
+  await c.close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

@@ -1,9 +1,9 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102q';
-import { KB } from './kb.js?v=20261102q';
-import { Engine } from './engine.js?v=20261102q';
-import { Narrator } from './narrator.js?v=20261102q';
+import { mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261103c';
+import { KB } from './kb.js?v=20261103c';
+import { Engine } from './engine.js?v=20261103c';
+import { Narrator } from './narrator.js?v=20261103c';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -160,6 +160,7 @@ function renderHome() {
   $('#stats').innerHTML = `<div class="goal" id="goalRing">${ringSvg(done, goal)}<div><div class="l">Today's goal</div><div class="gsub">${done >= goal ? 'Done for today ✓' : (goal - done) + ' reviews to go'}</div><div class="streak" id="streakN">🔥 <b>${sk}</b> day streak</div></div></div>` +
     [[T.due, 'due now'], [T.learned + '/' + T.total, 'moves learned'], [st.reviews ? Math.round(100 * st.correct / st.reviews) + '%' : '–', 'accuracy']]
     .map(([n, l]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join(''); }
+  { const n = recentMistakes(db.reps).length, b = $('#homeFix'); b.hidden = !n; b.textContent = `🎯 Fix my mistakes (${n})`; }
   const W = $('#whiteList'), B = $('#blackList'), C = $('#customList'); W.innerHTML = B.innerHTML = C.innerHTML = '';
   const starters = db.reps.filter(r => r.starter).sort((a, b) => STARTERS.findIndex(s => s.id === a.starter) - STARTERS.findIndex(s => s.id === b.starter));
   const tied = (b, w) => (metaOf(b).vs || []).includes(w.starter) ? 0 : 1;
@@ -215,15 +216,16 @@ function renderOpening(rep) {
   el.innerHTML = `<div class="crumbs"><a href="#/">Home</a> › ${esc(rep.name)}</div>
   <div class="ohero"><div class="eco">${esc(m.eco || '')} · ${rep.color === 'w' ? 'You play White' : 'You play Black'}</div><h1 class="grad">${esc(rep.name)}</h1>
     <p class="lead">${esc(kb?.tagline || m.blurb || '')}</p>
-    <div class="row"><button class="primary" data-act="due">Train due (${s.due + Math.min(s.fresh, 999)} to go)</button><button data-act="random">Random lines</button><button data-act="mistakes">Mistakes</button>
-      <details class="omore"><summary aria-label="More actions">⋯</summary><div class="omenu"><button data-act="edit">Edit lines</button><button data-act="pgn">Export PGN</button><button data-act="reset">Reset this opening's progress</button><button data-act="del" class="danger">Remove from library</button></div></details></div>
+    <div class="row"><button class="primary" data-act="due">Train due (${s.due + Math.min(s.fresh, 999)} to go)</button><button data-act="random">Random lines</button><button data-act="fix">🎯 Fix mistakes (${recentMistakes([rep]).length})</button>
+      <details class="omore"><summary aria-label="More actions">⋯</summary><div class="omenu"><button data-act="mistakes">Replay lines with mistakes</button><button data-act="edit">Edit lines</button><button data-act="pgn">Export PGN</button><button data-act="reset">Reset this opening's progress</button><button data-act="del" class="danger">Remove from library</button></div></details></div>
     <div class="muted">${Object.keys(byCh).length} chapters · ${rep.lines.length} lines · ${s.total} of your moves · ${s.learned} learned · ${s.mistakes} with mistakes</div></div>
   <div class="otabs"><button data-t="lines" class="${openingTab === 'lines' ? 'on' : ''}">Lines</button>${kb ? `<button data-t="kb" class="${openingTab === 'kb' ? 'on' : ''}">Knowledge base</button>` : ''}</div>
   <div id="oBody"></div>`;
   el.querySelectorAll('.otabs button').forEach(b => b.onclick = () => { openingTab = b.dataset.t; renderOpening(rep); });
   el.querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
     const a = b.dataset.act;
-    if (['due', 'random', 'mistakes'].includes(a)) { go('#/train'); $('#drillRep').value = rep.id; setMode(a); }
+    if (a === 'fix') { go('#/train'); $('#drillRep').value = rep.id; startSpots(recentMistakes([rep]), 'Fix my mistakes'); }
+    else if (['due', 'random', 'mistakes'].includes(a)) { go('#/train'); $('#drillRep').value = rep.id; setMode(a); }
     if (a === 'edit') editRep(rep);
     if (a === 'reset' && confirm(`Reset all progress for ${rep.name}? Its lines stay; every move becomes new again.`)) { delete db.cards[rep.id]; save(); toast('Progress reset for ' + rep.name); renderOpening(rep); }
     if (a === 'pgn') download(rep.name.replace(/\W+/g, '_') + '.pgn', toPgn(rep), 'application/x-chess-pgn');
@@ -574,6 +576,17 @@ function startSession(mode) {
   }
   nextLine();
 }
+// drill single positions (recent mistakes, or spots from imported games) across one or many openings
+function startSpots(spots, label) {
+  endPlay(true); $('#playBar').hidden = true; clearTimeout(drill.timer);
+  drill.mode = 'spots'; drill.done = drill.perfect = 0; drill.queue = spots.filter(e => repById(e.rep)); drill.qi = 0; drill.notice = label + ':';
+  $('#modeLabel').textContent = label; document.querySelectorAll('#modes button').forEach(x => x.classList.remove('primary'));
+  if (!drill.queue.length) { drill.line = null; $('#drillInfo').textContent = ''; drillCg.set({ fen: 'start', lastMove: undefined, movable: { color: undefined } }); navUi(); return msg('No recent mistakes to fix. 🎉 Train a few lines and come back.', 'ok'); }
+  drill.rep = repById(drill.queue[0].rep); drill.alts = repMoves(drill.rep); $('#drillRep').value = drill.rep.id; nextLine();
+}
+const recentMistakes = reps => mistakeSpots(reps, cardsOf);
+window.__freereps.startSpots = startSpots; window.__freereps.mistakeSpots = () => recentMistakes(db.reps);
+$('#homeFix').onclick = () => { go('#/train'); startSpots(recentMistakes(db.reps), 'Fix my mistakes'); };
 $('#drillNext').onclick = () => nextLine();
 function nextLine() {
   endPlay(true); clearTimeout(drill.timer); $('#drillNext').hidden = true; $('#playBar').hidden = true;
@@ -583,12 +596,18 @@ function nextLine() {
     Sound.play('complete'); renderDrillSelect(); return;
   }
   drill.view = null; drill.paused = false; drill.waiting = false; $('#drillNote').className = 'bnote empty';
-  drill.li = drill.queue[drill.qi++]; drill.line = drill.rep.lines[drill.li]?.m || []; drill.ply = 0; drill.chess = new Chess(); drill.lineMiss = 0;
+  let spot = null; { const e = drill.queue[drill.qi++];
+    if (e && typeof e === 'object') {           // a single position to fix (mistake drill / game import)
+      const r = repById(e.rep); if (!r || !r.lines[e.li]) return nextLine();
+      if (r !== drill.rep) { drill.rep = r; drill.alts = repMoves(r); $('#drillRep').value = r.id; }
+      drill.li = e.li; spot = e.ply; } else drill.li = e; }
+  drill.line = drill.rep.lines[drill.li]?.m || []; if (spot != null) drill.line = drill.line.slice(0, spot + 1); drill.ply = 0; drill.chess = new Chess(); drill.lineMiss = 0;
   drill.busy = false; drill.missed = false; clearTimeout(drill.wrongT); $('#confirmBar').hidden = true;
   { const bad = firstIllegal(drill.line); if (bad != null) { console.warn('[skoha] skipping line', drill.li, 'illegal move at ply', bad, drill.line[bad]); toast(`Skipped a damaged line (${drill.line.slice(0, bad + 1).join(' ')}).`); return nextLine(); } }
   Narrator.cancel(); drillCg.cancelPremove(); drillCg.setAutoShapes([]); $('#drillNote').innerHTML = ''; if ($('#drillPulse')) $('#drillPulse').hidden = true;
   drillCg.set({ fen: drill.chess.fen(), lastMove: undefined, check: false, turnColor: 'white' }); setOrientation();
-  $('#drillInfo').textContent = `${drill.rep.lines[drill.li].ch} · line ${drill.qi}/${drill.queue.length}`; drillStats();
+  if (spot) { for (let i = 0; i < spot; i++) drill.chess.move(drill.line[i]); drill.ply = spot; drillCg.set({ fen: drill.chess.fen(), lastMove: lastMoveOf(drill.chess), check: drill.chess.inCheck() }); coach(spot - 1); }
+  $('#drillInfo').textContent = spot != null ? `${drill.rep.name} · ${drill.rep.lines[drill.li].ch} · spot ${drill.qi}/${drill.queue.length}` : `${drill.rep.lines[drill.li].ch} · line ${drill.qi}/${drill.queue.length}`; drillStats();
   msg(`${drill.notice ? drill.notice + ' ' : ''}Your move as ${userColor() === 'w' ? 'White' : 'Black'}.${S().flip ? ' (The board is turned around: Settings › Board.)' : ''}`); drill.notice = ''; navUi();
   advance();
 }
