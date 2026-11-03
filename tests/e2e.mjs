@@ -1,8 +1,8 @@
 import { chromium } from 'playwright-core';
 import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
-const root = new URL('..', import.meta.url).pathname.replace(/\/$/, ''); const T = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.wav': 'audio/wav', '.pgn': 'text/plain', '.wasm': 'application/wasm' };
+const root = new URL('..', import.meta.url).pathname.replace(/\/$/, ''); const T = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.wav': 'audio/wav', '.pgn': 'text/plain', '.wasm': 'application/wasm', '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.svg': 'image/svg+xml' };
 const srv = http.createServer((q, r) => { if (q.url.startsWith('/api/')) { r.writeHead(501, { 'content-type': 'application/json' }); return r.end('{"enabled":false}'); } let p = path.join(root, decodeURIComponent(q.url.split('?')[0])); if (p.endsWith('/')) p += 'index.html';
-  fs.readFile(p, (e, d) => { if (e) { r.writeHead(404); r.end(); } else { r.writeHead(200, { 'content-type': T[path.extname(p)] || 'application/octet-stream' }); r.end(d); } }); }).listen(8765);
+  fs.readFile(p, (e, d) => { if (e) { r.writeHead(404); r.end(); } else { r.writeHead(200, { 'content-type': T[path.extname(p)] || 'application/octet-stream' }); if (p.endsWith('index.html') && global.__marker) d = Buffer.from(String(d).replace('</body>', global.__marker + '</body>')); r.end(d); } }); }).listen(8765);
 let fail = 0; const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++; };
 const b = await chromium.launch({ executablePath: process.env.CHROME || (fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined), args: ['--autoplay-policy=no-user-gesture-required'] });
 const pg = await b.newPage({ viewport: { width: 1200, height: 820 } });
@@ -273,4 +273,20 @@ const clickSq = async (p, s, white = true) => { const bb = await p.locator('#dri
   await mp.screenshot({ path: '/workspace/skoha-confirm-mobile.png' });
   await mp.tap('#confirmYes'); await mp.waitForTimeout(250); ok(await mp.evaluate(p => window.__freereps.drill.ply === p + 1, ply0), 'touch: confirmed move counts');
   const small = await mp.evaluate(() => [...document.querySelectorAll('#drill button')].filter(b => b.offsetParent && b.getBoundingClientRect().height < 44).map(b => b.id || b.textContent)); ok(small.length === 0, 'touch: all training buttons ≥44px ' + small.join(',')); }
+{ // PWA: manifest, icons, service worker, offline reload, prompt update
+  const c = await b.newContext({ viewport: { width: 1000, height: 800 } }); const p = await c.newPage();
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden])'); await p.click('#gSkip');
+  const man = await p.evaluate(async () => (await fetch(document.querySelector('link[rel=manifest]').href)).json());
+  ok(man.display === 'standalone' && man.icons.some(i => i.sizes === '512x512' && i.purpose === 'maskable') && man.icons.some(i => i.sizes === '192x192'), 'manifest with 192/512/maskable icons');
+  ok(await p.evaluate(async () => (await Promise.all(['icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png'].map(u => fetch(u).then(r => r.ok && r.headers.get('content-type') === 'image/png')))).every(Boolean)), 'icons served');
+  await p.evaluate(() => navigator.serviceWorker.ready); await p.reload(); await p.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 15000 });
+  ok(true, 'service worker controls the page');
+  await p.waitForTimeout(1500); await c.setOffline(true); await p.reload(); await p.waitForSelector('#whiteList .ocard', { timeout: 15000 }).then(() => ok(true, 'app loads offline from the service worker'), () => ok(false, 'offline load'));
+  await p.goto('http://localhost:8765/#/opening/italian'); await p.waitForSelector('#opening.active [data-act=due]'); await p.click('[data-act=due]'); await p.waitForTimeout(700);
+  ok((await cueState(p)).arrows.length === 1, 'training works offline');
+  await c.setOffline(false);
+  // new deploy: change served index.html; network-first means the very next load shows it (no stale cache)
+  global.__marker = '<!--deploy-2-->'; await p.goto('http://localhost:8765/#/'); await p.reload(); await p.waitForSelector('#whiteList .ocard');
+  ok((await p.content()).includes('deploy-2'), 'new deploy is picked up on the next online load'); global.__marker = '';
+  await c.close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

@@ -1,9 +1,9 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102m';
-import { KB } from './kb.js?v=20261102m';
-import { Engine } from './engine.js?v=20261102m';
-import { Narrator } from './narrator.js?v=20261102m';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102n';
+import { KB } from './kb.js?v=20261102n';
+import { Engine } from './engine.js?v=20261102n';
+import { Narrator } from './narrator.js?v=20261102n';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -378,6 +378,10 @@ function cueNew() {
   Object.assign(el.style, { left: bd.left - st.left + x + 'px', top: bd.top - st.top + y + 'px', width: w + 'px', height: w + 'px' }); el.hidden = false; el.dataset.sq = m.to;
 }
 window.__freereps.cueNew = () => cueNew();
+// ---------- PWA: offline + install ----------
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(r => { r.update().catch(() => {}); setInterval(() => r.update().catch(() => {}), 30 * 60e3); }).catch(() => {});
+}
 // ---------- play it out against a light engine ----------
 let play = null, engine = null;
 function playUi() { const c = play.chess; drillCg.set({ fen: c.fen(), turnColor: turnColor(c), check: c.inCheck(), lastMove: lastMoveOf(c), movable: { color: c.turn() === play.me && !c.isGameOver() ? cname(play.me) : undefined, dests: dests(c) } }); renderMovesPlay(); }

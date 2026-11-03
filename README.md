@@ -80,3 +80,6 @@ Free-plan limits: 100k KV reads and 1k writes per day, 1 GB storage; Pages Funct
 
 ## Play it out
 After a line ends, *Play it out* starts a game from that position against Stockfish 19 lite (single-threaded WASM, vendored in `vendor/stockfish/`, GPL-3.0, from the npm `stockfish` package by Nathan Rugg). It runs in a Web Worker. Easy = Skill 0, 120 ms; Medium = Skill 8, 350 ms; Hard = Skill 20, 900 ms.
+
+## Install & offline (PWA)
+`manifest.webmanifest` + `icons/` + `sw.js`. Code and content are fetched network-first, so a new deploy shows on the next online load and the cache is only an offline fallback. Vendor files, sounds and icons are cache-first. `skipWaiting` and `clients.claim` activate a new worker at once; `sw.js` is served `no-store`. Bump `VERSION` in sw.js when the file list changes.
