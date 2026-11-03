@@ -8,6 +8,14 @@ const b = await chromium.launch({ executablePath: process.env.CHROME || (fs.exis
 const pg = await b.newPage({ viewport: { width: 1200, height: 820 } });
 const errs = []; pg.on('pageerror', e => errs.push(e.message)); pg.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
 await pg.goto('http://localhost:8765/'); await pg.waitForSelector('#whiteList .ocard.featured');
+// first-visit guide: side + level -> suggestions -> 3-step tour -> lands on the picked opening
+await pg.waitForSelector('#guide:not([hidden])'); ok(true, 'guide shown on first visit');
+await pg.click('#guide [data-k=side] [data-v=b]'); await pg.click('#guide [data-k=level] [data-v=advanced]'); await pg.click('#gNext0');
+ok((await pg.textContent('#gSugg')).includes('Sicilian'), 'advanced Black -> Sicilian suggested');
+await pg.click('#gNext1'); for (let i = 0; i < 3; i++) await pg.click('#gTourNext');
+ok(await pg.isHidden('#guide') && /opening\/sicilian/.test(pg.url()), 'tour finishes on the suggested opening');
+await pg.reload(); await pg.waitForTimeout(800); ok(await pg.isHidden('#guide'), 'guide not shown again');
+await pg.goto('http://localhost:8765/#/'); await pg.waitForSelector('#whiteList .ocard.featured');
 ok((await pg.textContent('#whiteList .ocard:first-child h3')).includes('Réti'), 'Réti featured first in White openings');
 const nW = await pg.locator('#whiteList .ocard').count(), nB = await pg.locator('#blackList .ocard').count();
 ok(nW >= 12 && nB >= 14 && (await pg.textContent('#blackList')).includes('London System'), `White ${nW} / Black ${nB} cards, QGD tied to London`);
@@ -144,7 +152,7 @@ await pg.click('#modes [data-mode=line]'); await pg.selectOption('#drillLine', '
 await pg.click('nav [data-nav=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400); await pg.selectOption('#sTheme', 'aurora'); ok(await pg.evaluate(() => document.body.classList.contains('bt-aurora')), 'board theme switch');
 ok(errs.length === 0, 'no page errors ' + errs.join(' | '));
 // mobile
-const mp = await b.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); await mp.goto('http://localhost:8765/');
+const mp = await b.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); await mp.goto('http://localhost:8765/'); await mp.waitForSelector('#guide:not([hidden])'); await mp.screenshot({ path: '/workspace/skoha-guide-mobile.png' }); await mp.tap('#gSkip');
 await mp.waitForSelector('#whiteList .ocard'); const bw = await mp.evaluate(() => document.documentElement.scrollWidth);
 ok(bw <= 390, 'mobile no horizontal overflow (' + bw + ')');
 await mp.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; });

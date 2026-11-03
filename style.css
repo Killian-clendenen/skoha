@@ -257,3 +257,12 @@ select{height:38px}input[type=checkbox],input[type=radio]{accent-color:var(--a1)
 footer{max-width:1200px;margin:0 auto;padding:var(--s6) var(--s5);border-top:1px solid var(--line);font-size:12px}
 @media(max-width:600px){header{padding:var(--s2) var(--s4);gap:var(--s2)}nav{width:100%;justify-content:space-between}nav a{padding:var(--s2) var(--s3)}.hero{padding:var(--s4) 0}.ocards{grid-template-columns:1fr}.ocard{padding:var(--s4)}.searchwrap input{font-size:15px}}
 @media(max-width:900px){.tsplit{grid-template-columns:1fr}}
+/* modal / first-visit guide */
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:var(--s4);background:rgba(4,6,14,.72);backdrop-filter:blur(6px)}
+.mcard{position:relative;width:min(520px,100%);background:#11162b;border:1px solid var(--line2);border-radius:var(--r-lg);padding:var(--s5);box-shadow:0 30px 80px -30px #000;animation:fade .25s ease}
+.mcard h2{margin:var(--s2) 0 var(--s4);font-size:22px}.mclose{position:absolute;top:var(--s3);right:var(--s3);height:32px;font-size:13px;background:transparent;border-color:transparent;color:var(--muted)}
+.glabel{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:var(--s4) 0 var(--s2)}
+.gopts{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2)}.gopts button{height:44px}.gopts button.on,.gpick.on{border-color:var(--a1);background:rgba(62,240,208,.1);color:var(--a1)}
+.gsugg{display:grid;gap:var(--s2)}.gpick{height:auto;padding:var(--s3) var(--s4);justify-content:flex-start;text-align:left;white-space:normal;gap:var(--s3)}.gpick small{display:block;color:var(--muted);font-weight:400;font-size:13px}.gpick .dot{flex:none}
+.mfoot{display:flex;justify-content:flex-end;align-items:center;gap:var(--s2);margin-top:var(--s5)}.mfoot .muted{margin-right:auto}
+.gtour{text-align:center;padding:var(--s4) 0 0}.gicon{font-size:40px;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;margin:0 auto var(--s3);background:rgba(62,240,208,.1)}.gtour p{color:#cfd5ee;max-width:380px;margin:0 auto}

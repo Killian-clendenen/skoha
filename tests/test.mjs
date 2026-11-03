@@ -1,7 +1,7 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
+import { suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
 import { KB } from '../kb.js';
 const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
@@ -97,4 +97,6 @@ ok(top('1.d4 Nf6 2.c4 e6 3.Nc3 Bb4')?.id === 'nimzo', 'moves search -> Nimzo');
 ok(top('winawer')?.ch?.includes('Winawer') && top('berlin wall')?.id === 'berlin', 'variation search');
 ok(search(SI, 'zzzz').length === 0 && search(SI, '').length === 0, 'no false hits');
 ok(navStep(null, 5, -1) === 4 && navStep(4, 5, -1) === 3 && navStep(1, 5, -1) === 0 && navStep(0, 5, -1) === 0 && navStep(null, 1, -1) === 0 && navStep(0, 1, 1) === null && navStep(3, 5, 1) === 4 && navStep(4, 5, 1) === null && navStep(null, 5, 1) === null && navStep(null, 0, -1) === null, 'explanation history navStep');
+ok(suggestOpenings('b','advanced').includes('sicilian') && suggestOpenings('w').length === 3 && suggestOpenings('both','intermediate').length === 3 && suggestOpenings('w','x')[0] === 'italian', 'guide suggestions');
+for (const l of ['beginner','intermediate','advanced']) for (const sd of ['w','b','both']) ok(suggestOpenings(sd,l).every(id => idx.some(s => s.id === id)), `suggestions exist ${sd}/${l}`);
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

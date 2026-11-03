@@ -205,3 +205,14 @@ export function navStep(view, ply, d) {
   const cur = view ?? ply, nv = Math.max(0, Math.min(ply, cur + d));
   return nv >= ply ? null : nv;
 }
+
+// ---------- first-visit guide: opening suggestions ----------
+const SUGG = {
+  w: { beginner: ['italian', 'london', 'scotch'], intermediate: ['italian', 'qg', 'vienna'], advanced: ['ruy', 'catalan', 'english'] },
+  b: { beginner: ['carokann', 'scandi', 'qgd'], intermediate: ['french', 'slav', 'kid'], advanced: ['sicilian', 'nimzo', 'grunfeld'] },
+};
+export function suggestOpenings(side, level = 'beginner') {
+  const L = SUGG.w[level] ? level : 'beginner';
+  if (side === 'w' || side === 'b') return SUGG[side][L].slice();
+  return [SUGG.w[L][0], SUGG.b[L][0], SUGG.b[L][1]];
+}

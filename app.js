@@ -1,7 +1,7 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep } from './core.js?v=20261102e';
-import { KB } from './kb.js?v=20261102e';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings } from './core.js?v=20261102f';
+import { KB } from './kb.js?v=20261102f';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -565,5 +565,30 @@ function editRep(r) {
   go('#/build'); buildSync(); bmsg('Editing "' + r.name + '". Add/remove lines, then Save repertoire.');
 }
 buildSync(); renderSettings(); applyTheme();
-loadStarters().then(route);
+loadStarters().then(() => { route(); if (!db.guided) openGuide(); });
+// ---------- first-visit guide ----------
+const G = { side: 'both', level: 'beginner', tour: 0, pick: null };
+const TOUR = [
+  ['♟', 'The board', 'Play your repertoire moves by dragging or tapping. New moves are shown with a blue arrow first.'],
+  ['💬', 'The bubble', 'Every move, yours and your opponent\'s, comes with a short explanation and arrows right on the board.'],
+  ['▶', 'Next & Back', 'After your move, press Next ▶ (or Space) to see the reply. ◀ Back steps through earlier moves and explanations.'],
+];
+function gStep(n) { document.querySelectorAll('#guide .gstep').forEach(s => s.hidden = +s.dataset.step !== n); }
+function openGuide() { $('#guide').hidden = false; gStep(0); }
+function closeGuide(goTo) { $('#guide').hidden = true; db.guided = true; db.profile = { side: G.side, level: G.level }; save(); if (goTo) go('#/opening/' + goTo); }
+window.__freereps.openGuide = openGuide;
+document.querySelectorAll('#guide .gopts').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => {
+  g.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); G[g.dataset.k] = b.dataset.v; }));
+$('#gSkip').onclick = () => closeGuide();
+$('#gNext0').onclick = () => {
+  const ids = suggestOpenings(G.side, G.level); G.pick = ids[0];
+  $('#gSugg').innerHTML = ids.map((id, i) => { const m = STARTERS.find(s => s.id === id) || {}; return `<button class="gpick${i ? '' : ' on'}" data-id="${id}"><span class="dot ${m.color}"></span><span><b>${esc(m.name || id)}</b><small>${esc(KB[id]?.tagline || m.blurb || '')}</small></span></button>`; }).join('');
+  $('#gSugg').querySelectorAll('.gpick').forEach(b => b.onclick = () => { G.pick = b.dataset.id; $('#gSugg').querySelectorAll('.gpick').forEach(x => x.classList.toggle('on', x === b)); });
+  gStep(1);
+};
+$('#gBack1').onclick = () => gStep(0);
+function tourShow() { const [i, t, d] = TOUR[G.tour]; $('#gTour').innerHTML = `<div class="gicon">${i}</div><h2>${t}</h2><p>${d}</p>`; $('#gTourPos').textContent = `${G.tour + 1} / ${TOUR.length}`; $('#gTourNext').textContent = G.tour === TOUR.length - 1 ? 'Start training' : 'Next'; }
+$('#gNext1').onclick = () => { G.tour = 0; tourShow(); gStep(2); };
+$('#gTourNext').onclick = () => { if (G.tour < TOUR.length - 1) { G.tour++; tourShow(); } else closeGuide(G.pick); };
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#guide').hidden) closeGuide(); });
 window.__freereps.study = study; window.__freereps.lineCg = lineCg;

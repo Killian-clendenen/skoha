@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261102e">
+<link rel="stylesheet" href="style.css?v=20261102f">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♞</text></svg>">
 </head><body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -145,6 +145,28 @@
     </div>
   </section>
 </main>
+<div id="guide" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="gTitle">
+  <div class="mcard">
+    <button class="mclose" id="gSkip" aria-label="Skip guide">Skip</button>
+    <div class="gstep" data-step="0">
+      <div class="eyebrow">Welcome to Skoha</div><h2 id="gTitle">Let's set you up in 30 seconds</h2>
+      <div class="glabel">I want to learn openings for</div>
+      <div class="gopts" data-k="side"><button data-v="w">White</button><button data-v="b">Black</button><button data-v="both" class="on">Both</button></div>
+      <div class="glabel">My level</div>
+      <div class="gopts" data-k="level"><button data-v="beginner" class="on">Beginner</button><button data-v="intermediate">Club player</button><button data-v="advanced">Advanced</button></div>
+      <div class="mfoot"><button class="primary" id="gNext0">Suggest openings</button></div>
+    </div>
+    <div class="gstep" data-step="1" hidden>
+      <h2>Good places to start</h2><p class="muted">Pick one now; you can add the rest anytime from Home.</p>
+      <div id="gSugg" class="gsugg"></div>
+      <div class="mfoot"><button id="gBack1">Back</button><button class="primary" id="gNext1">Quick tour</button></div>
+    </div>
+    <div class="gstep" data-step="2" hidden>
+      <div class="gtour" id="gTour"></div>
+      <div class="mfoot"><span class="muted" id="gTourPos"></span><button id="gTourNext" class="primary">Next</button></div>
+    </div>
+  </div>
+</div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2).</footer>
-<script type="module" src="app.js?v=20261102e"></script>
+<script type="module" src="app.js?v=20261102f"></script>
 </body></html>
