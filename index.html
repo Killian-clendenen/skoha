@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261102l">
+<link rel="stylesheet" href="style.css?v=20261102m">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♞</text></svg>">
 </head><body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -84,6 +84,7 @@
       <div class="boardwrap">
         <div class="bstage"><div id="drillBoard" class="board"></div></div>
         <div class="tprogress"><i id="drillProg"></i></div>
+        <div class="confirmbar" id="confirmBar" hidden><span id="confirmTxt"></span><button id="confirmNo">✕ Undo</button><button id="confirmYes" class="primary">✓ Confirm</button></div>
         <div class="tnav"><button id="navBack" title="Back (←)" aria-label="Back">◀ Back</button><span id="navPos" class="muted">No moves yet</span><button id="navFwd" title="Next (→ / Space / Enter)" aria-label="Next">Next ▶</button></div>
       </div>
       <div class="tside">
@@ -134,6 +135,7 @@
       <label><input type="checkbox" id="sAutoReply"> Opponent replies by itself (off: press Next ▶ to see the reply)</label>
       <label><input type="checkbox" id="sAutoNext"> Go to the next line automatically</label>
       <label><input type="checkbox" id="sPremove"> Let me move before the opponent has replied</label>
+      <label><input type="checkbox" id="sConfirm"> On touch screens, confirm each move before it counts</label>
       <label>Opponent speed <select id="sDelay"><option value="150">Instant</option><option value="400">Normal</option><option value="800">Relaxed</option></select></label>
       <label>New lines per session <input type="number" id="sNew" min="0" max="100"></label>
       <label>Daily goal (reviews per day) <input type="number" id="sGoal" min="1" max="500"></label></div>
@@ -202,5 +204,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2) · Engine: Stockfish.js (GPL-3.0).</footer>
-<script type="module" src="app.js?v=20261102l"></script>
+<script type="module" src="app.js?v=20261102m"></script>
 </body></html>

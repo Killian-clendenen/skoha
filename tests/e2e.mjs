@@ -70,7 +70,9 @@ while (guard++ < 60) {
   if (c.turn() !== 'w') { await pg.waitForTimeout(60); continue; }
   const exp = s.line.split(' ')[s.ply]; const m = c.move(exp);
   if (!didMistake && s.ply === 2) { await mv('a2', 'a3'); await pg.waitForTimeout(250); didMistake = true;
-    ok((await pg.textContent('#drillMsg')).includes("isn't in your repertoire"), 'mistake detected'); }
+    ok((await pg.textContent('#drillMsg')).includes("isn't in your repertoire"), 'mistake detected');
+    ok(/^The move is \S+: (move the|castle)/.test(await pg.textContent('#wrongLead')) && await pg.evaluate(() => { const sh = window.__freereps.cg.state.drawable.autoShapes; return sh.some(s => s.brush === 'red' && s.dest) && sh.some(s => s.brush === 'green' && s.dest); }), 'wrong move: box shows the right move + why, red/green arrows: ' + await pg.textContent('#wrongLead'));
+    await pg.screenshot({ path: '/workspace/skoha-wrong.png' }); }
   await mv(m.from, m.to);
   // premove: next user move entered while opponent's reply pending
   const line = s.line.split(' ');
@@ -172,6 +174,7 @@ ok((await mp.textContent('#drillNote')).length > 10, 'mobile: coach explains opp
 const tb = await mp.locator('#navBack').boundingBox(); ok(tb.height >= 48 && tb.width >= 100 && tb.y > mg.bb - 1, 'mobile: large Back/Next tap targets under board ' + JSON.stringify(tb));
 await mp.screenshot({ path: '/workspace/skoha-annot-mobile.png' });
 
+
 // ---- new-move cue: arrow + from/to rings + pulsing target + "Play X: move the ..." bubble, real clicks, fresh profiles ----
 async function fresh(vp = { width: 1200, height: 820 }) { const c = await b.newContext({ viewport: vp }); const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message)); await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden])'); return p; }
 const cueState = p => p.evaluate(() => { const d = window.__freereps.drill, sh = window.__freereps.cg.state.drawable.autoShapes, pu = document.querySelector('#drillPulse');
@@ -259,4 +262,15 @@ const clickSq = async (p, s, white = true) => { const bb = await p.locator('#dri
   await p.click('#backTrain'); await p.waitForTimeout(300);
   ok(await p.evaluate(f => window.__freereps.play() === null && window.__freereps.cg.state.pieces.size > 0 && window.__freereps.drill.chess.fen() === f, fen0) && await p.isVisible('#drillNext'), 'Back to training restores the finished line');
   await p.context().close(); }
+{ // tap-to-move confirm on touch
+  await mp.evaluate(() => { const s = window.__freereps.db().settings; s.confirm = true; });
+  const c = await cueState(mp); const white = await mp.evaluate(() => window.__freereps.cg.state.orientation === 'white');
+  const tap = async s => { const bb = await mp.locator('#drillBoard cg-board').boundingBox(); const f = s.charCodeAt(0) - 97, r = +s[1] - 1, w = bb.width / 8; await mp.touchscreen.tap(bb.x + ((white ? f : 7 - f) + .5) * w, bb.y + ((white ? 7 - r : r) + .5) * w); };
+  const ply0 = await mp.evaluate(() => window.__freereps.drill.ply);
+  await tap(c.arrows[0].slice(0, 2)); await tap(c.arrows[0].slice(2)); await mp.waitForTimeout(250);
+  ok(await mp.isVisible('#confirmBar') && await mp.evaluate(p => window.__freereps.drill.ply === p, ply0), 'touch: move waits for confirmation');
+  const cb = await mp.locator('#confirmYes').boundingBox(); ok(cb.height >= 48, 'confirm button is a big target');
+  await mp.screenshot({ path: '/workspace/skoha-confirm-mobile.png' });
+  await mp.tap('#confirmYes'); await mp.waitForTimeout(250); ok(await mp.evaluate(p => window.__freereps.drill.ply === p + 1, ply0), 'touch: confirmed move counts');
+  const small = await mp.evaluate(() => [...document.querySelectorAll('#drill button')].filter(b => b.offsetParent && b.getBoundingClientRect().height < 44).map(b => b.id || b.textContent)); ok(small.length === 0, 'touch: all training buttons ≥44px ' + small.join(',')); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

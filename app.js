@@ -1,13 +1,13 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102l';
-import { KB } from './kb.js?v=20261102l';
-import { Engine } from './engine.js?v=20261102l';
-import { Narrator } from './narrator.js?v=20261102l';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102m';
+import { KB } from './kb.js?v=20261102m';
+import { Engine } from './engine.js?v=20261102m';
+import { Narrator } from './narrator.js?v=20261102m';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
-const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false, dailyGoal: 10, narrator: false, voice: '', voiceRate: 1, voicePitch: 1, narrOpp: true };
+const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false, dailyGoal: 10, narrator: false, voice: '', voiceRate: 1, voicePitch: 1, narrOpp: true, confirm: false };
 let db = load();
 function load() {
   try {
@@ -269,7 +269,7 @@ function download(name, text, type) {
 }
 
 // ---------- settings ----------
-const SET = { sSound: 'sound', sVolume: 'volume', sAnim: 'anim', sDelay: 'delay', sPremove: 'premove', sDests: 'dests', sCoords: 'coords', sAutoNext: 'autoNext', sAutoReply: 'autoReply', sFlip: 'flip', sNew: 'newLimit', sNotes: 'notes', sGoal: 'dailyGoal', sNarr: 'narrator', sRate: 'voiceRate', sPitch: 'voicePitch', sNarrOpp: 'narrOpp' };
+const SET = { sSound: 'sound', sVolume: 'volume', sAnim: 'anim', sDelay: 'delay', sPremove: 'premove', sDests: 'dests', sCoords: 'coords', sAutoNext: 'autoNext', sAutoReply: 'autoReply', sFlip: 'flip', sNew: 'newLimit', sNotes: 'notes', sGoal: 'dailyGoal', sNarr: 'narrator', sRate: 'voiceRate', sPitch: 'voicePitch', sNarrOpp: 'narrOpp', sConfirm: 'confirm' };
 function renderSettings() {
   $('#sTheme').value = S().theme || 'brown';
   for (const [id, k] of Object.entries(SET)) { const el = $('#' + id); if (el.type === 'checkbox') el.checked = S()[k]; else el.value = S()[k]; }
@@ -297,7 +297,7 @@ $('#resetBtn').onclick = () => { if (confirm('Erase all repertoires and progress
 
 // ---------- drill ----------
 const drill = { chess: new Chess(), rep: null, queue: [], qi: 0, li: -1, line: null, ply: 0, missed: false, learning: false, busy: false, mode: 'due', timer: 0, alts: null, done: 0, perfect: 0 };
-const drillCg = Chessground($('#drillBoard'), { ...boardOpts(), movable: { ...boardOpts().movable, events: { after: (o, d) => onUserMove(o, d) } } });
+const drillCg = Chessground($('#drillBoard'), { ...boardOpts(), movable: { ...boardOpts().movable, events: { after: (o, d) => askMove(o, d) } } });
 window.__freereps = { drill, db: () => db, sounds: Sound.log, cg: drillCg };   // hooks for automated tests
 const userColor = () => drill.rep?.color || 'w';
 function setOrientation() { const c = userColor(); drillCg.set({ orientation: cname(S().flip ? (c === 'w' ? 'b' : 'w') : c) }); }
@@ -611,10 +611,27 @@ function onUserMove(from, to) {
     drill.missed = true; drill.lineMiss++;
     Sound.play('error');
     msg(`✘ ${m.san} isn't in your repertoire. The move is <b>${expected}</b> — play it.`, 'bad');
-    showArrow(expected);
+    wrongCard(m, expected);
   }
   setTimeout(resync, 120);
 }
+// wrong move: say clearly what the right move is and why, with a red arrow for the try and a green one for the answer
+function wrongCard(m, expected) {
+  const l = drill.rep.lines[drill.li], ok = new Chess(drill.chess.fen()).move(expected), why = l.n?.[drill.ply]?.t || describeMove(ok, false);
+  const el = $('#drillNote'); el.className = 'bnote wrong';
+  el.innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${esc(m.san)} ✘</span><span class="who bad">Not this move</span></div><p class="play" id="wrongLead"><b>The move is ${esc(expected)}: ${esc(playLead(ok).replace(/^Play \S+: /, ''))}.</b></p><p>${esc(why)}</p><p class="prevnote">Try it now: follow the green arrow.</p></div>`;
+  if ($('#drill').classList.contains('active')) drillCg.setAutoShapes([{ orig: m.from, dest: m.to, brush: 'red' }, { orig: ok.from, dest: ok.to, brush: 'green', modifiers: { lineWidth: 14 } }, { orig: ok.to, brush: 'green' }]);
+  Narrator.say(null, `Not quite. The move is ${expected}. ${why}`);
+}
+// optional tap-to-move confirm on touch screens
+const coarse = () => matchMedia('(pointer: coarse)').matches;
+function askMove(o, d) {
+  if (!S().confirm || !coarse()) return onUserMove(o, d);
+  const bar = $('#confirmBar'); bar.hidden = false; $('#confirmTxt').textContent = `Move ${o} → ${d}?`;
+  $('#confirmYes').onclick = () => { bar.hidden = true; onUserMove(o, d); };
+  $('#confirmNo').onclick = () => { bar.hidden = true; if (play) playUi(); else resync(); };
+}
+window.__freereps.wrong = () => $('#drillNote').textContent;
 function lineDone() {
   drill.done++; if (!drill.lineMiss) drill.perfect++; renderDrillSelect();
   drillCg.cancelPremove(); drillCg.set({ movable: { color: undefined } });
