@@ -1,13 +1,13 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102n';
-import { KB } from './kb.js?v=20261102n';
-import { Engine } from './engine.js?v=20261102n';
-import { Narrator } from './narrator.js?v=20261102n';
+import { validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261102o';
+import { KB } from './kb.js?v=20261102o';
+import { Engine } from './engine.js?v=20261102o';
+import { Narrator } from './narrator.js?v=20261102o';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
-const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false, dailyGoal: 10, narrator: false, voice: '', voiceRate: 1, voicePitch: 1, narrOpp: true, confirm: false };
+const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false, dailyGoal: 10, narrator: false, voice: '', voiceRate: 1, voicePitch: 1, narrOpp: true, confirm: false, help: 'guided' };
 let db = load();
 function load() {
   try {
@@ -333,7 +333,7 @@ function coach(ply, upcoming = false) {
   const mine = (ply % 2 === 0 ? 'w' : 'b') === userColor();
   const num = Math.floor(ply / 2) + 1 + (ply % 2 ? '...' : '.');
   const text = n?.t || describeMove(mv, c.inCheck());
-  const label = upcoming ? 'New move: why we play it' : mine ? 'Your move' : 'Opponent\'s reply';
+  const label = upcoming ? (drill.learning ? 'New move: why we play it' : 'Guided: your move') : mine ? 'Your move' : 'Opponent\'s reply';
   // bubble goes over the top edge (opponent's back ranks) unless the move or its arrows live there
   const whiteView = drillCg.state.orientation === 'white', row = q => whiteView ? 8 - +q[1] : +q[1] - 1;
   const nx = !upcoming && !mine && l.m[ply + 1] ? new Chess(c.fen()).move(l.m[ply + 1]) : null;
@@ -354,9 +354,10 @@ function coach(ply, upcoming = false) {
   if ($('#drill').classList.contains('active')) {
     const sh = shapesOf(n);
     if (upcoming) sh.push(...cueShapes(mv));
-    if (upcoming || drill.view != null || !(drill.learning && drill.chess.turn() === userColor())) drillCg.setAutoShapes(sh);
+    if (upcoming || drill.view != null || !(guided() && drill.chess.turn() === userColor())) drillCg.setAutoShapes(sh);
   }
 }
+const guided = () => drill.learning || S().help !== 'none';
 const PIECE = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
 function playLead(m) {
   if (m.flags.includes('k') || m.flags.includes('q')) return `Play ${m.san}: castle ${m.flags.includes('k') ? 'kingside' : 'queenside'} (king from ${m.from} to ${m.to})`;
@@ -366,7 +367,7 @@ const cueShapes = m => [{ orig: m.from, dest: m.to, brush: 'blue', modifiers: { 
 // show the move to play for a new (unlearned) move: bold blue arrow, ringed from/to squares, pulsing target, "Play X" bubble
 function cueNew() {
   const p = $('#drillPulse'); if (p) p.hidden = true;
-  if (!drill.line || drill.view != null || !drill.learning || drill.waiting || drill.ply >= drill.line.length || drill.chess.turn() !== userColor()) return;
+  if (!drill.line || drill.view != null || !guided() || drill.waiting || drill.ply >= drill.line.length || drill.chess.turn() !== userColor()) return;
   if (!$('#drill').classList.contains('active')) return;
   const m = new Chess(drill.chess.fen()).move(drill.line[drill.ply]); if (!m) return;
   coach(drill.ply, true); drillCg.setAutoShapes([...cueShapes(m)]);
@@ -378,6 +379,12 @@ function cueNew() {
   Object.assign(el.style, { left: bd.left - st.left + x + 'px', top: bd.top - st.top + y + 'px', width: w + 'px', height: w + 'px' }); el.hidden = false; el.dataset.sq = m.to;
 }
 window.__freereps.cueNew = () => cueNew();
+function helpUi() { const b = $('#helpToggle'), on = S().help !== 'none'; b.textContent = on ? '🧭 Help: Guided' : '🎯 No help (test yourself)'; b.setAttribute('aria-pressed', String(!on)); b.classList.toggle('nohelp', !on);
+  b.title = on ? 'Blue guides show every move. Click to test yourself from memory.' : 'Moves you have learned are hidden. Click to show guides again.'; }
+$('#helpToggle').onclick = () => { S().help = S().help === 'none' ? 'guided' : 'none'; save(); helpUi();
+  if (drill.line && drill.view == null && !play && drill.chess.turn() === userColor() && drill.ply < drill.line.length) {
+    if (guided()) { cueNew(); } else { drillCg.setAutoShapes([]); if ($('#drillPulse')) $('#drillPulse').hidden = true; if (drill.ply) coach(drill.ply - 1); else { $('#drillNote').className = 'bnote empty'; $('#drillNote').innerHTML = ''; } msg('No help: play the move from memory.'); } } };
+helpUi();
 // ---------- PWA: offline + install ----------
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(r => { r.update().catch(() => {}); setInterval(() => r.update().catch(() => {}), 30 * 60e3); }).catch(() => {});
@@ -478,7 +485,7 @@ function navGo(v) {
     resync(); coach(drill.ply - 1); cueNew(); if (drill.waiting) drillCg.set({ movable: { color: undefined } }); navUi();
     if (drill.ply >= drill.line.length) drillCg.set({ movable: { color: undefined } });
     else if (drill.paused) { drill.paused = false; advance(); }
-    else if (drill.learning && drill.chess.turn() === userColor()) coach(drill.ply, true);
+    else if (guided() && drill.chess.turn() === userColor()) coach(drill.ply, true);
     return;
   }
   const c = new Chess(); drill.line.slice(0, nv).forEach(x => c.move(x)); const h = c.history({ verbose: true }).at(-1);
@@ -544,6 +551,7 @@ function advance() {
     const card = cardsOf(drill.rep)[cardKey()];
     drill.missed = false; drill.learning = !card;
     if (drill.learning) { msg(`New move: play <b>${drill.line[drill.ply]}</b> (follow the blue arrow).`); cueNew(); navUi(); }
+    else if (S().help !== 'none') { msg(`Your move: play <b>${drill.line[drill.ply]}</b> (guided). Switch to <b>No help</b> to test yourself.`); cueNew(); navUi(); }
     else { drillCg.setAutoShapes([]); cueNew(); }
     drillCg.playPremove();
   } else {
@@ -578,6 +586,7 @@ function record(ok) {
   const cs = cardsOf(drill.rep), k = cardKey(), card = cs[k];
   if (!ok) cs[k] = schedule(card, 2);
   else if (drill.learning) cs[k] = schedule(card, 4);
+  else if (!drill.missed && S().help !== 'none' && isDue(card)) cs[k] = guidedPass(card);
   else if (!drill.missed && isDue(card)) cs[k] = schedule(card, 5);
   db.stats ||= { reviews: 0, correct: 0 }; if (!drill.learning) { db.stats.reviews++; if (ok) db.stats.correct++; }
   { const was = (db.history || {})[dayKey()] || 0; db.history = addReview(db.history); if (was + 1 === (S().dailyGoal || 10)) setTimeout(() => toast('🎯 Daily goal reached! Streak: ' + goalStreak(db.history, S().dailyGoal) + ' day(s)'), 50); }
@@ -626,6 +635,9 @@ function wrongCard(m, expected) {
   el.innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${esc(m.san)} ✘</span><span class="who bad">Not this move</span></div><p class="play" id="wrongLead"><b>The move is ${esc(expected)}: ${esc(playLead(ok).replace(/^Play \S+: /, ''))}.</b></p><p>${esc(why)}</p><p class="prevnote">Try it now: follow the green arrow.</p></div>`;
   if ($('#drill').classList.contains('active')) drillCg.setAutoShapes([{ orig: m.from, dest: m.to, brush: 'red' }, { orig: ok.from, dest: ok.to, brush: 'green', modifiers: { lineWidth: 14 } }, { orig: ok.to, brush: 'green' }]);
   Narrator.say(null, `Not quite. The move is ${expected}. ${why}`);
+  if ($('#drillPulse')) $('#drillPulse').hidden = true;
+  const at = drill.ply, li = drill.li; clearTimeout(drill.wrongT);
+  drill.wrongT = setTimeout(() => { if (drill.ply === at && drill.li === li && drill.view == null && !play) cueNew(); }, 2600);
 }
 // optional tap-to-move confirm on touch screens
 const coarse = () => matchMedia('(pointer: coarse)').matches;

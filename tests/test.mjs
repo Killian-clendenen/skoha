@@ -1,7 +1,7 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
+import { guidedPass, syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
 import { KB } from '../kb.js';
 const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
@@ -128,4 +128,7 @@ ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Google US English', lang
   const id = 'a'.repeat(64); ok((await onRequest({ request: rq('GET', '?id=' + id), env: { SYNC: KV } })).status === 404, 'function: 404 before upload');
   ok((await onRequest({ request: rq('PUT', '?id=' + id, code), env: { SYNC: KV } })).status === 200 && (await (await onRequest({ request: rq('GET', '?id=' + id), env: { SYNC: KV } })).text()) === code, 'function: put/get round trip');
   ok((await onRequest({ request: rq('PUT', '?id=bad', code), env: { SYNC: KV } })).status === 400 && (await onRequest({ request: rq('PUT', '?id=' + id, 'x'), env: { SYNC: KV } })).status === 413, 'function: validates id + payload'); }
+{ const now = 1e12, D = 864e5, c0 = { ease: 2.5, interval: 6, reps: 2, lapses: 0, due: now - 1 };
+  const g = guidedPass(c0, now); ok(g.interval === 6 && g.reps === 2 && g.due === now + D && g.guided === 1, 'guided pass: no interval growth, back tomorrow');
+  const n = schedule(c0, 5, now); ok(n.interval > 6 && n.due > now + 6 * D, 'no-help pass grows the interval'); }
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

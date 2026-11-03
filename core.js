@@ -288,3 +288,10 @@ export async function decodeSync(code) {
   const c = String(code).trim().replace(/^.*#\/sync\//, '').replace(/\s+/g, ''); if (!c.startsWith('SK1.')) throw new Error('not a Skoha sync code');
   return JSON.parse(new TextDecoder().decode(await pipe(b64u.dec(c.slice(4)), DecompressionStream)));
 }
+
+// Guided pass (the answer was shown): keeps the card in daily rotation but never grows its interval;
+// only a No-help pass (schedule(card, 5)) advances spaced repetition.
+export function guidedPass(card, now = Date.now()) {
+  const c = { ease: 2.5, interval: 0, reps: 0, lapses: 0, ...card };
+  c.guided = (c.guided || 0) + 1; c.due = Math.min(c.due ?? Infinity, now + DAY); if (c.due < now) c.due = now + DAY; return c;
+}

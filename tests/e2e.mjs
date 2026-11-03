@@ -213,7 +213,25 @@ const clickSq = async (p, s, white = true) => { const bb = await p.locator('#dri
   const c = await cueState(p); await clickSq(p, c.arrows[0].slice(0, 2)); await clickSq(p, c.arrows[0].slice(2)); await p.waitForTimeout(300);
   await p.evaluate(() => { const d = window.__freereps.drill; d.queue.forEach(q => q); });
   await p.evaluate(() => document.querySelector('#modeBox').open = true); await p.click('#modes [data-mode=random]'); await p.waitForTimeout(800);
-  const c2 = await cueState(p); ok(c2.learning === false && c2.arrows.length === 0 && c2.pulse === null, 'learned move hides the answer ' + JSON.stringify(c2));
+  const c2 = await cueState(p); cueOk(c2, 'Guided (default): learned move still guided'); ok(c2.learning === false, 'that move is a learned card');
+  ok((await p.textContent('#helpToggle')).includes('Guided'), 'help toggle shows Guided'); await p.screenshot({ path: '/workspace/skoha-guided.png' });
+  await p.click('#helpToggle'); await p.waitForTimeout(200);
+  const c3 = await cueState(p); ok(c3.arrows.length === 0 && c3.pulse === null && !c3.lead && !(await p.textContent('#drillMsg')).includes(c3.exp), 'No help: no arrow, pulse or answer text ' + JSON.stringify(c3));
+  ok(await p.evaluate(() => window.__freereps.db().settings.help === 'none'), 'No help persisted'); await p.screenshot({ path: '/workspace/skoha-nohelp.png' });
+  await p.evaluate(() => document.querySelector('#modeBox').open = true); await p.click('#modes [data-mode=random]'); await p.waitForTimeout(800);
+  ok((await cueState(p)).arrows.length === 0, 'No help stays off on the next line');
+  { // wrong move in No help: green answer + red attempt, no blue pulse; answer then stays (no blue cue in No help)
+    const bad = await p.evaluate(() => { const d = window.__freereps.drill, ms = d.chess.moves({ verbose: true }); const q = ms.find(m => m.san !== d.line[d.ply] && !(d.alts?.get?.(d.chess.fen().split(' ').slice(0, 4).join(' '))?.has(m.san))); return q.from + q.to; });
+    await clickSq(p, bad.slice(0, 2)); await clickSq(p, bad.slice(2)); await p.waitForTimeout(300);
+    const w = await p.evaluate(() => { const sh = window.__freereps.cg.state.drawable.autoShapes, pu = document.querySelector('#drillPulse'); return { red: sh.some(s => s.brush === 'red' && s.dest), green: sh.some(s => s.brush === 'green' && s.dest), blue: sh.some(s => s.brush === 'blue'), pulse: !!(pu && !pu.hidden) }; });
+    ok(w.red && w.green && !w.blue && !w.pulse, 'wrong move visuals consistent ' + JSON.stringify(w)); }
+  await p.click('#helpToggle');
+  { // wrong move in Guided: same visuals, then the normal blue cue returns
+    const bad = await p.evaluate(() => { const d = window.__freereps.drill, ms = d.chess.moves({ verbose: true }); return ms.filter(m => m.san !== d.line[d.ply]).map(m => m.from + m.to).at(-1); });
+    await clickSq(p, bad.slice(0, 2)); await clickSq(p, bad.slice(2)); await p.waitForTimeout(300);
+    const w = await p.evaluate(() => { const sh = window.__freereps.cg.state.drawable.autoShapes, pu = document.querySelector('#drillPulse'); return { green: sh.some(s => s.brush === 'green' && s.dest), blue: sh.some(s => s.brush === 'blue'), pulse: !!(pu && !pu.hidden) }; });
+    ok(w.green && !w.blue && !w.pulse, 'Guided wrong move: green answer, blue pulse cleared ' + JSON.stringify(w));
+    await p.waitForTimeout(2800); cueOk(await cueState(p), 'normal cue restored after wrong-move feedback'); }
   await p.context().close(); }
 { const p = await fresh(); await p.click('#gSkip'); await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active #lnNote'); await p.waitForTimeout(400);
   const g = await p.evaluate(() => { const b = document.querySelector('#lineBoard').getBoundingClientRect(), n = document.querySelector('#lnNote').getBoundingClientRect(); return { left: n.right <= b.left, h: Math.abs(n.height - b.height) < 4 }; });

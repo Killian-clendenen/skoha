@@ -305,3 +305,7 @@ footer{max-width:1200px;margin:0 auto;padding:var(--s6) var(--s5);border-top:1px
 .bnote.wrong .coach-card{border-color:rgba(255,92,108,.7)}.bnote .who.bad{background:rgba(255,92,108,.16);color:#ff9aa5;border:1px solid rgba(255,92,108,.5)}.bnote.wrong p.play{color:#9ff0c0}
 @media (pointer:coarse){button,.btn,select,input[type=number]{min-height:48px}.chip{min-height:40px;display:inline-flex;align-items:center}.tbtns button{min-width:56px}nav a{min-height:44px;display:inline-flex;align-items:center}
   label:has(input[type=checkbox]){min-height:44px;display:flex;align-items:center;gap:10px}input[type=checkbox]{width:22px;height:22px}.tmore>summary{min-height:48px}.gopts button{min-height:52px}}
+.helpt{height:40px}.helpt.nohelp{border-color:#ffb35c;color:#ffcf8f;background:rgba(255,179,92,.08)}
+/* home stats: goal card full width, three stats in one row */
+.stats{grid-template-columns:repeat(3,1fr)}.stats .goal{grid-column:1/-1}
+@media(max-width:420px){.stats .stat{padding:var(--s3)}.stats .stat .n{font-size:20px}}
