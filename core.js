@@ -154,3 +154,47 @@ export function repMoves(rep) {
   }
   return map;
 }
+
+// ---------- search (home screen) ----------
+export const norm = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  .replace(/\b\d+\.(\.\.)?\s*/g, '').replace(/[’'`"+#!?]/g, '').replace(/[^a-z0-9\-=\s]/g, ' ').replace(/\s+/g, ' ').trim();
+const SAN_RE = /^([nbrqk]?[a-h]?[1-8]?x?[a-h][1-8](=[nbrq])?|o-o(-o)?)$/;
+export const isMoveQuery = q => { const t = norm(q).split(' ').filter(Boolean); return t.length > 0 && t.every(x => SAN_RE.test(x)) && t.some(x => /[1-8]/.test(x)); };
+// metas: starters/index.json entries; reps: [{id, name, color, starter, lines}]
+export function buildSearchIndex(reps, metas = []) {
+  const items = [];
+  for (const r of reps) {
+    const m = metas.find(s => s.id === r.starter) || {};
+    const chs = [...new Set(r.lines.map(l => l.ch))];
+    const moves = r.lines.map(l => norm(l.m.join(' ')));
+    const base = [r.name, m.eco || '', ...(m.aliases || []), m.blurb || ''].map(norm);
+    items.push({ type: 'opening', id: r.id, name: r.name, color: r.color, eco: m.eco || '', name_n: norm(r.name), keys: base, aliases: (m.aliases || []).map(norm), text: [...base, ...chs.map(norm)].join(' | '), moves });
+    for (const ch of chs) items.push({ type: 'chapter', id: r.id, name: r.name, ch, color: r.color, name_n: norm(ch), keys: [norm(ch)], aliases: [], text: norm(ch) + ' | ' + norm(r.name),
+      moves: r.lines.filter(l => l.ch === ch).map(l => norm(l.m.join(' '))) });
+  }
+  return items;
+}
+export function search(items, q, limit = 12) {
+  const n = norm(q); if (!n) return [];
+  const toks = n.split(' ');
+  const moveQ = isMoveQuery(q);
+  const out = [];
+  for (const it of items) {
+    let s = 0;
+    if (moveQ) {
+      const hits = it.moves.filter(m => m === n || m.startsWith(n + ' ')).length;
+      if (hits) s = (it.type === 'opening' ? 92 : 90) + Math.min(hits, 9) / 10;
+      if (it.aliases.some(a => a === n)) s = Math.max(s, 95);
+    } else {
+      if (it.name_n === n) s = 120;
+      else if (it.name_n.startsWith(n)) s = 100;
+      else if (it.name_n.split(/[\s:&()-]+/).some(w => w.startsWith(n))) s = it.type === 'chapter' ? 97 : 85;
+      if (it.aliases.some(a => a === n)) s = Math.max(s, 95);
+      else if (it.aliases.some(a => a.startsWith(n))) s = Math.max(s, 75);
+      if (!s && toks.every(t => it.text.includes(t))) s = 50 + (it.name_n.includes(toks[0]) ? 10 : 0);
+    }
+    if (s) out.push({ ...it, score: s });
+  }
+  // a chapter hit makes its opening relevant too; dedupe openings
+  return out.sort((a, b) => b.score - a.score || (a.type === 'opening' ? -1 : 1) - (b.type === 'opening' ? -1 : 1) || a.name.localeCompare(b.name)).slice(0, limit);
+}

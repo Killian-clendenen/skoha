@@ -1,0 +1,60 @@
+[Event "Berlin: The Berlin Wall"]
+
+{The Berlin (3...Nf6) is Kramnik's defence from 2000 against Kasparov. Black accepts an endgame where the king is in the centre but solid.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... e5 {Classical. The pawn on e5 controls d4.}
+2. Nf3 {Attacks e5. The knight on f3 eyes the pawn on e5 and controls d4.}
+2... Nc6 {Defends. The knight on c6 controls d4.}
+3. Bb5 {The Ruy Lopez. The bishop on b5 eyes the knight on c6.}
+3... Nf6 {[%cal Gf6e4] The Berlin. The knight on f6 eyes the pawn on e4 and controls d5.}
+4. O-O {Castles. The king is safe and the rook comes into play.}
+4... Nxe4 {Takes. The knight on e4 eyes the pawn on d2 and the pawn on f2.}
+5. d4 {Opens. The pawn on d4 eyes the pawn on e5.}
+ (5. Re1 {Regains. The rook on e1 eyes the knight on e4.}
+5... Nd6 {Retreats. The knight on d6 eyes the bishop on b5 and controls e4.}
+6. Nxe5 {Takes. The knight on e5 eyes the pawn on d7 and the pawn on f7.}
+6... Be7 {Develops.}
+7. Bf1 {Retreats.}
+7... Nxe5 {Trades.}
+8. Rxe5 {Recaptures. The rook on e5 eyes the bishop on e7 and controls d5 and e4.}
+8... O-O {Castles. The king is safe and the rook comes into play.}
+9. d4 {Centre.}
+9... Bf6 {Hits the rook. The bishop on f6 eyes the rook on e5.}
+10. Re1 {Retreats. The rook on e1 controls e4 and e5.}
+10... Re8 {Trades. The rook on e8 eyes the rook on e1 and controls e4 and e5.}
+)
+5... Nd6 {Retreats with tempo. The knight on d6 eyes the bishop on b5 and controls e4.}
+6. Bxc6 {Trades. The bishop on c6 eyes the pawn on b7 and the pawn on d7 and controls d5 and e4.}
+6... dxc6 {Recaptures. The pawn on c6 controls d5.}
+7. dxe5 {Takes. The pawn on e5 eyes the knight on d6.}
+7... Nf5 {Retreats. The knight on f5 controls d4.}
+8. Qxd8+ {Trades queens. The queen on d8 eyes the bishop on c8 and the pawn on c7 and controls d4 and d5. It is check, so the reply is forced.}
+8... Kxd8 {Recaptures.}
+9. Nc3 {Develops. The knight on c3 controls d5 and e4.}
+9... Ke8 {Back home.}
+10. h3 {Stops ...Ng3.}
+10... h5 {Gains space.} *
+
+[Event "Berlin: Anti-Berlin 4.d3"]
+
+{Against 4.d3, Black develops with ...Bc5.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... e5 {Classical. The pawn on e5 controls d4.}
+2. Nf3 {Attacks e5. The knight on f3 eyes the pawn on e5 and controls d4.}
+2... Nc6 {Defends. The knight on c6 controls d4.}
+3. Bb5 {Ruy Lopez. The bishop on b5 eyes the knight on c6.}
+3... Nf6 {Berlin. The knight on f6 eyes the pawn on e4 and controls d5.}
+4. d3 {The Anti-Berlin.}
+ (4. Nc3 {The Spanish Four Knights. The knight on c3 controls d5.}
+4... Nd4 {[%cal Gd4b5] Counterattacks the b5-bishop. The knight on d4 eyes the bishop on b5 and the knight on f3.}
+)
+4... Bc5 {Develops. The bishop on c5 eyes the pawn on f2 and controls d4.}
+ (4... d6 {Solid alternative.}
+5. c3 {Prepares d4. The pawn on c3 controls d4.}
+5... g6 {[%csl Gg7] Fianchetto setup.}
+)
+5. c3 {Prepares d4. The pawn on c3 controls d4.}
+5... O-O {Castles. The king is safe and the rook comes into play.}
+6. O-O {Castles. The king is safe and the rook comes into play.}
+6... d6 {Solid.}
+7. h3 {Stops ...Bg4.} *

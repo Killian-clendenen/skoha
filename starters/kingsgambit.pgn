@@ -1,0 +1,60 @@
+[Event "King's Gambit Accepted"]
+
+{2.f4 offers a pawn to deflect e5 and build a centre with d4, opening the f-file. Sharp and romantic, but playable at club level.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... e5 {Classical. The pawn on e5 controls d4.}
+2. f4 {[%cal Gf4e5] The King's Gambit: White offers a pawn to remove e5.}
+2... exf4 {Accepts.}
+3. Nf3 {Develops and stops ...Qh4+. The knight on f3 controls d4 and e5.}
+3... g5 {Black tries to hold f4.}
+ (3... Nf6 {The Schallopp: develops and hits e4. The knight on f6 eyes the pawn on e4 and controls d5.}
+4. e5 {[%cal Ge5f6] Gains space with tempo. The pawn on e5 eyes the knight on f6.}
+4... Nh5 {The knight guards f4.}
+5. d4 {[%csl Gd4,Ge5] Strong centre; the h5-knight is offside.}
+)
+ (3... d5 {The modern antidote: return the pawn for free development.}
+4. exd5 {Takes.}
+4... Nf6 {Develops and eyes d5. The knight on f6 eyes the pawn on d5 and controls e4.}
+5. Nc3 {Develops and defends d5. The knight on c3 controls e4.}
+5... Nxd5 {Regains the pawn. The knight on d5 eyes the knight on c3.}
+6. Nxd5 {Trades. The knight on d5 eyes the pawn on c7 and the pawn on f4.}
+6... Qxd5 {Recaptures. The queen on d5 eyes the knight on f3 and the pawn on a2 and controls d4 and e4 and e5.}
+7. d4 {[%csl Gd4] Takes the centre and opens the c1-bishop toward f4.}
+)
+4. h4 {[%cal Gh4g5] Undermines the g5 chain at once. The pawn on h4 eyes the pawn on g5.}
+4... g4 {Gains time on the knight. The pawn on g4 eyes the knight on f3.}
+5. Ne5 {The Kieseritzky Gambit: the knight goes forward to a central square.}
+5... Nf6 {Develops and hits e4. The knight on f6 eyes the pawn on e4 and controls d5.}
+6. d4 {[%csl Ge5,Gd4] Supports the e5 knight.}
+6... d6 {Kicks the knight. The pawn on d6 eyes the knight on e5.}
+7. Nd3 {Retreats where it attacks f4. The knight on d3 eyes the pawn on f4 and controls e5.}
+7... Nxe4 {Takes e4.}
+8. Bxf4 {[%csl Gf4] White regains a pawn with open lines and active pieces.} *
+
+[Event "King's Gambit Declined & Falkbeer"]
+
+{Not everyone accepts. Know the Classical Declined (2...Bc5) and the Falkbeer (2...d5).}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... e5 {Classical. The pawn on e5 controls d4.}
+2. f4 {The King's Gambit. The pawn on f4 eyes the pawn on e5.}
+2... Bc5 {[%cal Gc5g1] Declines and stops White castling short.}
+ (2... d5 {The Falkbeer Countergambit. The pawn on d5 eyes the pawn on e4.}
+3. exd5 {Takes.}
+3... exf4 {Black transposes into an accepted line with ...d5.}
+4. Nf3 {Develops and covers h4. The knight on f3 controls d4 and e5.}
+4... Nf6 {Develops. The knight on f6 eyes the pawn on d5 and controls e4.}
+5. Nc3 {Develops and holds d5. The knight on c3 controls e4.}
+5... Nxd5 {Regains the pawn. The knight on d5 eyes the knight on c3.}
+6. Nxd5 {Trades. The knight on d5 eyes the pawn on c7 and the pawn on f4.}
+6... Qxd5 {Recaptures. The queen on d5 eyes the knight on f3 and the pawn on a2 and controls d4 and e4 and e5.}
+7. d4 {Centre and the bishop goes to f4. The pawn on d4 controls e5.}
+)
+3. Nf3 {Develops and attacks e5. The knight on f3 eyes the pawn on e5 and controls d4.}
+3... d6 {Supports e5.}
+4. c3 {[%csl Gd4] Prepares d4. The pawn on c3 controls d4.}
+4... Nf6 {Develops. The knight on f6 eyes the pawn on e4 and controls d5.}
+5. d4 {[%cal Gd4c5] Builds the centre with tempo on the bishop.}
+5... exd4 {Takes. The pawn on d4 eyes the pawn on c3.}
+6. cxd4 {Recaptures. The pawn on d4 eyes the bishop on c5 and controls e5.}
+6... Bb4+ {Check. It is check, so the reply is forced.}
+7. Bd2 {Blocks and offers a trade. The bishop on d2 eyes the bishop on b4.} *

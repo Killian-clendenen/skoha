@@ -93,3 +93,27 @@
 8. O-O {King safety.}
 8... b6 {Prepares ...Bb7.}
 9. a4 {Gains queenside space.} *
+
+[Event "London vs ...c5 & ...Qb6"]
+
+{Black's sharpest anti-London plan: ...c5, ...Nc6 and ...Qb6 hitting b2. White meets it with Qb3, ready to trade queens or retreat calmly.}
+1. d4 {[%csl Ge5,Gc5] Takes the centre. The pawn on d4 controls e5.}
+1... d5 {Symmetry. The pawn on d5 controls e4.}
+2. Bf4 {[%cal Gf4c7] The London bishop leaves the chain before e3.}
+2... c5 {[%cal Gc5d4] Black hits d4 at once, aiming to exploit the missing bishop on c1 with ...Qb6.}
+3. e3 {Supports d4 and opens the f1-bishop.}
+3... Nc6 {More pressure on d4. The knight on c6 eyes the pawn on d4 and controls e5.}
+ (3... Nf6 {Develops first. The knight on f6 controls e4.}
+4. c3 {[%csl Gd4] Solidly supports d4.}
+4... Nc6 {More pressure on d4. The knight on c6 eyes the pawn on d4 and controls e5.}
+5. Nd2 {Supports e4 and keeps f3 free for the other knight.}
+5... Qb6 {[%cal Gb6b2] Hits b2. The queen on b6 eyes the pawn on b2.}
+6. Qb3 {[%cal Gb3b6] Offers a queen trade that would open the a-file for White.}
+)
+4. c3 {[%csl Gd4] Holds d4.}
+4... Qb6 {[%cal Gb6b2] Hits b2. White's queenside is undefended because the bishop left c1.}
+5. Qb3 {[%cal Gb3b6] The standard reply: offers a trade, and after ...Qxb3 axb3 White gets the a-file.}
+5... c4 {[%cal Gc4b3] Black gains space with tempo on the queen.}
+6. Qc2 {Back to safety, still eyeing h7 and e4. The queen on c2 eyes the pawn on h7 and controls e4.}
+6... Bf5 {[%cal Gf5c2] Develops with tempo on the queen. The bishop on f5 eyes the queen on c2 and controls e4.}
+7. Qc1 {The queen quietly returns. Black has queenside space, but White is solid and will play Nd2, Ngf3, Be2 and b3 to break up the c4 chain.} *

@@ -126,3 +126,28 @@
 8... Qxd4 {Takes a pawn.}
 9. c3 {[%csl Gd4] Gambit play.}
 9... Qd8 {Retreats.} *
+
+[Event "Caro-Kann: Fantasy 3.f3"]
+
+{The Fantasy Variation (3.f3) supports e4 with a pawn. Black's most reliable reply is 3...e6, preparing ...c5 or ...Bb4, while 3...dxe4 4.fxe4 e5 is the direct counter.}
+1. e4 {White takes the centre. The pawn on e4 controls d5.}
+1... c6 {[%csl Gd5] The Caro-Kann: prepares ...d5 without blocking the c8-bishop.}
+2. d4 {Builds the ideal centre. The pawn on d4 controls e5.}
+2... d5 {[%cal Gd5e4] Challenges e4. The pawn on d5 eyes the pawn on e4.}
+3. f3 {[%csl Ge4] The Fantasy: e4 is held by a pawn, but the f3 pawn takes the knight's best square and weakens e3 and the a7–g1 diagonal.}
+3... e6 {Solid. Black prepares ...Bb4 or ...c5, and ...Qb6 can target the weak diagonal toward g1.}
+ (3... dxe4 {The direct approach. The pawn on e4 eyes the pawn on f3.}
+4. fxe4 {Recaptures with a big centre. The pawn on e4 controls d5.}
+4... e5 {[%cal Ge5d4] Hits the centre at once, exploiting White's loose kingside.}
+5. Nf3 {Develops and attacks e5. The knight on f3 eyes the pawn on e5.}
+5... exd4 {Takes.}
+6. Bc4 {[%cal Gc4f7] White plays for development and the f-file, offering a pawn for activity.}
+)
+4. Nc3 {Defends e4. The knight on c3 eyes the pawn on d5.}
+4... Bb4 {[%cal Gb4c3] Pins the knight, putting more pressure on e4.}
+5. a3 {Asks the bishop. The pawn on a3 eyes the bishop on b4.}
+5... Bxc3+ {Gives up the bishop pair to double the c-pawns.}
+6. bxc3 {Recaptures toward the centre.}
+6... dxe4 {Takes on e4. The pawn on e4 eyes the pawn on f3.}
+7. fxe4 {Recaptures. The pawn on e4 controls d5.}
+7... e5 {[%cal Ge5d4] Strikes the overextended centre. Black has a solid game against White's loose pawns.} *

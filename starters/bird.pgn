@@ -1,0 +1,54 @@
+[Event "Bird vs 1...d5"]
+
+{The Bird (1.f4) is a reversed Dutch. White controls e5, fianchettoes the queen's bishop and often plays for a kingside attack.}
+1. f4 {[%csl Ge5] The Bird: grabs e5. The pawn on f4 controls e5.}
+1... d5 {Classical centre. The pawn on d5 controls e4.}
+2. Nf3 {Develops and covers e5. The knight on f3 controls d4 and e5.}
+2... Nf6 {Develops. The knight on f6 controls e4.}
+3. e3 {Opens the f1-bishop. The pawn on e3 controls d4.}
+3... g6 {Fianchetto.}
+ (3... Bg4 {Pins. The bishop on g4 eyes the knight on f3.}
+4. Be2 {Breaks the pin.}
+4... e6 {Solid.}
+5. O-O {Castles. The king is safe and the rook comes into play.}
+)
+4. b3 {Prepares Bb2.}
+4... Bg7 {Fianchetto.}
+5. Bb2 {[%cal Gb2g7] The bishop fights for the long diagonal.}
+5... O-O {Castles. The king is safe and the rook comes into play.}
+6. Be2 {Develops.}
+6... c5 {Space. The pawn on c5 controls d4.}
+7. O-O {Castles. The king is safe and the rook comes into play.}
+7... Nc6 {Develops. The knight on c6 controls d4 and e5.}
+8. Ne5 {[%csl Ge5] The thematic outpost. The knight on e5 eyes the pawn on f7 and the knight on c6.} *
+
+[Event "Bird vs From's Gambit & 1...Nf6"]
+
+{Know the From's Gambit (1...e5) and the quiet 1...Nf6.}
+1. f4 {The Bird. The pawn on f4 controls e5.}
+1... e5 {From's Gambit. The pawn on e5 eyes the pawn on f4 and controls d4.}
+ (1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
+2. Nf3 {Develops. The knight on f3 controls d4 and e5.}
+2... g6 {Fianchetto.}
+3. g3 {Double fianchetto setup.}
+3... Bg7 {Fianchetto.}
+4. Bg2 {Long diagonal.}
+4... O-O {Castles. The king is safe and the rook comes into play.}
+5. O-O {Castles. The king is safe and the rook comes into play.}
+5... d6 {Prepares ...e5. The pawn on d6 controls e5.}
+6. d3 {Supports e4. The pawn on d3 controls e4.}
+)
+2. fxe5 {Accepts.}
+2... d6 {Sacrifices a pawn for development. The pawn on d6 eyes the pawn on e5.}
+3. exd6 {Takes. The pawn on d6 eyes the pawn on c7.}
+3... Bxd6 {Recaptures, aiming at g3. The bishop on d6 eyes the pawn on h2 and controls e5.}
+4. Nf3 {[%csl Gh4] Stops ...Qh4+. The knight on f3 controls d4 and e5.}
+4... Nf6 {Develops; ...Ng4 is coming. The knight on f6 controls d5 and e4.}
+ (4... g5 {Aggressive.}
+5. d4 {Centre. The pawn on d4 controls e5.}
+5... g4 {Kicks the knight. The pawn on g4 eyes the knight on f3.}
+6. Ne5 {Central outpost. The knight on e5 eyes the pawn on f7 and the pawn on g4.}
+)
+5. d4 {[%csl Gd4] Centre. The pawn on d4 controls e5.}
+5... Ng4 {Threatens ...Nxh2 and ...Bxh2. The knight on g4 eyes the pawn on h2 and controls e5.}
+6. Qd3 {[%cal Gd3h7] Covers g3 and h7. The queen on d3 eyes the pawn on h7 and controls e4.} *

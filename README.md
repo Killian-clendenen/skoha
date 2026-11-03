@@ -1,4 +1,10 @@
-# Skoha v3: the fountain of youth for your chess
+# Skoha v4: the fountain of youth for your chess
+
+## New in v4
+- **30 starter repertoires** (14 White, 16 Black), 224 lines, ~1,070 moves to learn, every move annotated. New: Ruy Lopez, Scotch, Vienna, King's Gambit, Evans Gambit, Queen's Gambit, Catalan, English, King's Indian Attack, Bird, Jobava London; Sicilian (Najdorf, Dragon, Sveshnikov, Accelerated Dragon, Anti-Sicilians), French, Scandinavian, Pirc, Alekhine, Petroff, Berlin, King's Indian, Nimzo-Indian, Grünfeld, Slav, Dutch, Benoni, Queen's Indian. Italian, London, Caro-Kann and QGD each got a new chapter. Each has a knowledge-base entry.
+- **Home search**: instant, accent-insensitive search by name, variation, ECO code or moves ("Najdorf", "C42", "e4 c5"). `/` focuses, ↑/↓ select, Enter jumps to the opening or chapter, Esc clears.
+- **Board-first training**: modes and stats live in a compact top bar; a coach card next to the board (below it on phones) explains every move just played and every new move to play, with arrows.
+- Starter PGN sources are numbered PGN; short comments were extended with factual notes (what the moved piece attacks/controls).
 
 A static site using chessground and chess.js. There's no framework and no build step. All data stays in the browser (localStorage), with JSON backup.
 

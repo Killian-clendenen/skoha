@@ -1,0 +1,56 @@
+[Event "Dutch: Leningrad"]
+
+{The Dutch (1...f5) grabs e4 and aims for a kingside attack. The Leningrad combines it with a g7 fianchetto.}
+1. d4 {Centre. The pawn on d4 controls e5.}
+1... f5 {[%csl Ge4] The Dutch. The pawn on f5 controls e4.}
+2. g3 {Fianchetto.}
+2... Nf6 {Develops. The knight on f6 controls d5 and e4.}
+3. Bg2 {Long diagonal. The bishop on g2 eyes the pawn on b7 and controls d5 and e4.}
+3... g6 {Fianchetto.}
+4. Nf3 {Develops. The knight on f3 controls e5.}
+4... Bg7 {Develops.}
+5. O-O {Castles. The king is safe and the rook comes into play.}
+5... O-O {Castles. The king is safe and the rook comes into play.}
+6. c4 {Space. The pawn on c4 controls d5.}
+6... d6 {Prepares ...e5. The pawn on d6 controls e5.}
+7. Nc3 {Develops. The knight on c3 controls d5 and e4.}
+7... Qe8 {Prepares ...e5 and ...Qh5.}
+ (7... c6 {Flexible: prepares ...Qa5 or ...Na6. The pawn on c6 controls d5.}
+8. d5 {Gains space. The pawn on d5 eyes the pawn on c6.}
+)
+8. d5 {Gains space.}
+8... a5 {Stops b4.} *
+
+[Event "Dutch: Anti-Dutch lines"]
+
+{2.Bg5, 2.Nc3, 2.e4 and the London.}
+1. d4 {Centre. The pawn on d4 controls e5.}
+1... f5 {Dutch. The pawn on f5 controls e4.}
+2. Bf4 {The London. The bishop on f4 eyes the pawn on c7 and controls e5.}
+ (2. e4 {The Staunton Gambit. The pawn on e4 eyes the pawn on f5 and controls d5.}
+2... fxe4 {Takes.}
+3. Nc3 {Develops. The knight on c3 eyes the pawn on e4 and controls d5.}
+3... Nf6 {Develops. The knight on f6 controls d5.}
+4. Bg5 {Pins. The bishop on g5 eyes the knight on f6.}
+4... g6 {Fianchetto.}
+5. f3 {Opens lines. The pawn on f3 eyes the pawn on e4.}
+5... exf3 {Takes. The pawn on f3 eyes the pawn on g2.}
+6. Nxf3 {Recaptures. The knight on f3 controls e5.}
+6... Bg7 {Develops.}
+)
+ (2. Nc3 {Develops. The knight on c3 controls d5 and e4.}
+2... Nf6 {Develops. The knight on f6 controls d5 and e4.}
+3. Bg5 {Pins. The bishop on g5 eyes the knight on f6.}
+3... d5 {Centre. The pawn on d5 controls e4.}
+4. Bxf6 {Trades. The bishop on f6 eyes the pawn on e7 and the pawn on g7 and controls e5.}
+4... exf6 {Recaptures. The pawn on f6 controls e5.}
+5. e3 {Solid.}
+5... c6 {Solid.}
+)
+2... Nf6 {Develops. The knight on f6 controls d5 and e4.}
+3. e3 {Solid.}
+3... g6 {Fianchetto.}
+4. Nf3 {Develops. The knight on f3 controls e5.}
+4... Bg7 {Develops.}
+5. h3 {Prepares Be2.}
+5... O-O {Castles. The king is safe and the rook comes into play.} *

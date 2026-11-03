@@ -98,3 +98,25 @@
 10. Bc2 {The bishop stays on the b1–h7 diagonal.}
 10... c5 {Space on the queenside.}
 11. Nbd2 {[%cal Gd2f1] Heads for f1–g3.} *
+
+[Event "Italian vs 3...Be7 & 3...Nd4"]
+
+{Two less common replies. The Hungarian (3...Be7) is solid but passive, so White takes the centre with d4. The Blackburne Shilling (3...Nd4) is a trap: greedy 4.Nxe5? runs into 4...Qg5!.}
+1. e4 {[%csl Gd5,Gf5] Takes the centre. The pawn on e4 controls d5.}
+1... e5 {Black claims an equal share of the centre.}
+2. Nf3 {[%cal Gf3e5] Develops with an attack on e5. The knight on f3 eyes the pawn on e5 and controls d4.}
+2... Nc6 {Defends e5 and develops. The knight on c6 controls d4.}
+3. Bc4 {[%cal Gc4f7] The Italian: the bishop aims at f7. The bishop on c4 eyes the pawn on f7 and controls d5.}
+3... Be7 {The Hungarian Defence: solid, but the bishop does not pressure f2 and Black is a little passive.}
+ (3... Nd4 {The Blackburne Shilling Gambit, a trap rather than a real defence.}
+4. Nxd4 {The safe and strong reply. Never 4.Nxe5? Qg5! when Black attacks g2 and e5 at once and threatens mating ideas on g2.}
+4... exd4 {Black has doubled d-pawns and has moved the same knight twice.}
+5. O-O {[%csl Ge1] Simple development; White is clearly better. c3 next will open the centre.}
+)
+4. d4 {[%cal Gd4e5] Grabs the centre because ...Be7 put no pressure on d4.}
+4... d6 {Holds e5. The Hungarian becomes a Philidor-like structure.}
+5. Nc3 {Develops and supports e4. The knight on c3 controls d5.}
+5... Nf6 {Develops and hits e4. The knight on f6 eyes the pawn on e4 and controls d5.}
+6. h3 {[%csl Gg4] Stops ...Bg4, which would pressure d4 by pinning the f3 knight.}
+6... O-O {Castles. The king is safe and the rook comes into play.}
+7. O-O {Castles. White has more space and freer development.} *

@@ -1,0 +1,69 @@
+[Event "Nimzo-Indian: Rubinstein 4.e3"]
+
+{The Nimzo-Indian (3...Bb4) pins the c3-knight to stop e4. Black is willing to give up the bishop pair to double White's c-pawns.}
+1. d4 {Centre. The pawn on d4 controls e5.}
+1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
+2. c4 {Space. The pawn on c4 controls d5.}
+2... e6 {Prepares ...Bb4. The pawn on e6 controls d5.}
+3. Nc3 {Prepares e4. The knight on c3 controls d5 and e4.}
+3... Bb4 {[%cal Gb4c3] The Nimzo: pins the knight and stops e4.}
+4. e3 {The Rubinstein.}
+4... O-O {Castles. The king is safe and the rook comes into play.}
+ (4... c5 {Strikes d4 at once. The pawn on c5 eyes the pawn on d4.}
+5. Bd3 {Develops. The bishop on d3 eyes the pawn on h7 and controls e4.}
+5... Nc6 {More pressure on d4. The knight on c6 eyes the pawn on d4 and controls e5.}
+6. Nf3 {Develops. The knight on f3 controls e5.}
+6... Bxc3+ {Doubles the c-pawns. The bishop on c3 eyes the pawn on d4 and the pawn on b2. It is check, so the reply is forced.}
+7. bxc3 {Recaptures toward the centre.}
+7... d6 {The Hübner plan: ...e5 and a dark-square blockade against the doubled pawns.}
+)
+5. Bd3 {Develops. The bishop on d3 eyes the pawn on h7 and controls e4.}
+5... d5 {Centre. The pawn on d5 eyes the pawn on c4 and controls e4.}
+6. Nf3 {Develops. The knight on f3 controls e5.}
+6... c5 {Hits d4. The pawn on c5 eyes the pawn on d4.}
+7. O-O {Castles. The king is safe and the rook comes into play.}
+7... dxc4 {Takes. The pawn on c4 eyes the bishop on d3.}
+8. Bxc4 {Recaptures. The bishop on c4 eyes the pawn on e6 and controls d5.}
+8... Nc6 {Develops. The knight on c6 eyes the pawn on d4 and controls e5.}
+9. a3 {Asks the bishop. The pawn on a3 eyes the bishop on b4.}
+9... Ba5 {Keeps the pin. The bishop on a5 eyes the knight on c3.} *
+
+[Event "Nimzo-Indian: Classical, Sämisch & Leningrad"]
+
+{4.Qc2 avoids doubled pawns, 4.f3 prepares e4, 4.Bg5 pins.}
+1. d4 {Centre. The pawn on d4 controls e5.}
+1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
+2. c4 {Space. The pawn on c4 controls d5.}
+2... e6 {Prepares ...Bb4. The pawn on e6 controls d5.}
+3. Nc3 {Develops. The knight on c3 controls d5 and e4.}
+3... Bb4 {Nimzo. The bishop on b4 eyes the knight on c3.}
+4. Qc2 {The Classical. The queen on c2 eyes the pawn on h7 and controls e4.}
+ (4. f3 {Prepares e4. The pawn on f3 controls e4.}
+4... d5 {Stops e4. The pawn on d5 eyes the pawn on c4 and controls e4.}
+5. a3 {Asks the bishop. The pawn on a3 eyes the bishop on b4.}
+5... Be7 {Keeps the bishop. The bishop on e7 eyes the pawn on a3.}
+6. e4 {Centre. The pawn on e4 eyes the pawn on d5.}
+6... dxe4 {Takes. The pawn on e4 eyes the pawn on f3.}
+7. fxe4 {Recaptures. The pawn on e4 controls d5.}
+7... e5 {Strikes. The pawn on e5 eyes the pawn on d4.}
+8. d5 {Gains space.}
+8... Bc5 {Active. The bishop on c5 eyes the pawn on a3 and the knight on g1 and controls d4.}
+)
+ (4. Bg5 {The Leningrad. The bishop on g5 eyes the knight on f6.}
+4... h6 {Asks the bishop. The pawn on h6 eyes the bishop on g5.}
+5. Bh4 {Keeps the pin. The bishop on h4 eyes the knight on f6.}
+5... c5 {Hits d4. The pawn on c5 eyes the pawn on d4.}
+6. d5 {Gains space. The pawn on d5 eyes the pawn on e6.}
+6... d6 {Solid. The pawn on d6 controls e5.}
+)
+4... O-O {Castles. The king is safe and the rook comes into play.}
+5. a3 {Asks the bishop. The pawn on a3 eyes the bishop on b4.}
+5... Bxc3+ {Takes. The bishop on c3 eyes the pawn on d4 and the pawn on b2. It is check, so the reply is forced.}
+6. Qxc3 {Recaptures.}
+6... b6 {Fianchetto.}
+7. Bg5 {Pins. The bishop on g5 eyes the knight on f6.}
+7... Bb7 {Develops. The bishop on b7 eyes the pawn on g2 and controls d5 and e4.}
+8. f3 {Stops ...Ne4. The pawn on f3 controls e4.}
+8... h6 {Asks. The pawn on h6 eyes the bishop on g5.}
+9. Bh4 {Keeps the pin. The bishop on h4 eyes the knight on f6.}
+9... d5 {Centre. The pawn on d5 eyes the pawn on c4 and controls e4.} *

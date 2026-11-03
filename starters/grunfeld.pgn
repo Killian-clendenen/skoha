@@ -1,0 +1,67 @@
+[Event "Grünfeld: Exchange"]
+
+{The Grünfeld (3...d5) lets White build a big centre and then attacks it with ...c5, ...Nc6 and the g7-bishop.}
+1. d4 {Centre. The pawn on d4 controls e5.}
+1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
+2. c4 {Space. The pawn on c4 controls d5.}
+2... g6 {Fianchetto.}
+3. Nc3 {Develops. The knight on c3 controls d5 and e4.}
+3... d5 {[%cal Gd5c4] The Grünfeld. The pawn on d5 eyes the pawn on c4 and controls e4.}
+4. cxd5 {The Exchange.}
+4... Nxd5 {Recaptures. The knight on d5 eyes the knight on c3.}
+5. e4 {Kicks the knight. The pawn on e4 eyes the knight on d5.}
+5... Nxc3 {Trades. The knight on c3 eyes the pawn on e4 and the pawn on a2 and controls d5.}
+6. bxc3 {Recaptures toward the centre.}
+6... Bg7 {[%cal Gg7c3] Hits c3 and d4. The bishop on g7 eyes the pawn on d4 and controls e5.}
+7. Bc4 {Develops. The bishop on c4 eyes the pawn on f7 and controls d5.}
+ (7. Nf3 {The modern Rb1 line. The knight on f3 controls e5.}
+7... c5 {Hits d4. The pawn on c5 eyes the pawn on d4.}
+8. Rb1 {Prepares to take b7. The rook on b1 eyes the pawn on b7.}
+8... O-O {Castles. The king is safe and the rook comes into play.}
+9. Be2 {Develops.}
+9... cxd4 {Takes. The pawn on d4 eyes the pawn on c3.}
+10. cxd4 {Recaptures. The pawn on d4 controls e5.}
+10... Qa5+ {Checks. The queen on a5 eyes the pawn on a2 and controls d5 and e5. It is check, so the reply is forced.}
+11. Bd2 {Blocks. The bishop on d2 eyes the queen on a5.}
+11... Qxa2 {Takes a2. The queen on a2 eyes the bishop on d2 and the rook on b1 and controls d5.}
+12. O-O {Castles. The king is safe and the rook comes into play.}
+)
+7... c5 {Hits d4. The pawn on c5 eyes the pawn on d4.}
+ (7... O-O {Castles first. The king is safe and the rook comes into play.}
+8. Ne2 {Develops; f3 can support e4 later.}
+8... c5 {Now hits d4. The pawn on c5 eyes the pawn on d4.}
+)
+8. Ne2 {Develops.}
+8... Nc6 {More pressure on d4. The knight on c6 eyes the pawn on d4 and controls e5.}
+9. Be3 {Defends d4.}
+9... O-O {Castles. The king is safe and the rook comes into play.}
+10. O-O {Castles. The king is safe and the rook comes into play.} *
+
+[Event "Grünfeld: 4.Bf4 & Russian"]
+
+{Other main systems.}
+1. d4 {Centre. The pawn on d4 controls e5.}
+1... Nf6 {Flexible. The knight on f6 controls d5 and e4.}
+2. c4 {Space. The pawn on c4 controls d5.}
+2... g6 {Fianchetto.}
+3. Nc3 {Develops. The knight on c3 controls d5 and e4.}
+3... d5 {Grünfeld. The pawn on d5 eyes the pawn on c4 and controls e4.}
+4. Bf4 {Develops. The bishop on f4 eyes the pawn on c7 and controls e5.}
+ (4. Nf3 {Develops. The knight on f3 controls e5.}
+4... Bg7 {Develops.}
+5. Qb3 {The Russian System. The queen on b3 eyes the pawn on b7.}
+5... dxc4 {Takes. The pawn on c4 eyes the queen on b3.}
+6. Qxc4 {Recaptures. The queen on c4 eyes the pawn on c7 and the pawn on f7 and controls d5.}
+6... O-O {Castles. The king is safe and the rook comes into play.}
+7. e4 {Centre. The pawn on e4 controls d5.}
+7... a6 {The Hungarian.}
+)
+4... Bg7 {Develops.}
+5. e3 {Solid.}
+5... c5 {Hits d4. The pawn on c5 eyes the pawn on d4.}
+6. dxc5 {Takes.}
+6... Qa5 {Pins. The queen on a5 eyes the pawn on c5 and the knight on c3.}
+7. Rc1 {Defends.}
+7... dxc4 {Takes.}
+8. Bxc4 {Recaptures. The bishop on c4 eyes the pawn on f7 and controls d5.}
+8... O-O {Castles. The king is safe and the rook comes into play.} *

@@ -1,0 +1,71 @@
+[Event "KIA vs the French"]
+
+{The King's Indian Attack is a system: e4, d3, Nd2, Ngf3, g3, Bg2, O-O, Re1. White attacks on the kingside with e5 and h4.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... e6 {The French. The pawn on e6 controls d5.}
+2. d3 {[%csl Ge4] The KIA: avoid the French theory.}
+2... d5 {Centre. The pawn on d5 eyes the pawn on e4.}
+ (2... c5 {Black delays ...d5. The pawn on c5 controls d4.}
+3. Nf3 {Develops. The knight on f3 controls d4 and e5.}
+3... Nc6 {Develops. The knight on c6 controls d4 and e5.}
+4. g3 {Same KIA setup: Bg2, O-O, Re1.}
+)
+3. Nd2 {Supports e4.}
+3... Nf6 {Develops. The knight on f6 eyes the pawn on e4.}
+4. Ngf3 {Develops. The knight on f3 controls d4 and e5.}
+4... c5 {Space. The pawn on c5 controls d4.}
+5. g3 {Fianchetto.}
+5... Nc6 {Develops. The knight on c6 controls d4 and e5.}
+6. Bg2 {The bishop on the long diagonal.}
+6... Be7 {Develops.}
+7. O-O {Castles. The king is safe and the rook comes into play.}
+7... O-O {Castles. The king is safe and the rook comes into play.}
+8. Re1 {[%csl Ge5] Supports e5.}
+8... b5 {The queenside attack begins.}
+ (8... Qc7 {Black adds pressure to e5 in advance. The queen on c7 eyes the pawn on g3 and controls e5.}
+9. Qe2 {[%csl Ge5] Over-protects e5 before pushing.}
+)
+9. e5 {[%cal Ge5f6] Kicks the knight and gains kingside space.}
+9... Nd7 {Retreats. The knight on d7 eyes the pawn on e5.}
+10. Nf1 {[%csl Gh2,Gg3] The knight heads for h2 or g3 to support h4–h5.} *
+
+[Event "KIA vs the Sicilian & Caro-Kann"]
+
+{The same setup works against 1...c5 and 1...c6.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... c5 {The Sicilian. The pawn on c5 controls d4.}
+ (1... c6 {The Caro-Kann. The pawn on c6 controls d5.}
+2. d3 {The KIA approach.}
+2... d5 {Centre. The pawn on d5 eyes the pawn on e4.}
+3. Nd2 {Supports e4.}
+3... e5 {Black builds a centre. The pawn on e5 controls d4.}
+4. Ngf3 {Develops. The knight on f3 eyes the pawn on e5 and controls d4.}
+4... Bd6 {Develops.}
+5. g3 {Fianchetto.}
+5... Nf6 {Develops. The knight on f6 eyes the pawn on e4.}
+6. Bg2 {Long diagonal.}
+6... O-O {Castles. The king is safe and the rook comes into play.}
+7. O-O {Castles. The king is safe and the rook comes into play.}
+7... Re8 {Supports ...e4 ideas and e5.}
+8. Re1 {Supports e4; e4xd5 or Qe2 next.}
+)
+2. Nf3 {Develops. The knight on f3 controls d4 and e5.}
+2... e6 {Flexible. The pawn on e6 controls d5.}
+ (2... Nc6 {Develops. The knight on c6 controls d4 and e5.}
+3. d3 {KIA setup.}
+3... g6 {Closed-Sicilian style fianchetto.}
+4. g3 {Mirrors.}
+4... Bg7 {Long diagonal. The bishop on g7 eyes the pawn on b2 and controls d4 and e5.}
+5. Bg2 {Long diagonal.}
+)
+3. d3 {The KIA setup.}
+3... Nc6 {Develops. The knight on c6 controls d4 and e5.}
+4. g3 {Fianchetto.}
+4... d5 {Centre. The pawn on d5 eyes the pawn on e4.}
+5. Nbd2 {Supports e4.}
+5... Nf6 {Develops. The knight on f6 eyes the pawn on e4.}
+6. Bg2 {Long diagonal.}
+6... Be7 {Develops.}
+7. O-O {Castles. The king is safe and the rook comes into play.}
+7... O-O {Castles. The king is safe and the rook comes into play.}
+8. Re1 {[%csl Ge5] Prepares e5.} *

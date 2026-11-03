@@ -1,0 +1,62 @@
+[Event "Alekhine: Modern"]
+
+{The Alekhine (1...Nf6) invites White's pawns forward and then attacks them.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... Nf6 {[%cal Gf6e4] The Alekhine. The knight on f6 eyes the pawn on e4 and controls d5.}
+2. e5 {Gains time. The pawn on e5 eyes the knight on f6.}
+2... Nd5 {Central knight.}
+3. d4 {Centre.}
+3... d6 {Hits e5. The pawn on d6 eyes the pawn on e5.}
+4. Nf3 {The Modern.}
+4... Bg4 {Pins. The bishop on g4 eyes the knight on f3.}
+ (4... g6 {Fianchetto.}
+5. Bc4 {Hits the knight. The bishop on c4 eyes the knight on d5.}
+5... Nb6 {Retreats. The knight on b6 eyes the bishop on c4 and controls d5.}
+6. Bb3 {Retreats. The bishop on b3 eyes the pawn on f7 and controls d5.}
+6... Bg7 {Develops. The bishop on g7 eyes the pawn on e5.}
+7. a4 {Gains space.}
+)
+5. Be2 {Unpins.}
+5... e6 {Solid.}
+6. O-O {Castles. The king is safe and the rook comes into play.}
+6... Be7 {Develops.}
+7. c4 {Kicks the knight. The pawn on c4 eyes the knight on d5.}
+7... Nb6 {Retreats. The knight on b6 eyes the pawn on c4 and controls d5.}
+8. h3 {Asks the bishop. The pawn on h3 eyes the bishop on g4.}
+8... Bh5 {Keeps the pin. The bishop on h5 eyes the knight on f3.}
+9. Nc3 {Develops. The knight on c3 controls d5 and e4.}
+9... O-O {Castles. The king is safe and the rook comes into play.}
+10. Be3 {Develops.}
+10... d5 {Fixes the centre. The pawn on d5 eyes the pawn on c4 and controls e4.} *
+
+[Event "Alekhine: Four Pawns & 2.Nc3"]
+
+{The Four Pawns Attack is the critical test. 2.Nc3 avoids the theory.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... Nf6 {Alekhine. The knight on f6 eyes the pawn on e4 and controls d5.}
+2. e5 {Gains time. The pawn on e5 eyes the knight on f6.}
+ (2. Nc3 {Avoids the Alekhine. The knight on c3 controls d5.}
+2... e5 {Central reply. The pawn on e5 controls d4.}
+3. Nf3 {Develops. The knight on f3 eyes the pawn on e5 and controls d4.}
+3... Nc6 {Four Knights. The knight on c6 controls d4.}
+)
+2... Nd5 {Central.}
+3. c4 {Kicks. The pawn on c4 eyes the knight on d5.}
+3... Nb6 {Retreats. The knight on b6 eyes the pawn on c4 and controls d5.}
+4. d4 {Centre.}
+4... d6 {Hits e5. The pawn on d6 eyes the pawn on e5.}
+5. f4 {The Four Pawns.}
+ (5. exd6 {The Exchange variation. The pawn on d6 eyes the pawn on c7 and the pawn on e7.}
+5... cxd6 {Recaptures toward the centre, keeping a solid pawn majority.}
+6. Nc3 {Develops. The knight on c3 controls d5 and e4.}
+6... g6 {[%csl Gg7] Fianchetto aiming at d4.}
+)
+5... dxe5 {Takes. The pawn on e5 eyes the pawn on d4 and the pawn on f4.}
+6. fxe5 {Recaptures.}
+6... Nc6 {Hits d4. The knight on c6 eyes the pawn on e5 and the pawn on d4.}
+7. Be3 {Defends.}
+7... Bf5 {Develops. The bishop on f5 eyes the knight on b1 and controls e4.}
+8. Nc3 {Develops. The knight on c3 controls d5 and e4.}
+8... e6 {Solid. The pawn on e6 controls d5.}
+9. Nf3 {Develops.}
+9... Be7 {Develops.} *

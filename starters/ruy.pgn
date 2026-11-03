@@ -1,0 +1,106 @@
+[Event "Ruy Lopez: Closed main line"]
+
+{The Spanish torture. White pressures e5 indirectly by attacking its defender on c6, builds with c3/d4 and keeps a long-term edge in space.}
+1. e4 {[%csl Gd5,Gf5] Grabs the centre and frees the queen and bishop.}
+1... e5 {Black stakes an equal claim to the centre.}
+2. Nf3 {[%cal Gf3e5] Develops with an attack on e5. The knight on f3 eyes the pawn on e5 and controls d4.}
+2... Nc6 {Defends e5 and develops. The knight on c6 controls d4.}
+3. Bb5 {[%cal Gb5c6] The Ruy Lopez: the bishop attacks the knight that guards e5.}
+3... a6 {The Morphy Defence: Black asks the bishop at once.}
+4. Ba4 {Keeps the pin-like pressure on c6. Taking on c6 now is the Exchange variation, a different plan.}
+4... Nf6 {[%cal Gf6e4] Develops and counterattacks e4. The knight on f6 eyes the pawn on e4 and controls d5.}
+5. O-O {King safety first. e4 is "poisoned" for now because Re1 will regain it.}
+5... Be7 {The Closed Ruy: Black prepares to castle and keeps the e5 pawn solid.}
+6. Re1 {[%csl Ge4] Defends e4 so that Bxc6 followed by Nxe5 becomes a real threat.}
+6... b5 {[%cal Rb5a4] Kicks the bishop to break the pressure on c6. It concedes some queenside looseness (a4 levers later).}
+7. Bb3 {[%cal Gb3f7] The bishop now eyes f7 along the a2–g8 diagonal.}
+7... d6 {Shores up e5 and opens the c8-bishop.}
+8. c3 {[%csl Gd4] Prepares d4 and gives the bishop a retreat to c2.}
+8... O-O {Black castles. White must now stop ...Bg4, which would pin the f3-knight against the queen and pressure d4.}
+9. h3 {[%csl Gg4] The key quiet move: no ...Bg4, so d4 can come without being undermined.}
+9... Na5 {The Chigorin: the knight hits the b3-bishop and frees c7 for ...c5.}
+ (9... Bb7 {The Zaitsev: the bishop eyes e4 and Black will play ...Re8 and ...Bf8.}
+10. d4 {[%csl Gd4,Ge4] White builds the ideal centre now that ...Bg4 is ruled out.}
+10... Re8 {Adds pressure to e4 and prepares ...Bf8.}
+11. Nbd2 {Defends e4 and heads for f1–g3.}
+11... Bf8 {Re-routes the bishop to support the e5 point and the kingside.}
+)
+ (9... Nb8 {The Breyer: the knight re-routes to d7 to support e5 and free the c-pawn.}
+10. d4 {Takes the centre. The pawn on d4 eyes the pawn on e5.}
+10... Nbd7 {Completes the Breyer manoeuvre.}
+11. Nbd2 {The standard knight route via f1 to g3.}
+11... Bb7 {Pressure on e4. The bishop on b7 eyes the pawn on e4 and controls d5.}
+12. Bc2 {Keeps the bishop on the b1–h7 diagonal, eyeing the kingside.}
+)
+10. Bc2 {The bishop stays on the long diagonal aiming at h7.}
+10... c5 {[%cal Gc5d4] Black gains queenside space and pressures d4.}
+11. d4 {[%csl Gd4,Ge4] Strikes the centre: the classic Ruy Lopez tension.}
+11... Qc7 {Supports e5 and the c-file.}
+12. Nbd2 {The knight heads to f1 and g3, where it eyes f5.} *
+
+[Event "Ruy Lopez: Open & Anti-Marshall"]
+
+{Two important tries for Black: grabbing e4 (the Open Ruy) and preparing the Marshall Gambit with ...O-O. Against the Marshall White sidesteps with a4.}
+1. e4 {Grabs the centre. The pawn on e4 controls d5.}
+1... e5 {Classical reply. The pawn on e5 controls d4.}
+2. Nf3 {Attacks e5. The knight on f3 eyes the pawn on e5 and controls d4.}
+2... Nc6 {Defends. The knight on c6 controls d4.}
+3. Bb5 {The Spanish. The bishop on b5 eyes the knight on c6.}
+3... a6 {Morphy Defence. The pawn on a6 eyes the bishop on b5.}
+4. Ba4 {Keeps the pressure. The bishop on a4 eyes the knight on c6.}
+4... Nf6 {Counterattack on e4. The knight on f6 eyes the pawn on e4 and controls d5.}
+5. O-O {Castles; e4 can be regained. The king is safe and the rook comes into play.}
+5... Nxe4 {The Open Ruy: Black takes and accepts an open game.}
+ (5... Be7 {Heading for the Closed lines.}
+6. Re1 {Defends e4 and renews the threat on e5.}
+6... b5 {Breaks the pin. The pawn on b5 eyes the bishop on a4.}
+7. Bb3 {Eyes f7. The bishop on b3 eyes the pawn on f7 and controls d5.}
+7... O-O {Black castles, hoping for 8.c3 d5!? (the Marshall Gambit).}
+8. a4 {[%cal Ga4b5] The Anti-Marshall: White hits b5 before Black can sacrifice d5.}
+8... b4 {Gains space and keeps the queenside closed.}
+ (8... Bb7 {Develops and keeps b5 defended.}
+9. d3 {Solid: no Marshall, and e4 is defended for good.}
+9... d6 {Supports e5.}
+10. Nbd2 {The knight heads for f1–g3 or c4.}
+)
+9. d3 {Calm and strong: e4 is held and the Marshall is off.}
+9... d6 {Solid support for e5.}
+10. a5 {[%csl Gb6] Fixes the queenside and gives the bishop a5 later if needed.}
+)
+6. d4 {[%csl Ge5] Opens the centre immediately: White's pieces are better placed to exploit it.}
+6... b5 {Black must deal with Bb5 pins and threats on e5.}
+7. Bb3 {Back to the strong diagonal. The bishop on b3 eyes the pawn on f7 and controls d5.}
+7... d5 {[%csl Gd5] Supports the advanced knight on e4.}
+8. dxe5 {Gains space. The e5 pawn cramps Black's kingside.}
+8... Be6 {Protects d5.}
+9. c3 {[%csl Gc2] Gives the bishop c2 and prepares Nbd2 to challenge e4.}
+9... Be7 {Develops.}
+10. Nbd2 {[%cal Gd2e4] Challenges the e4 knight. The knight on d2 eyes the knight on e4.} *
+
+[Event "Ruy Lopez: vs the Berlin & early deviations"]
+
+{The Berlin (3...Nf6) is the main drawing weapon at top level. A practical approach is 4.d3, keeping pieces on the board. Also: how to handle 3...a6 4.Ba4 d6.}
+1. e4 {Grabs the centre. The pawn on e4 controls d5.}
+1... e5 {Classical. The pawn on e5 controls d4.}
+2. Nf3 {Attacks e5. The knight on f3 eyes the pawn on e5 and controls d4.}
+2... Nc6 {Defends. The knight on c6 controls d4.}
+3. Bb5 {The Spanish. The bishop on b5 eyes the knight on c6.}
+3... Nf6 {The Berlin: Black counterattacks e4 at once.}
+ (3... a6 {Morphy Defence. The pawn on a6 eyes the bishop on b5.}
+4. Ba4 {Keeps the tension. The bishop on a4 eyes the knight on c6.}
+4... d6 {The Modern Steinitz: Black solidifies e5 before ...Nf6.}
+5. c3 {[%csl Gd4] Prepares d4 and keeps a retreat for the bishop.}
+5... Bd7 {Breaks the pin and unpins the c6-knight.}
+6. d4 {[%csl Gd4,Ge4] Builds the big centre. The pawn on d4 eyes the pawn on e5.}
+6... Nf6 {Develops and hits e4. The knight on f6 eyes the pawn on e4 and controls d5.}
+7. O-O {Castles. e4 is safe for now because ...Nxe4 runs into Re1 and d5.}
+)
+4. d3 {[%csl Ge4] The Anti-Berlin: White protects e4 and avoids the endgame.}
+4... Bc5 {Active: the bishop targets f2. The bishop on c5 eyes the pawn on f2 and controls d4.}
+5. c3 {[%csl Gd4] Prepares d4 and gives the b5-bishop a retreat.}
+5... O-O {Castles. The king is safe and the rook comes into play.}
+6. O-O {Castles. The king is safe and the rook comes into play.}
+6... d6 {Solid.}
+7. h3 {[%csl Gg4] Stops ...Bg4.}
+7... a6 {Asks the bishop. The pawn on a6 eyes the bishop on b5.}
+8. Ba4 {Keeps the bishop on the a4–e8 diagonal, heading to c2 later.} *

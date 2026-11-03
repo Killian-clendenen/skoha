@@ -1,0 +1,62 @@
+[Event "Slav: Main line 4...dxc4"]
+
+{The Slav (2...c6) holds d5 while keeping the c8-bishop's diagonal open.}
+1. d4 {Centre. The pawn on d4 controls e5.}
+1... d5 {Symmetry. The pawn on d5 controls e4.}
+2. c4 {Queen's Gambit. The pawn on c4 eyes the pawn on d5.}
+2... c6 {[%csl Gd5] The Slav.}
+3. Nf3 {Develops. The knight on f3 controls e5.}
+3... Nf6 {Develops. The knight on f6 controls e4.}
+4. Nc3 {Develops. The knight on c3 eyes the pawn on d5 and controls e4.}
+4... dxc4 {Takes.}
+5. a4 {Stops ...b5.}
+5... Bf5 {Develops outside the chain. The bishop on f5 controls e4.}
+6. e3 {Prepares Bxc4.}
+ (6. Ne5 {Hits c4 with the knight. The knight on e5 eyes the pawn on f7 and the pawn on c6.}
+6... Nbd7 {Challenges e5. The knight on d7 eyes the knight on e5.}
+7. Nxc4 {Regains the pawn. The knight on c4 controls e5.}
+7... Qc7 {Prepares ...e5. The queen on c7 eyes the pawn on h2 and controls e5.}
+8. g3 {Fianchetto.}
+8... e5 {Strikes the centre. The pawn on e5 eyes the pawn on d4.}
+9. dxe5 {Takes. The pawn on e5 eyes the knight on f6.}
+9... Nxe5 {Recaptures. The knight on e5 eyes the knight on c4.}
+10. Bf4 {Pins. The bishop on f4 eyes the knight on e5.}
+10... Nfd7 {Supports e5.}
+11. Bg2 {Long diagonal. The bishop on g2 eyes the pawn on c6 and controls d5 and e4.}
+)
+6... e6 {Solid. The pawn on e6 controls d5.}
+7. Bxc4 {Regains. The bishop on c4 eyes the pawn on e6 and controls d5.}
+7... Bb4 {Pins. The bishop on b4 eyes the knight on c3.}
+8. O-O {Castles. The king is safe and the rook comes into play.}
+8... Nbd7 {Develops. The knight on d7 controls e5.} *
+
+[Event "Slav: 4.e3 & Exchange"]
+
+{Quieter tries.}
+1. d4 {Centre. The pawn on d4 controls e5.}
+1... d5 {Symmetry. The pawn on d5 controls e4.}
+2. c4 {Queen's Gambit. The pawn on c4 eyes the pawn on d5.}
+2... c6 {Slav.}
+3. Nf3 {Develops. The knight on f3 controls e5.}
+ (3. cxd5 {The Exchange. The pawn on d5 eyes the pawn on c6.}
+3... cxd5 {Recaptures. The pawn on d5 controls e4.}
+4. Nc3 {Develops. The knight on c3 eyes the pawn on d5 and controls e4.}
+4... Nf6 {Develops. The knight on f6 controls e4.}
+5. Bf4 {Develops. The bishop on f4 eyes the knight on b8 and controls e5.}
+5... Nc6 {Develops. The knight on c6 eyes the pawn on d4 and controls e5.}
+6. e3 {Solid.}
+6... Bf5 {Develops. The bishop on f5 controls e4.}
+)
+3... Nf6 {Develops. The knight on f6 controls e4.}
+4. e3 {Solid.}
+4... Bf5 {Develops. The bishop on f5 eyes the knight on b1 and controls e4.}
+ (4... a6 {The Chebanenko: prepares ...b5.}
+5. Nc3 {Develops. The knight on c3 eyes the pawn on d5 and controls e4.}
+5... b5 {[%cal Gb5c4] Gains queenside space. The pawn on b5 eyes the pawn on c4.}
+)
+5. Nc3 {Develops. The knight on c3 eyes the pawn on d5 and controls e4.}
+5... e6 {Solid.}
+6. Nh4 {Hunts the bishop. The knight on h4 eyes the bishop on f5.}
+6... Bg6 {Retreats. The bishop on g6 controls e4.}
+7. Nxg6 {Takes. The knight on g6 eyes the bishop on f8 and the rook on h8 and controls e5.}
+7... hxg6 {Recaptures, opening the h-file.} *

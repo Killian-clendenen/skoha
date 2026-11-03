@@ -31,6 +31,13 @@
       </div>
       <div class="stats" id="stats"></div>
     </div>
+    <div class="searchwrap" role="search">
+      <span class="sicon" aria-hidden="true">⌕</span>
+      <input id="search" type="search" autocomplete="off" spellcheck="false" placeholder="Search openings, defences, ECO or moves — try “Najdorf”, “e4 c5”, “B90”" aria-label="Search openings" aria-controls="searchResults">
+      <kbd>/</kbd>
+      <div id="searchResults" class="sresults" role="listbox" hidden></div>
+    </div>
+    <p id="searchEmpty" class="muted" hidden>No opening matches. Try a name (“Sicilian”), a variation (“Winawer”), an ECO code (“C42”) or moves (“d4 Nf6 c4 g6”).</p>
     <h2 class="sect"><span class="dot w"></span> White openings</h2>
     <div id="whiteList" class="ocards"></div>
     <h2 class="sect"><span class="dot b"></span> Black defences</h2>
@@ -57,25 +64,34 @@
   </section>
 
   <section id="drill" class="tab">
-    <div class="split">
-      <div class="boardwrap"><div id="drillBoard" class="board"></div></div>
-      <aside class="panel">
-        <select id="drillRep" aria-label="Repertoire"></select>
-        <div class="modes" id="modes">
-          <button data-mode="due" class="primary">Due reviews</button>
-          <button data-mode="random">Random lines</button>
-          <button data-mode="mistakes">Mistakes only</button>
-          <button data-mode="chapter">Chapter</button>
-          <button data-mode="line">Pick a line</button>
+    <div class="trainbar">
+      <select id="drillRep" aria-label="Repertoire"></select>
+      <div class="seg" id="modes" role="tablist" aria-label="Training mode">
+        <button data-mode="due" class="primary" title="Due reviews + new moves">Due</button>
+        <button data-mode="random" title="Random lines">Random</button>
+        <button data-mode="mistakes" title="Only lines with past mistakes">Mistakes</button>
+        <button data-mode="chapter" title="One chapter">Chapter</button>
+        <button data-mode="line" title="One specific line">Line</button>
+      </div>
+      <select id="drillChapter" hidden aria-label="Chapter"></select>
+      <select id="drillLine" hidden aria-label="Line"></select>
+      <div class="tstats" id="drillStats" aria-live="polite"></div>
+    </div>
+    <div class="tsplit">
+      <div class="boardwrap"><div id="drillBoard" class="board"></div>
+        <div class="tprogress"><i id="drillProg"></i></div>
+      </div>
+      <div class="tside">
+        <div id="drillNote" class="coach" aria-live="polite">
+          <div class="coach-empty"><div class="coach-k">Coach</div><p>Every move you play, and every reply, is explained here, with arrows on the board.</p></div>
         </div>
-        <select id="drillChapter" hidden aria-label="Chapter"></select>
-        <select id="drillLine" hidden aria-label="Line"></select>
-        <div id="drillInfo" class="muted"></div>
         <div id="drillMsg" class="msg">Pick a repertoire and a mode.</div>
-        <div id="drillNote" class="note small"></div>
-        <div id="drillMoves" class="moves"></div>
-        <div class="row"><button id="drillHint">Hint</button><button id="drillFlip">Flip</button><button id="drillStudy">Study this line</button><button id="drillNext" class="primary" hidden>Next line →</button></div>
-      </aside>
+        <div class="tfoot">
+          <div id="drillInfo" class="muted"></div>
+          <div id="drillMoves" class="moves"></div>
+          <div class="tbtns"><button id="drillHint" title="Hint (H)">💡 Hint</button><button id="drillFlip" title="Flip (F)">⇅ Flip</button><button id="drillStudy" title="Open this line in study view">📖 Study</button><button id="drillNext" class="primary" hidden>Next line →</button></div>
+        </div>
+      </div>
     </div>
   </section>
 

@@ -1,0 +1,53 @@
+[Event "Scotch: 4...Nf6 (Mieses)"]
+
+{The Scotch opens the centre at once with 3.d4. White gets free development and a space edge; Black's best try is quick counterplay against e4.}
+1. e4 {Grabs the centre. The pawn on e4 controls d5.}
+1... e5 {Classical. The pawn on e5 controls d4.}
+2. Nf3 {[%cal Gf3e5] Attacks e5. The knight on f3 eyes the pawn on e5 and controls d4.}
+2... Nc6 {Defends. The knight on c6 controls d4.}
+3. d4 {[%cal Gd4e5] The Scotch: White challenges e5 straight away instead of the slow Ruy squeeze.}
+3... exd4 {Practically forced; ...d6 would be passive.}
+4. Nxd4 {[%csl Gd4] The knight recaptures centrally. White has a free hand in the centre.}
+4... Nf6 {[%cal Gf6e4] Counterattacks e4 at once. The knight on f6 eyes the pawn on e4 and controls d5.}
+ (4... Nxd4 {Trades knights, but it centralises White's queen with tempo-free development.}
+5. Qxd4 {[%csl Gd4] A dominant central queen; Black has no quick way to harass it.}
+5... Ne7 {Heads for c6 or g6. The knight on e7 controls d5.}
+6. Bc4 {[%cal Gc4f7] Develops with an eye on f7. The bishop on c4 eyes the pawn on f7 and controls d5.}
+)
+5. Nxc6 {Trades to break Black's pawn structure before playing e5.}
+5... bxc6 {Recaptures towards the centre. Black gets the b-file but doubled c-pawns.}
+6. e5 {[%cal Ge5f6] Kicks the knight away from its best square.}
+6... Qe7 {Pins the e5 pawn to the king's file so it can be attacked.}
+7. Qe2 {Defends e5 and breaks the pin. The queen on e2 controls e4.}
+7... Nd5 {The knight takes a central post.}
+8. c4 {[%cal Gc4d5] Kicks the knight again, gaining space. The pawn on c4 eyes the knight on d5.}
+8... Ba6 {Pins the c4 pawn against the queen. The bishop on a6 eyes the pawn on c4.}
+ (8... Nb6 {Retreats, keeping the c4 pawn under watch.}
+9. Nc3 {Simple development; White keeps the e5 space advantage.}
+)
+9. b3 {Solidly defends c4. White keeps the e5 wedge and a structural edge.} *
+
+[Event "Scotch: 4...Bc5"]
+
+{The classical bishop sortie hits d4. White can either take on c6 or support d4 with Be3/c3.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... e5 {Classical. The pawn on e5 controls d4.}
+2. Nf3 {Attacks e5. The knight on f3 eyes the pawn on e5 and controls d4.}
+2... Nc6 {Defends. The knight on c6 controls d4.}
+3. d4 {The Scotch. The pawn on d4 eyes the pawn on e5.}
+3... exd4 {Takes.}
+4. Nxd4 {Recaptures. The knight on d4 eyes the knight on c6.}
+4... Bc5 {[%cal Gc5d4] Attacks the d4 knight right away. The bishop on c5 eyes the knight on d4.}
+5. Nxc6 {Trades off before Black adds pressure. The knight on c6 eyes the queen on d8 and the pawn on a7 and controls d4 and e5.}
+ (5. Be3 {Holds d4 instead.}
+5... Qf6 {More pressure on d4. The queen on f6 eyes the knight on d4 and the pawn on f2 and controls e5.}
+6. c3 {[%csl Gd4] Solidly supports the knight.}
+6... Nge7 {Develops; ...Nxd4 ideas remain. The knight on e7 controls d5.}
+7. Bc4 {[%cal Gc4f7] Develops actively towards f7. The bishop on c4 eyes the pawn on f7 and controls d5.}
+)
+5... Qf6 {[%cal Gf6f2] An intermezzo threatening mate on f2. The queen on f6 eyes the knight on c6 and the pawn on b2 and controls d4 and e5.}
+6. Qd2 {Covers f2 and keeps the queen flexible. The queen on d2 eyes the pawn on d7 and controls d4 and d5.}
+6... dxc6 {Recaptures towards the centre with an open d-file.}
+7. Nc3 {Develops and prepares Na4 to hit the c5-bishop.}
+7... Be6 {Develops and covers c4. The bishop on e6 eyes the pawn on a2 and controls d5.}
+8. Na4 {[%cal Ga4c5] Hunts the bishop pair. The knight on a4 eyes the bishop on c5.} *

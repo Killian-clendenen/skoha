@@ -122,3 +122,25 @@
 8... Bxd2+ {Takes the queen.}
 9. Kxd2 {Recaptures.}
 9... Kxd8 {Black is a piece up.} *
+
+[Event "QGD: 5.Bf4"]
+
+{5.Bf4 is the modern main line. Black answers with the ...c5 break and active piece play.}
+1. d4 {Centre. The pawn on d4 controls e5.}
+1... d5 {Symmetry. The pawn on d5 controls e4.}
+2. c4 {The Queen's Gambit. The pawn on c4 eyes the pawn on d5.}
+2... e6 {[%csl Gd5] The QGD: holds d5 solidly.}
+3. Nc3 {Pressure on d5. The knight on c3 eyes the pawn on d5 and controls e4.}
+3... Nf6 {Defends d5 and develops. The knight on f6 controls e4.}
+4. Nf3 {Develops. The knight on f3 controls e5.}
+4... Be7 {Flexible development, ready to castle.}
+5. Bf4 {[%cal Gf4c7] Develops the bishop outside the pawn chain, eyeing c7 and b8.}
+5... O-O {Castles. The king is safe and the rook comes into play.}
+6. e3 {Solid support for d4.}
+6... c5 {[%cal Gc5d4] The key freeing break: Black challenges White's centre before it settles.}
+7. dxc5 {Takes, hoping to gain time on the bishop.}
+7... Bxc5 {Recaptures; the bishop is active on c5. The bishop on c5 eyes the pawn on e3 and controls d4.}
+8. Qc2 {Eyes h7 and prepares Rd1 or O-O-O. The queen on c2 eyes the pawn on h7 and controls e4.}
+8... Nc6 {Develops with pressure on d4 and e5. The knight on c6 controls d4 and e5.}
+9. a3 {Prepares b4 to gain queenside space with tempo.}
+9... Qa5 {[%cal Ga5c3] Pins the c3-knight and eyes a3; Black's pieces are fully active.} *

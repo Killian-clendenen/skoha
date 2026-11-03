@@ -1,7 +1,7 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove } from '../core.js';
+import { validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
 import { KB } from '../kb.js';
 const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
@@ -73,4 +73,27 @@ const ch = new Chess(); const s = san => { const m = ch.move(san); return soundF
 ok(['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Nf6', 'Ng5', 'd5', 'exd5', 'Nxd5', 'Nxf7'].map(s).join() === 'move,move,move,move,move,move,move,move,capture,capture,capture', 'move/capture sounds');
 const c2 = new Chess(); ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Bc5'].forEach(x => c2.move(x)); ok(soundFor(c2.move('O-O'), false) === 'castle', 'castle sound');
 const c3 = new Chess(); ['e4', 'f6', 'd4', 'g5'].forEach(x => c3.move(x)); ok(soundFor(c3.move('Qh5'), c3.inCheck()) === 'check', 'check sound');
+// library size + home ties
+const W = idx.filter(s => s.color === 'w'), Bk = idx.filter(s => s.color === 'b');
+ok(idx.length >= 25 && W.length >= 12 && Bk.length >= 14, `library: ${idx.length} repertoires (${W.length} White, ${Bk.length} Black)`);
+ok(new Set(idx.map(s => s.id)).size === idx.length, 'unique starter ids');
+for (const b of Bk) ok(W.some(w => b.answers === w.first || (b.vs || []).includes(w.id)), `${b.name} tied to a White opening`);
+for (const b of Bk) for (const v of b.vs || []) ok(idx.some(s => s.id === v), `${b.name} vs ${v} exists`);
+const all = idx.map(s => ({ id: s.id, name: s.name, color: s.color, starter: s.id, lines: parsePgn(readFileSync(new URL('../starters/', import.meta.url).pathname + s.file, 'utf8')).lines }));
+let tl = 0, tm = 0; all.forEach(r => { tl += r.lines.length; tm += new Set(r.lines.flatMap(l => userCards(l.m, r.color).map(c => c.key))).size; });
+console.log(`  TOTAL: ${all.length} repertoires, ${tl} lines, ${tm} moves to learn`);
+// search
+const SI = buildSearchIndex(all, idx);
+const top = q => search(SI, q)[0];
+ok(norm('1.e4 c5 2.Nf3') === 'e4 c5 nf3' && norm('Grünfeld') === 'grunfeld', 'norm strips numbers + accents');
+ok(isMoveQuery('e4 c5') && isMoveQuery('1.d4 Nf6') && !isMoveQuery('Najdorf') && !isMoveQuery('B90'), 'move query detection');
+ok(top('Sicilian')?.id === 'sicilian' && top('Sicilian').type === 'opening', 'search "Sicilian" -> Sicilian opening');
+ok(top('Najdorf')?.id === 'sicilian' && top('Najdorf').type === 'chapter' && /Najdorf/.test(top('Najdorf').ch), 'search "Najdorf" -> Sicilian Najdorf chapter');
+ok(search(SI, 'e4 c5').every(r => r.id === 'sicilian' || r.id === 'kia') && search(SI, 'e4 c5')[0]?.id === 'sicilian', 'search "e4 c5" -> Sicilian first: ' + search(SI, 'e4 c5').map(r => r.id + ':' + (r.ch || '')).slice(0, 4));
+ok(top('grunfeld')?.id === 'grunfeld' && top('Grünfeld')?.id === 'grunfeld', 'accent-insensitive search');
+ok(top('C42')?.id === 'petroff' && top('b90')?.id === 'sicilian', 'ECO alias search');
+ok(top('reti')?.id === 'reti' && top('kings gambit')?.id === 'kingsgambit' && top("king's indian def")?.id === 'kid', 'name search with apostrophes');
+ok(top('1.d4 Nf6 2.c4 e6 3.Nc3 Bb4')?.id === 'nimzo', 'moves search -> Nimzo');
+ok(top('winawer')?.ch?.includes('Winawer') && top('berlin wall')?.id === 'berlin', 'variation search');
+ok(search(SI, 'zzzz').length === 0 && search(SI, '').length === 0, 'no false hits');
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

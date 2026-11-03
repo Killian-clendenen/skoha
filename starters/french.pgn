@@ -1,0 +1,89 @@
+[Event "French: Advance"]
+
+{The French (1...e6 2...d5) concedes space but builds a solid chain. Black's plan is always to attack the base of White's chain with ...c5 and ...f6.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... e6 {[%csl Gd5] The French: prepares ...d5. The pawn on e6 controls d5.}
+2. d4 {Builds a centre. The pawn on d4 controls e5.}
+2... d5 {[%cal Gd5e4] Challenges e4. The pawn on d5 eyes the pawn on e4.}
+3. e5 {The Advance: gains space.}
+3... c5 {[%cal Gc5d4] Attacks the base of the chain. The pawn on c5 eyes the pawn on d4.}
+4. c3 {Supports d4.}
+4... Nc6 {More pressure on d4. The knight on c6 eyes the pawn on e5 and the pawn on d4.}
+5. Nf3 {Supports d4.}
+5... Qb6 {[%cal Gb6d4,Gb6b2] Piles up on d4 and eyes b2. The queen on b6 eyes the pawn on b2.}
+6. a3 {Prepares b4.}
+ (6. Bd3 {The Milner-Barry Gambit. The bishop on d3 eyes the pawn on h7 and controls e4.}
+6... cxd4 {Takes. The pawn on d4 eyes the pawn on c3.}
+7. cxd4 {Recaptures.}
+7... Bd7 {Prepares ...Nxd4 and avoids Bb5+.}
+8. O-O {Gambits the d4 pawn. The king is safe and the rook comes into play.}
+8... Nxd4 {Accepts. The knight on d4 eyes the knight on f3.}
+9. Nxd4 {Trades. The knight on d4 eyes the pawn on e6.}
+9... Qxd4 {Takes. The queen on d4 eyes the pawn on e5 and the bishop on d3 and controls e4.}
+10. Nc3 {Develops with compensation. The knight on c3 eyes the pawn on d5 and controls e4.}
+)
+6... c4 {[%csl Gc4] Locks the queenside to stop b4.}
+7. Nbd2 {Develops. The knight on d2 eyes the pawn on c4 and controls e4.}
+7... Na5 {[%cal Ga5b3] Eyes b3.} *
+
+[Event "French: Winawer"]
+
+{The Winawer (3...Bb4) pins the knight and often gives up the bishop pair to damage White's structure.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... e6 {French. The pawn on e6 controls d5.}
+2. d4 {Centre. The pawn on d4 controls e5.}
+2... d5 {Challenges e4. The pawn on d5 eyes the pawn on e4.}
+3. Nc3 {Defends e4. The knight on c3 eyes the pawn on d5.}
+3... Bb4 {[%cal Gb4c3] The Winawer: pins the knight. The bishop on b4 eyes the knight on c3.}
+4. e5 {Gains space.}
+4... c5 {Hits d4. The pawn on c5 eyes the pawn on d4.}
+5. a3 {Asks the bishop. The pawn on a3 eyes the bishop on b4.}
+5... Bxc3+ {Gives up the bishop pair. The bishop on c3 eyes the pawn on d4 and the pawn on b2. It is check, so the reply is forced.}
+6. bxc3 {Doubled pawns.}
+6... Ne7 {Develops, ready to meet Qg4.}
+7. Qg4 {[%cal Gg4g7] Hits g7. The queen on g4 eyes the pawn on g7 and the pawn on e6 and controls e4.}
+ (7. Nf3 {The positional approach.}
+7... Qa5 {[%cal Ga5c3] Pins the c3 pawn. The queen on a5 eyes the pawn on a3 and the pawn on c3.}
+8. Bd2 {Unpins.}
+8... Nbc6 {Develops. The knight on c6 eyes the pawn on e5 and the pawn on d4.}
+9. Be2 {Develops.}
+)
+7... Qc7 {Counterattacks. The queen on c7 eyes the pawn on e5.}
+8. Qxg7 {Takes. The queen on g7 eyes the rook on h8 and the pawn on f7.}
+8... Rg8 {Hits the queen. The rook on g8 eyes the queen on g7.}
+9. Qxh7 {Takes. The queen on h7 eyes the rook on g8 and the pawn on f7 and controls e4.}
+9... cxd4 {Counterattack in the centre. The pawn on d4 eyes the pawn on c3.}
+10. Ne2 {Develops. The knight on e2 eyes the pawn on d4.}
+10... Nbc6 {Develops. The knight on c6 eyes the pawn on e5.}
+11. f4 {Protects e5.} *
+
+[Event "French: Tarrasch & Exchange"]
+
+{Against 3.Nd2 Black plays ...c5. Against the Exchange, develop actively.}
+1. e4 {Centre. The pawn on e4 controls d5.}
+1... e6 {French. The pawn on e6 controls d5.}
+2. d4 {Centre. The pawn on d4 controls e5.}
+2... d5 {Challenges. The pawn on d5 eyes the pawn on e4.}
+3. Nd2 {The Tarrasch.}
+ (3. exd5 {The Exchange. The pawn on d5 eyes the pawn on e6.}
+3... exd5 {Recaptures; the c8-bishop is free. The pawn on d5 controls e4.}
+4. Nf3 {Develops. The knight on f3 controls e5.}
+4... Nf6 {Develops. The knight on f6 controls e4.}
+5. Bd3 {Develops. The bishop on d3 eyes the pawn on h7 and controls e4.}
+5... Bd6 {Develops. The bishop on d6 eyes the pawn on h2 and controls e5.}
+6. O-O {Castles. The king is safe and the rook comes into play.}
+6... O-O {Castles. The king is safe and the rook comes into play.}
+)
+3... c5 {[%cal Gc5d4] Hits d4. The pawn on c5 eyes the pawn on d4.}
+4. exd5 {Takes. The pawn on d5 eyes the pawn on e6.}
+4... Qxd5 {Recaptures. The queen on d5 eyes the pawn on d4 and the pawn on a2 and controls e4 and e5.}
+5. Ngf3 {Develops. The knight on f3 controls e5.}
+5... cxd4 {Takes.}
+6. Bc4 {[%cal Gc4d5] Gains time on the queen. The bishop on c4 eyes the queen on d5.}
+6... Qd6 {Retreats. The queen on d6 eyes the pawn on h2 and controls d5 and e5.}
+7. O-O {Castles. The king is safe and the rook comes into play.}
+7... Nf6 {Develops. The knight on f6 controls d5 and e4.}
+8. Nb3 {Hunts d4. The knight on b3 eyes the pawn on d4.}
+8... Nc6 {Defends. The knight on c6 controls e5.}
+9. Nbxd4 {Recaptures. The knight on d4 eyes the knight on c6 and the pawn on e6.}
+9... a6 {Stops Nb5.} *
