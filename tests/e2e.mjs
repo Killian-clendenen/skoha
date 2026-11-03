@@ -421,4 +421,15 @@ await retiMoves('everything learned, nothing due', FX('ls-c2e3afe.json'), { lear
     await p.touchscreen.tap(...pt(mv.from)); await p.waitForTimeout(80); await p.touchscreen.tap(...pt(mv.to)); await p.waitForTimeout(400); }
   ok(await p.evaluate(() => window.__freereps.drill.chess.isCheckmate()), 'Legal\'s mate trap played to checkmate on a phone'); ok(!errs.length, 'no page errors in traps ' + errs.join());
   await c.close(); }
+{ const c = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+  await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForTimeout(1200); if (await p.isVisible('#gSkip')) { await p.click('#gSkip'); await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForTimeout(600); }
+  const bb = await p.locator('#lineBoard cg-board').boundingBox(), w = bb.width / 8; const pt = q => [bb.x + (q.charCodeAt(0) - 97 + .5) * w, bb.y + (8 - +q[1] + .5) * w];
+  const tap2 = async (a, z) => { await p.touchscreen.tap(...pt(a)); await p.waitForTimeout(80); await p.touchscreen.tap(...pt(z)); await p.waitForTimeout(350); };
+  ok(await p.locator('#lineBoard svg line, #lineBoard svg path').count() > 0, 'study: blue guide arrow for the first move');
+  await tap2('e2', 'e4'); ok(/Not this line/.test(await p.textContent('#lnNote')) && await p.evaluate(() => window.__freereps.study?.ply ?? -1) === 0, 'study: wrong move snaps back with the right one named');
+  await tap2('g1', 'f3'); ok(/Réti starts flexibly/.test(await p.textContent('#lnNote')), 'study: playing Nf3 on the board advances the line'); ok(await p.evaluate(() => scrollY) === 0, 'study: stepping does not scroll the page on phones');
+  await p.click('#lnNext'); await p.waitForTimeout(250); await tap2('c2', 'c4'); ok(/signature Réti move/.test(await p.textContent('#lnNote')), 'study: play the next own move after Next');
+  await p.click('#lnPrev'); await p.click('#lnPrev'); await p.click('#lnPrev'); await p.waitForTimeout(200); ok(/Start/.test(await p.textContent('#lnNote')), 'study: Back returns to the start');
+  await p.screenshot({ path: '/workspace/skoha-feat-study.png' }); ok(!errs.length, 'no page errors in study ' + errs.join());
+  await c.close(); }
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

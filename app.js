@@ -1,10 +1,10 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261103d';
-import { TRAPS } from './traps.js?v=20261103d';
-import { KB } from './kb.js?v=20261103d';
-import { Engine } from './engine.js?v=20261103d';
-import { Narrator } from './narrator.js?v=20261103d';
+import { mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261103e';
+import { TRAPS } from './traps.js?v=20261103e';
+import { KB } from './kb.js?v=20261103e';
+import { Engine } from './engine.js?v=20261103e';
+import { Narrator } from './narrator.js?v=20261103e';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -258,7 +258,16 @@ function renderOpening(rep) {
 // ---------- line page (study view with annotations + arrows) ----------
 const BRUSH = { G: 'green', R: 'red', Y: 'yellow', B: 'blue' };
 const shapesOf = n => n ? [...(n.cal || []).map(([o, d, c]) => ({ orig: o, dest: d, brush: BRUSH[c] || 'green' })), ...(n.csl || []).map(([o, c]) => ({ orig: o, brush: BRUSH[c] || 'green' }))] : [];
-const lineCg = Chessground($('#lineBoard'), { viewOnly: true, coordinates: true, animation: { enabled: true, duration: 200 }, drawable: { enabled: true, visible: true } });
+const lineCg = Chessground($('#lineBoard'), { coordinates: true, animation: { enabled: true, duration: 200 }, drawable: { enabled: true, visible: true }, premovable: { enabled: false },
+  movable: { free: false, color: undefined, showDests: true, events: { after: (o, d) => studyMove(o, d) } } });
+// playable study: make the line's next move on the board (either side); a wrong move snaps back with the right one shown
+function studyMove(o, d) {
+  const exp = study.verbose[study.ply]?.m;
+  if (exp && exp.from === o && exp.to === d) return studyGo(study.ply + 1);
+  Sound.play('error'); studyGo(study.ply, true);
+  if (exp) { $('#lnNote').insertAdjacentHTML('afterbegin', `<p class="studybad">Not this line: here it's <b>${esc(exp.san)}</b>. Follow the blue arrow.</p>`);
+    lineCg.setAutoShapes([...lineCg.state.drawable.autoShapes.filter(x => x.brush !== 'blue'), { orig: exp.from, dest: exp.to, brush: 'blue', modifiers: { lineWidth: 14 } }]); }
+}
 const study = { rep: null, li: 0, ply: 0, chess: null, verbose: [] };
 function noteHtml(rep, line, ply, mv, inCheck) {
   const n = line.n?.[ply]; const mine = (ply % 2 === 0 ? 'w' : 'b') === rep.color;
@@ -281,11 +290,13 @@ function studyGo(p, silent) {
   const line = study.rep.lines[study.li]; p = Math.max(0, Math.min(line.m.length, p)); const fwd = p === study.ply + 1; study.ply = p;
   const v = study.verbose[p - 1];
   lineCg.set({ fen: v ? v.fen : 'start', lastMove: v ? [v.m.from, v.m.to] : undefined, check: v?.check || false, turnColor: p % 2 ? 'black' : 'white' });
-  lineCg.setAutoShapes(v ? shapesOf(line.n?.[p - 1]) : []);
+  { const nx = study.verbose[p]?.m, c = new Chess(v ? v.fen : undefined), mine = nx && nx.color === study.rep.color;
+    lineCg.set({ movable: { color: nx ? cname(nx.color) : undefined, dests: nx ? dests(c) : new Map() } });
+    lineCg.setAutoShapes([...(v ? shapesOf(line.n?.[p - 1]) : []), ...(nx && !(mine && S().help === 'none') ? [{ orig: nx.from, dest: nx.to, brush: 'blue' }] : [])]); }
   $('#lnNote').innerHTML = v ? noteHtml(study.rep, line, p - 1, v.m, v.check)
-    : `<div><span class="san">Start</span><span class="who opp">${esc(line.ch)}</span></div><p>${esc(study.rep.intros?.[line.ch] || 'Step through the line with ▶ or the → key. Every move comes with its idea.')}</p>`;
+    : `<div><span class="san">Start</span><span class="who opp">${esc(line.ch)}</span></div><p>${esc(study.rep.intros?.[line.ch] || 'Play the moves on the board (follow the blue arrow), or step through with ▶ and the → key. Every move comes with its idea.')}</p>`;
   $('#lnMoves').querySelectorAll('button').forEach(b => b.classList.toggle('cur', Number(b.dataset.p) === p));
-  $('#lnMoves').querySelector('button.cur')?.scrollIntoView({ block: 'nearest' });
+  { const ml = $('#lnMoves'), cur = ml.querySelector('button.cur'); if (cur && ml.scrollHeight > ml.clientHeight + 2) ml.scrollTop = cur.offsetTop - ml.offsetTop - ml.clientHeight / 2; }   // scroll the move list only, never the page (phones)
   if (!silent && v && fwd) Sound.play(soundFor(v.m, v.check));
   if (!silent) { if (v) Narrator.say(v.m.san, line.n?.[p - 1]?.t || ''); else Narrator.cancel(); }
 }
