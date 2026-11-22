@@ -168,8 +168,8 @@ await mp.waitForSelector('#whiteList .ocard'); const bw = await mp.evaluate(() =
 ok(bw <= 390, 'mobile no horizontal overflow (' + bw + ')');
 await mp.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; });
 await mp.goto('http://localhost:8765/#/opening/sicilian'); await mp.waitForSelector('#opening.active [data-act=random]'); await mp.click('[data-act=random]'); await mp.waitForTimeout(900);
-const mg = await mp.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(); return { bb: b.bottom, bt: b.top, bw: b.width, ct: c.top, cb: c.bottom, nt: n.top, nb: n.bottom, nh: n.height, w: document.documentElement.scrollWidth, vh: innerHeight, noteBelowBoard: c.top >= b.bottom - 2, noteAboveNav: c.bottom <= n.top + 2, navInView: n.top >= -2 && n.bottom <= innerHeight + 2, boardInView: b.top >= -2 && b.bottom <= innerHeight + 2 }; });
-ok(mg.noteBelowBoard && mg.noteAboveNav && mg.navInView && mg.boardInView && mg.w <= 390 && mg.bw >= 250, `mobile train: board, explanation and Back/Next all on screen without overlap (${JSON.stringify(mg)})`);
+const mg = await mp.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(); return { bb: b.bottom, bt: b.top, bw: b.width, ct: c.top, cb: c.bottom, nt: n.top, nb: n.bottom, nh: n.height, w: document.documentElement.scrollWidth, vh: innerHeight, navUnderBoard: n.top >= b.bottom - 2 && n.top <= b.bottom + 40, noteBelowNav: c.top >= n.bottom - 2, navInView: n.top >= -2 && n.bottom <= innerHeight + 2, boardInView: b.top >= -2 && b.bottom <= innerHeight + 2 }; });
+ok(mg.navUnderBoard && mg.noteBelowNav && mg.navInView && mg.boardInView && mg.w <= 390 && mg.bw >= 250, `mobile train: Back/Next sit under the board, explanation below them, all on screen (${JSON.stringify(mg)})`);
 ok((await mp.textContent('#drillNote')).length > 10, 'mobile: coach explains opponent move');
 const tb = await mp.locator('#navBack').boundingBox(); ok(tb.height >= 48 && tb.width >= 90 && tb.y > mg.bb - 1, 'mobile: large Back/Next tap targets under the board ' + JSON.stringify(tb));
 await mp.screenshot({ path: '/workspace/skoha-annot-mobile.png' });
@@ -491,10 +491,10 @@ for (const [w, h, tag] of [[360, 740, '360x740'], [390, 844, '390x844'], [430, 9
   ok(!L.overflow, `${tag} opening: no horizontal overflow`);
   await p.click('[data-act=due]'); await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(700);
   L = await p.evaluate(phoneLayout);
-  ok(L.board && L.board.in && L.nav && L.nav.in && L.note && L.note.in && !L.overlap && !L.overflow && L.board.w >= 180, `${tag} train: board, explanation and Next all on screen without overlap (${JSON.stringify(L)})`);
+  ok(L.board && L.board.in && L.nav && L.nav.in && L.note && (h < w || L.note.t >= L.nav.b - 2) && !L.overlap && !L.overflow && L.board.w >= 180, `${tag} train: board and Next on screen, explanation below Next in portrait (${JSON.stringify(L)})`);
   await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active #lineBoard'); await p.waitForTimeout(500);
   L = await p.evaluate(phoneLayout);
-  ok(L.board && L.board.in && L.nav && L.nav.in && L.note && L.note.in && !L.overlap && !L.overflow && L.board.w >= 180, `${tag} study: board, explanation and Next all on screen without overlap (${JSON.stringify(L)})`);
+  ok(L.board && L.board.in && L.nav && L.nav.in && L.note && (h < w || L.note.t >= L.nav.b - 2) && !L.overlap && !L.overflow && L.board.w >= 180, `${tag} study: board and Next on screen, explanation below Next in portrait (${JSON.stringify(L)})`);
   await c.close();
 }
 { const { c, p } = await phoneCtx(360, 740);
@@ -561,9 +561,13 @@ function m4Layout() {
   const boardEl = document.querySelector('#drill.active #drillBoard, #line.active #lineBoard');
   const noteEl = document.querySelector('#drill.active #drillNote, #line.active #lnNote');
   const br = boardEl && boardEl.getBoundingClientRect(), nr = noteEl && noteEl.getBoundingClientRect();
+  const nextEl = document.querySelector('#drill.active #navFwd, #line.active #lnNext');
+  const nrct = nextEl && nextEl.getBoundingClientRect();
   const overlap = !!(br && nr && br.right > nr.left + 2 && nr.right > br.left + 2 && br.bottom > nr.top + 2 && nr.bottom > br.top + 2);
+  const navUnderBoard = !!(br && nrct && nrct.top >= br.bottom - 2 && nrct.top <= br.bottom + 40);
+  const noteBelowNav = !!(nr && nrct && nr.top >= nrct.bottom - 2);
   const sq = (file, rank) => { if (!br) return { onBoard: false }; const w = br.width / 8, x = br.left + (file + .5) * w, y = br.top + (7 - rank + .5) * w, h = document.elementFromPoint(x, y); return { x, y, onBoard: !!(h && boardEl.contains(h)) }; };
-  return { vh: innerHeight, vw: innerWidth, sw: document.documentElement.scrollWidth, overflow: document.documentElement.scrollWidth > innerWidth + 1, back: vis(document.querySelector('#drill.active #navBack, #line.active #lnPrev')), next: vis(document.querySelector('#drill.active #navFwd, #line.active #lnNext')), board: br && { t: br.top, b: br.bottom, w: br.width, h: br.height, in: br.top >= -2 && br.bottom <= innerHeight + 2 }, overlap, g1: sq(6, 0), f3: sq(5, 2) };
+  return { vh: innerHeight, vw: innerWidth, sw: document.documentElement.scrollWidth, overflow: document.documentElement.scrollWidth > innerWidth + 1, back: vis(document.querySelector('#drill.active #navBack, #line.active #lnPrev')), next: vis(document.querySelector('#drill.active #navFwd, #line.active #lnNext')), board: br && { t: br.top, b: br.bottom, w: br.width, h: br.height, in: br.top >= -2 && br.bottom <= innerHeight + 2 }, overlap, navUnderBoard, noteBelowNav, g1: sq(6, 0), f3: sq(5, 2) };
 }
 async function m4OpenTrain(p) {
   await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide, #whiteList'); await skipGuide(p);
@@ -572,18 +576,22 @@ async function m4OpenTrain(p) {
   await p.click('[data-act=due]'); await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(700);
 }
 async function m4TapSq(p, pt, touch) { if (touch) await p.touchscreen.tap(pt.x, pt.y); else await p.mouse.click(pt.x, pt.y); }
-const m4sizes = [[320, 568, '320x568', 2], [360, 640, '360x640', 3], [384, 700, '384x700', 2.625], [390, 844, '390x844', 3], [412, 780, '412x780', 2.625], [412, 915, '412x915', 2.625], [430, 932, '430x932', 3], [768, 1024, '768x1024', 2], [844, 390, '844x390', 2.625], [1200, 800, '1200x800', 1]];
+const m4sizes = [[320, 568, '320x568', 2], [360, 560, '360x560', 3], [360, 640, '360x640', 3], [384, 700, '384x700', 2.625], [390, 844, '390x844', 3], [412, 640, '412x640', 2.625], [412, 700, '412x700', 2.625], [412, 780, '412x780', 2.625], [412, 915, '412x915', 2.625], [430, 932, '430x932', 3], [768, 1024, '768x1024', 2], [844, 390, '844x390', 2.625], [1200, 800, '1200x800', 1]];
 for (const [w, h, tag, dpr] of m4sizes) {
   const { c, p } = await m4Ctx(w, h, dpr);
   await m4OpenTrain(p);
   let L = await p.evaluate(m4Layout);
   const phone = w <= 900;
-  if (phone) ok(L.back.ok && L.next.ok, `${tag} train: Back and Next visible and tappable ${JSON.stringify({ back: L.back, next: L.next })}`);
-  else ok(L.board && L.board.in && !L.overlap, `${tag} desktop train: board on screen, explanation not covering it ${JSON.stringify({ board: L.board, overlap: L.overlap })}`);
+  if (phone) {
+    ok(L.back.ok && L.next.ok, `${tag} train: Back and Next visible and tappable ${JSON.stringify({ back: L.back, next: L.next })}`);
+    ok(L.navUnderBoard, `${tag} train: Back/Next sit immediately below the board ${JSON.stringify({ board: L.board, next: L.next, navUnderBoard: L.navUnderBoard })}`);
+    if (h >= w) ok(L.noteBelowNav, `${tag} train: explanation is below Back/Next (no empty gap above the bar)`);
+  } else ok(L.board && L.board.in && !L.overlap, `${tag} desktop train: board on screen, explanation not covering it ${JSON.stringify({ board: L.board, overlap: L.overlap })}`);
   ok(!L.overflow, `${tag} train: no horizontal overflow (${L.sw} / ${L.vw})`);
   ok(L.board && L.board.in && L.board.w >= 120 && !L.overlap, `${tag} train: board fits and does not cover the explanation ${JSON.stringify({ board: L.board, overlap: L.overlap })}`);
   ok(L.g1.onBoard && L.f3.onBoard, `${tag} train: board squares are hittable (elementFromPoint)`);
-  if (tag === '412x780') await p.screenshot({ path: '/workspace/skoha-m4-after-412-train.png' });
+  if (tag === '412x780' || tag === '412x640') await p.screenshot({ path: `/workspace/skoha-m5-${tag}-train.png` });
+  if (tag === '412x780') await p.screenshot({ path: '/workspace/skoha-m5-412-train.png' });
   if (['412x780', '360x640', '320x568', '844x390'].includes(tag) && L.g1.onBoard) {
     await m4TapSq(p, L.g1, phone); await p.waitForTimeout(200);
     await m4TapSq(p, L.f3, phone); await p.waitForTimeout(450);
@@ -591,7 +599,7 @@ for (const [w, h, tag, dpr] of m4sizes) {
     ok(/\bNf3\b/.test(moved), `${tag} tap-tap g1-f3 plays Nf3 (${moved})`);
     L = await p.evaluate(m4Layout);
     if (phone) ok(L.next.ok, `${tag} after Nf3: Next is still visible and tappable ${JSON.stringify(L.next)}`);
-    if (tag === '412x780') await p.screenshot({ path: '/workspace/skoha-m4-412-after-tap.png' });
+    if (tag === '412x780') await p.screenshot({ path: '/workspace/skoha-m5-412-after-tap.png' });
   }
   await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active #lineBoard'); await p.waitForTimeout(400);
   L = await p.evaluate(m4Layout);
@@ -625,7 +633,7 @@ for (const [w, h, tag, dpr] of m4sizes) {
   ok(await p.evaluate(() => /\bNf3\b/.test(window.__freereps.drill.chess.history().join(' '))), 'due-reviews: tap-tap still plays Nf3');
   L = await p.evaluate(m4Layout);
   ok(L.next.ok, 'due-reviews after Nf3: Next is visible so the line can continue');
-  await p.screenshot({ path: '/workspace/skoha-m4-412-due-after-tap.png' });
+  await p.screenshot({ path: '/workspace/skoha-m5-412-due-after-tap.png' });
   await c.close(); }
 
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

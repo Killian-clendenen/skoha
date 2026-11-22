@@ -2,42 +2,17 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <title>Skoha — the fountain of youth for your chess</title>
-<script>
-/* size the app shell to the visible viewport before CSS/JS paint (Android Chrome URL bar + system nav) */
-(function(){
-  function v(){
-    var vv=window.visualViewport, inner=window.innerHeight||1;
-    var h=Math.max(1,Math.round((vv&&vv.height)||inner));
-    var top=Math.max(0,Math.round((vv&&vv.offsetTop)||0));
-    var svh=document.getElementById('vhS'), dvh=document.getElementById('vhD');
-    if(svh&&svh.offsetHeight>1)h=Math.min(h,svh.offsetHeight);
-    if(dvh&&dvh.offsetHeight>1)h=Math.min(h,dvh.offsetHeight);
-    if(inner>1)h=Math.min(h,inner);
-    var bottom=Math.max(0,Math.round(inner-top-h));
-    var s=document.documentElement.style;
-    s.setProperty('--app-h',h+'px');
-    s.setProperty('--app-top',top+'px');
-    s.setProperty('--app-bottom',bottom+'px');
-  }
-  v();
-  addEventListener('resize',v);
-  if(window.visualViewport){visualViewport.addEventListener('resize',v);visualViewport.addEventListener('scroll',v);}
-  document.addEventListener('DOMContentLoaded',v);
-})();
-</script>
 <meta name="description" content="Free chess opening trainer: annotated repertoires, knowledge base, spaced repetition, premoves, PGN import.">
 <meta name="theme-color" content="#070a14">
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261122c">
+<link rel="stylesheet" href="style.css?v=20261122d">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32"><link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Skoha"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head><body>
-<div id="vhS" aria-hidden="true" style="position:fixed;left:0;top:0;width:0;height:100svh;pointer-events:none;visibility:hidden"></div>
-<div id="vhD" aria-hidden="true" style="position:fixed;left:0;top:0;width:0;height:100dvh;pointer-events:none;visibility:hidden"></div>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <header>
   <a class="brand" href="#/"><span class="logo">♞</span> Sko<span class="grad">ha</span></a>
@@ -235,5 +210,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2) · Engine: Stockfish.js (GPL-3.0).</footer>
-<script type="module" src="app.js?v=20261122c"></script>
+<script type="module" src="app.js?v=20261122d"></script>
 </body></html>

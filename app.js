@@ -1,10 +1,10 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261122c';
-import { TRAPS } from './traps.js?v=20261122c';
-import { KB } from './kb.js?v=20261122c';
-import { Engine } from './engine.js?v=20261122c';
-import { Narrator } from './narrator.js?v=20261122c';
+import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261122d';
+import { TRAPS } from './traps.js?v=20261122d';
+import { KB } from './kb.js?v=20261122d';
+import { Engine } from './engine.js?v=20261122d';
+import { Narrator } from './narrator.js?v=20261122d';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -554,73 +554,32 @@ $('#testVoice').onclick = () => { const o = S().narrator; S().narrator = true; N
 function speakUi() { const b = $('#drillSpeak'); b.textContent = S().narrator ? '🔊' : '🔇'; b.setAttribute('aria-pressed', S().narrator); b.title = S().narrator ? 'Narrator on (click to mute)' : 'Narrator off (click to turn on)'; }
 $('#drillSpeak').onclick = () => { S().narrator = !S().narrator; save(); speakUi(); renderSettings(); if (!S().narrator) Narrator.cancel(); }; speakUi();
 $('#sNarr').addEventListener('change', () => { speakUi(); if (!S().narrator) Narrator.cancel(); });
-// keep the explanation box exactly as tall as the board beside it (desktop). On phones/tablets,
-// size the shell to the visible viewport (visualViewport, 100dvh/100svh probes) and shrink the
-// board so header + note + tools + Back/Next always fit. Closed-loop: if the nav bar still
-// sits past the visible bottom, shrink again.
-function visibleBox() {
-  const vv = window.visualViewport;
-  const inner = window.innerHeight || 1;
-  let h = Math.max(1, Math.round((vv && vv.height) || inner));
-  const top = Math.max(0, Math.round((vv && vv.offsetTop) || 0));
-  const svh = document.getElementById('vhS'), dvh = document.getElementById('vhD');
-  if (svh && svh.offsetHeight > 1) h = Math.min(h, Math.round(svh.offsetHeight));
-  if (dvh && dvh.offsetHeight > 1) h = Math.min(h, Math.round(dvh.offsetHeight));
-  if (inner > 1) h = Math.min(h, inner);
-  const bottom = Math.max(0, Math.round(inner - top - h));
-  return { top, height: Math.max(1, h), bottom };
-}
-function fitViewport() {
-  const { top, height, bottom } = visibleBox();
-  const s = document.documentElement.style;
-  s.setProperty('--app-h', height + 'px');
-  s.setProperty('--app-top', top + 'px');
-  s.setProperty('--app-bottom', bottom + 'px');
-  return { top, height, bottom };
-}
+// keep the explanation box exactly as tall as the board beside it (desktop). On phones,
+// cap the board at min(available width, 55% of window.innerHeight) so Back/Next — which
+// sit in normal flow immediately below the board — stay on screen with it. No vh-shell.
 function clearBoardBounds() {
   try { drillCg.state.dom.bounds.clear?.(); } catch {}
   try { lineCg.state.dom.bounds.clear?.(); } catch {}
 }
 function fitTrainLayout() {
-  const box = fitViewport();
   const root = document.querySelector('#drill.active, #line.active');
   const wraps = document.querySelectorAll('#drill .boardwrap, #line .boardwrap');
   if (!root || innerWidth > 900) { wraps.forEach(el => { el.style.width = ''; el.style.height = ''; el.style.maxHeight = ''; }); return; }
-  const split = root.querySelector('.tsplit, .lsplit');
   const board = root.querySelector('.boardwrap');
-  if (!split || !board) return;
-  const landscape = matchMedia('(orientation: landscape) and (max-height: 560px)').matches;
-  const header = document.querySelector('header');
+  if (!board) return;
+  const availW = Math.max(120, Math.floor(root.clientWidth || document.documentElement.clientWidth));
+  const headerH = document.querySelector('header')?.getBoundingClientRect().height || 0;
   const bar = root.querySelector('.trainbar, .crumbs');
-  const nav = root.querySelector('.tnav, .navbtns');
-  const side = root.querySelector('.tside, .panel');
-  const headerH = header ? header.getBoundingClientRect().height : 0;
   const barH = bar ? bar.getBoundingClientRect().height : 0;
-  const navH = nav ? Math.max(nav.getBoundingClientRect().height, 48) : 56;
-  const sideH = (!landscape && side && side.offsetParent) ? side.getBoundingClientRect().height : 0;
-  const noteMin = landscape ? 0 : Math.max(56, Math.min(120, Math.round(box.height * 0.14)));
-  const pad = landscape ? 16 : 24;
-  const availH = box.height - headerH - barH - navH - sideH - noteMin - pad;
-  const availW = landscape ? Math.floor((split.clientWidth || box.height) * 0.55) : (split.clientWidth || document.documentElement.clientWidth);
-  const size = Math.max(120, Math.floor(Math.min(availW, availH, 640)));
+  // soft caps only: 55% of innerHeight, and leave room so Next (right under the board) fits on the first screen
+  const cap = Math.max(120, Math.min(
+    Math.floor((window.innerHeight || availW) * 0.55),
+    Math.floor((window.innerHeight || availW) - headerH - barH - 72)
+  ));
+  const size = Math.min(availW, cap);
   board.style.width = size + 'px';
   board.style.height = size + 'px';
   board.style.maxHeight = size + 'px';
-  // closed-loop: if Back/Next still sit past the visible bottom, shrink the board and the shell
-  const visBottom = box.top + box.height;
-  if (nav) {
-    const nb = nav.getBoundingClientRect().bottom;
-    const overflow = Math.ceil(nb - visBottom);
-    if (overflow > 1) {
-      const next = Math.max(120, size - overflow - 4);
-      board.style.width = next + 'px';
-      board.style.height = next + 'px';
-      board.style.maxHeight = next + 'px';
-      const shrunk = Math.max(1, box.height - overflow);
-      document.documentElement.style.setProperty('--app-h', shrunk + 'px');
-    }
-  }
   clearBoardBounds();
 }
 { const fit = () => { [['#drillBoard', '#drill .tnote'], ['#lineBoard', '#line .tnote']].forEach(([b, n]) => { const bd = $(b), nt = $(n); if (bd && nt) nt.style.setProperty('--bh', innerWidth > 900 ? bd.getBoundingClientRect().height + 'px' : 'auto'); }); fitTrainLayout(); };
