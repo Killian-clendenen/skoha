@@ -8,7 +8,7 @@ body{margin:0;font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe 
 @keyframes float{to{transform:translate(6vmax,4vmax) scale(1.15)}}
 @media (prefers-reduced-motion:reduce){.aurora i{animation:none}*{transition:none!important}}
 a{color:var(--a1);text-decoration:none}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 22px;position:sticky;top:0;z-index:10;background:rgba(7,10,20,.6);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);flex-wrap:wrap}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:max(12px,env(safe-area-inset-top,0px)) 22px 12px;position:sticky;top:0;z-index:10;background:rgba(7,10,20,.6);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);flex-wrap:wrap}
 .brand{font-weight:800;font-size:21px;letter-spacing:-.02em;color:var(--text)}.logo{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--grad);color:#0a0d1a;margin-right:4px}
 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 nav{display:flex;gap:4px}nav a{color:var(--muted);padding:8px 14px;border-radius:999px;font-weight:600;transition:.2s}nav a:hover{color:var(--text)}nav a.active{color:#0a0d1a;background:var(--grad)}
@@ -375,10 +375,12 @@ footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
   .sresults{max-height:min(360px,55dvh)}
   .sres{min-height:48px}
 
-  /* app-like training/study: fill the screen under the header, bar always visible */
-  body:has(#drill.active),body:has(#line.active){display:flex;flex-direction:column;position:fixed;top:var(--app-top,0px);left:0;right:0;width:100%;height:var(--app-h,100svh);max-height:var(--app-h,100svh);overflow:hidden}
+  /* app-like training/study: fill the *visible* viewport; Back/Next stay on screen */
+  body:has(#drill.active),body:has(#line.active){display:flex;flex-direction:column;position:fixed;top:var(--app-top,0px);left:0;right:0;width:100%;height:var(--app-h,100dvh);max-height:var(--app-h,100dvh);overflow:hidden;box-sizing:border-box;padding-bottom:max(var(--app-bottom,0px),env(safe-area-inset-bottom,0px))}
   body:has(#drill.active)>header,body:has(#line.active)>header{flex:0 0 auto}
-  body:has(#drill.active)>main,body:has(#line.active)>main{flex:1 1 auto;min-height:0;overflow:hidden;padding-top:8px;padding-bottom:0;display:flex;flex-direction:column}
+  body:has(#drill.active)>main,body:has(#line.active)>main{flex:1 1 auto;min-height:0;overflow:hidden;padding-top:8px;padding-bottom:0;padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;width:100%;max-width:100%;box-sizing:border-box}
+  #drill.active,#line.active,.tsplit,.lsplit,.tnote,.lnote,.tnav,.navbtns,.trainbar{max-width:100%;min-width:0;box-sizing:border-box}
+  #drill.active .tnav #navPos,#line.active .navbtns span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   body:has(#drill.active)>footer,body:has(#line.active)>footer{display:none}
   #drill.active,#line.active{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding-bottom:0;grid-template-columns:none;grid-template-areas:none;gap:0}
   #drill.active .trainbar,#line.active .crumbs{flex:0 0 auto;grid-area:auto}
@@ -394,12 +396,17 @@ footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
   #drill.active .tbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:stretch}
   #drill.active .tbtns button{flex:1 1 4.5rem;min-width:44px;max-width:100%;height:44px;min-height:44px;padding:0 6px;overflow:hidden}
   #drill.active #drillNext{display:none!important}
-  #drill.active .tnav,#line.active .navbtns{order:unset;flex:0 0 auto;grid-area:auto;margin-top:0;gap:10px;z-index:30;
-    padding:8px max(8px,env(safe-area-inset-left)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-right));
+  #drill.active .tnav,#line.active .navbtns{order:unset;flex:0 0 auto;flex-shrink:0;grid-area:auto;margin-top:0;gap:10px;z-index:30;
+    padding:8px max(8px,env(safe-area-inset-left,0px)) 8px max(8px,env(safe-area-inset-right,0px));
     background:rgba(7,10,20,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
     border-top:1px solid var(--line);width:100%;box-sizing:border-box}
   #drill.active .tnav button,#line.active .navbtns button{min-height:48px;height:48px}
   @media (max-width:480px){#drill.active .tbtns .blab{display:none}#drill.active .tbtns button{flex:1 1 0;min-width:44px}}
+  @media (max-width:360px){
+    #drill.active .tnav,#line.active .navbtns{gap:6px}
+    #drill.active .tnav button,#line.active .navbtns button{padding:0 8px;font-size:14px;min-width:0}
+    #drill.active .tnav #navPos{font-size:11px}
+  }
   /* compact train bar: opening + help on row 1, mode on row 2 */
   .trainbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;padding:8px 10px;margin-bottom:8px;gap:6px 8px}
   .trainbar select{height:44px;min-height:44px;max-width:none;width:100%;font-size:16px;grid-column:1/-1;grid-row:1}
@@ -408,6 +415,19 @@ footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
   .tmore>summary{height:44px;min-height:44px;width:100%;box-sizing:border-box}
   .tstats{display:none}
   #drill.active .tside .msg,#drill.active #drillInfo,#drill.active #drillMoves{font-size:13px}
+  @media (max-height:700px){
+    header{padding-top:max(6px,env(safe-area-inset-top,0px));padding-bottom:6px;gap:6px}
+    body:has(#drill.active)>main,body:has(#line.active)>main{padding-top:4px}
+    .trainbar{padding:4px 8px;margin-bottom:4px;gap:4px 8px}
+    .trainbar select,.helpt,.tmore>summary{height:40px;min-height:40px}
+  }
+  @media (max-height:620px){
+    header .brand{font-size:18px}
+    nav a{padding:6px 8px}
+    .trainbar select,.helpt,.tmore>summary{height:36px;min-height:36px;font-size:14px}
+    #drill.active .tnote,#line.active .lnote,#line.active .tnote{min-height:3.5rem}
+    #drill.active .tnav button,#line.active .navbtns button{min-height:44px;height:44px}
+  }
 }
 
 @media (max-width:600px){

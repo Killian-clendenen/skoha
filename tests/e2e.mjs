@@ -548,4 +548,84 @@ for (const [w, h, tag] of [[412, 780, '412x780'], [412, 915, '412x915'], [384, 7
   await c.close();
 }
 
+
+// m4: fluid shell — Back/Next visible and board tappable on a wide size matrix
+const M4_UA = 'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.135 Mobile Safari/537.36';
+async function m4Ctx(w, h, dpr = 2.625) {
+  const mobile = w <= 900;
+  const c = await b.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: dpr, hasTouch: mobile, isMobile: mobile && w < 800, isLandscape: w > h, userAgent: mobile ? M4_UA : undefined });
+  const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message)); return { c, p };
+}
+function m4Layout() {
+  const vis = (el) => { if (!el) return { ok: false }; const r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, hit = document.elementFromPoint(cx, cy); return { ok: r.width > 0 && r.height > 0 && r.top >= -1 && r.bottom <= innerHeight + 1 && r.left >= -1 && r.right <= innerWidth + 1 && !!(hit && el.contains(hit)), t: Math.round(r.top), b: Math.round(r.bottom), l: Math.round(r.left), r: Math.round(r.right), hit: hit && (hit.id || hit.tagName) }; };
+  const boardEl = document.querySelector('#drill.active #drillBoard, #line.active #lineBoard');
+  const noteEl = document.querySelector('#drill.active #drillNote, #line.active #lnNote');
+  const br = boardEl && boardEl.getBoundingClientRect(), nr = noteEl && noteEl.getBoundingClientRect();
+  const overlap = !!(br && nr && br.right > nr.left + 2 && nr.right > br.left + 2 && br.bottom > nr.top + 2 && nr.bottom > br.top + 2);
+  const sq = (file, rank) => { if (!br) return { onBoard: false }; const w = br.width / 8, x = br.left + (file + .5) * w, y = br.top + (7 - rank + .5) * w, h = document.elementFromPoint(x, y); return { x, y, onBoard: !!(h && boardEl.contains(h)) }; };
+  return { vh: innerHeight, vw: innerWidth, sw: document.documentElement.scrollWidth, overflow: document.documentElement.scrollWidth > innerWidth + 1, back: vis(document.querySelector('#drill.active #navBack, #line.active #lnPrev')), next: vis(document.querySelector('#drill.active #navFwd, #line.active #lnNext')), board: br && { t: br.top, b: br.bottom, w: br.width, h: br.height, in: br.top >= -2 && br.bottom <= innerHeight + 2 }, overlap, g1: sq(6, 0), f3: sq(5, 2) };
+}
+async function m4OpenTrain(p) {
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide, #whiteList'); await skipGuide(p);
+  await p.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; s.help = 'guided'; });
+  await p.goto('http://localhost:8765/#/opening/reti'); await p.waitForSelector('#opening.active [data-act=due]');
+  await p.click('[data-act=due]'); await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(700);
+}
+async function m4TapSq(p, pt, touch) { if (touch) await p.touchscreen.tap(pt.x, pt.y); else await p.mouse.click(pt.x, pt.y); }
+const m4sizes = [[320, 568, '320x568', 2], [360, 640, '360x640', 3], [384, 700, '384x700', 2.625], [390, 844, '390x844', 3], [412, 780, '412x780', 2.625], [412, 915, '412x915', 2.625], [430, 932, '430x932', 3], [768, 1024, '768x1024', 2], [844, 390, '844x390', 2.625], [1200, 800, '1200x800', 1]];
+for (const [w, h, tag, dpr] of m4sizes) {
+  const { c, p } = await m4Ctx(w, h, dpr);
+  await m4OpenTrain(p);
+  let L = await p.evaluate(m4Layout);
+  const phone = w <= 900;
+  if (phone) ok(L.back.ok && L.next.ok, `${tag} train: Back and Next visible and tappable ${JSON.stringify({ back: L.back, next: L.next })}`);
+  else ok(L.board && L.board.in && !L.overlap, `${tag} desktop train: board on screen, explanation not covering it ${JSON.stringify({ board: L.board, overlap: L.overlap })}`);
+  ok(!L.overflow, `${tag} train: no horizontal overflow (${L.sw} / ${L.vw})`);
+  ok(L.board && L.board.in && L.board.w >= 120 && !L.overlap, `${tag} train: board fits and does not cover the explanation ${JSON.stringify({ board: L.board, overlap: L.overlap })}`);
+  ok(L.g1.onBoard && L.f3.onBoard, `${tag} train: board squares are hittable (elementFromPoint)`);
+  if (tag === '412x780') await p.screenshot({ path: '/workspace/skoha-m4-after-412-train.png' });
+  if (['412x780', '360x640', '320x568', '844x390'].includes(tag) && L.g1.onBoard) {
+    await m4TapSq(p, L.g1, phone); await p.waitForTimeout(200);
+    await m4TapSq(p, L.f3, phone); await p.waitForTimeout(450);
+    const moved = await p.evaluate(() => window.__freereps.drill.chess.history().join(' '));
+    ok(/\bNf3\b/.test(moved), `${tag} tap-tap g1-f3 plays Nf3 (${moved})`);
+    L = await p.evaluate(m4Layout);
+    if (phone) ok(L.next.ok, `${tag} after Nf3: Next is still visible and tappable ${JSON.stringify(L.next)}`);
+    if (tag === '412x780') await p.screenshot({ path: '/workspace/skoha-m4-412-after-tap.png' });
+  }
+  await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active #lineBoard'); await p.waitForTimeout(400);
+  L = await p.evaluate(m4Layout);
+  if (phone) ok(L.back.ok && L.next.ok, `${tag} study: Back and Next visible and tappable ${JSON.stringify({ back: L.back, next: L.next })}`);
+  await c.close();
+}
+// drag on 412x780 and a due-reviews seed (23 overdue Réti cards)
+{ const { c, p } = await m4Ctx(412, 780, 2.625); await m4OpenTrain(p);
+  let L = await p.evaluate(m4Layout);
+  await p.mouse.move(L.g1.x, L.g1.y); await p.mouse.down(); await p.mouse.move(L.f3.x, L.f3.y, { steps: 8 }); await p.mouse.up(); await p.waitForTimeout(450);
+  ok(await p.evaluate(() => /\bNf3\b/.test(window.__freereps.drill.chess.history().join(' '))), '412x780 drag g1-f3 plays Nf3');
+  await c.close(); }
+{ const { c, p } = await m4Ctx(412, 780, 2.625);
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide, #whiteList'); await skipGuide(p);
+  const seeded = await p.evaluate(async () => {
+    const v = (document.querySelector('script[src*="app.js"]')?.src.match(/v=([^&]+)/) || [, ''])[1];
+    const { userCards } = await import('./core.js?v=' + v);
+    const db = window.__freereps.db();
+    const reti = db.reps.find(r => r.starter === 'reti' || r.id === 'reti'); if (!reti) return 0;
+    const cards = db.cards[reti.id] ||= {}; let n = 0;
+    for (const line of reti.lines) { for (const c of userCards(line.m, 'w')) { if (n >= 23) break; cards[c.key] = { ease: 2.5, interval: 1, reps: 2, lapses: 0, due: Date.now() - 1000 }; n++; } if (n >= 23) break; }
+    db.settings.delay = 150; db.settings.autoReply = false; db.settings.help = 'guided';
+    return n;
+  });
+  ok(seeded >= 23, `seeded ${seeded} due Réti reviews`);
+  await p.goto('http://localhost:8765/#/opening/reti'); await p.waitForSelector('#opening.active [data-act=due]');
+  await p.click('[data-act=due]'); await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(800);
+  let L = await p.evaluate(m4Layout);
+  ok(L.back.ok && L.next.ok && L.g1.onBoard, `due-reviews 412x780: Back/Next visible, board tappable ${JSON.stringify({ back: L.back, next: L.next, board: L.g1 })}`);
+  await m4TapSq(p, L.g1, true); await p.waitForTimeout(200); await m4TapSq(p, L.f3, true); await p.waitForTimeout(450);
+  ok(await p.evaluate(() => /\bNf3\b/.test(window.__freereps.drill.chess.history().join(' '))), 'due-reviews: tap-tap still plays Nf3');
+  L = await p.evaluate(m4Layout);
+  ok(L.next.ok, 'due-reviews after Nf3: Next is visible so the line can continue');
+  await p.screenshot({ path: '/workspace/skoha-m4-412-due-after-tap.png' });
+  await c.close(); }
+
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
