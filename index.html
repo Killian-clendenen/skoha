@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261122a">
+<link rel="stylesheet" href="style.css?v=20261122b">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32"><link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -56,7 +56,6 @@
     <div class="split lsplit">
       <div class="tnote lnote"><div class="note" id="lnNote"></div></div>
       <div class="boardwrap"><div id="lineBoard" class="board"></div></div>
-        <div class="navbtns"><button id="lnFirst" title="Start (Home)">⏮</button><button id="lnPrev" title="Back (←)">◀</button><button id="lnNext" title="Forward (→)">▶</button><button id="lnLast" title="End (End)">⏭</button></div>
       <aside class="panel">
         <div class="lnhead"><div><div class="muted" id="lnChapter"></div><h2 id="lnTitle"></h2></div><button id="lnDrill" class="primary">Practise this line</button></div>
         <div class="legend"><span><i class="lg g"></i>idea / control</span><span><i class="lg r"></i>threat / weakness</span><span><i class="lg y"></i>alternative</span><span><i class="lg b"></i>new move</span></div>
@@ -64,6 +63,7 @@
         <div class="row"><button id="lnPrevLine">← Previous line</button><button id="lnNextLine">Next line →</button></div>
       </aside>
     </div>
+    <div class="navbtns"><button id="lnFirst" title="Start (Home)">⏮</button><button id="lnPrev" title="Back (←)">◀</button><button id="lnNext" title="Forward (→)">▶</button><button id="lnLast" title="End (End)">⏭</button></div>
   </section>
 
   <section id="drill" class="tab">
@@ -90,18 +90,18 @@
         <div class="tprogress"><i id="drillProg"></i></div>
         <div class="confirmbar" id="confirmBar" hidden><span id="confirmTxt"></span><button id="confirmNo">✕ Undo</button><button id="confirmYes" class="primary">✓ Confirm</button></div>
       </div>
-        <div class="tnav"><button id="navBack" title="Back (←)" aria-label="Back">◀ Back</button><span id="navPos" class="muted">No moves yet</span><button id="navFwd" title="Next (→ / Space / Enter)" aria-label="Next">Next ▶</button></div>
       <div class="tside">
         <div id="drillMsg" class="msg">Pick an opening to practise.</div>
         <div class="tfoot">
           <div id="drillInfo" class="muted"></div>
           <div id="drillMoves" class="moves"></div>
-          <div class="tbtns"><button id="drillHint" title="Hint (H)">💡 Hint</button><button id="drillFlip" title="Flip (F)">⇅ Flip</button><button id="drillSpeak" aria-label="Narrator" aria-pressed="false">🔇</button><button id="drillStudy" title="Open this line in study view">📖 Explain line</button><button id="drillNext" class="primary" hidden>Next line →</button></div>
+          <div class="tbtns"><button id="drillHint" title="Hint (H)" aria-label="Hint">💡 <span class="blab">Hint</span></button><button id="drillFlip" title="Flip (F)" aria-label="Flip">⇅ <span class="blab">Flip</span></button><button id="drillSpeak" aria-label="Narrator" aria-pressed="false">🔇</button><button id="drillStudy" title="Open this line in study view" aria-label="Explain line">📖 <span class="blab">Explain line</span></button><button id="drillNext" class="primary" hidden>Next line →</button></div>
           <div class="playbar" id="playBar" hidden><button id="playOut">♞ Play it out</button><select id="playLevel" aria-label="Engine level"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>
           <div class="playbar" id="playOn" hidden><button id="backTrain" class="primary">← Back to training</button><span class="muted" id="playInfo"></span></div>
         </div>
       </div>
     </div>
+    <div class="tnav"><button id="navBack" title="Back (←)" aria-label="Back">◀ Back</button><span id="navPos" class="muted">No moves yet</span><button id="navFwd" title="Next (→ / Space / Enter)" aria-label="Next">Next ▶</button></div>
   </section>
 
   <section id="build" class="tab">
@@ -210,5 +210,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2) · Engine: Stockfish.js (GPL-3.0).</footer>
-<script type="module" src="app.js?v=20261122a"></script>
+<script type="module" src="app.js?v=20261122b"></script>
 </body></html>

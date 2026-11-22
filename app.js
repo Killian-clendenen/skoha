@@ -1,10 +1,10 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261122a';
-import { TRAPS } from './traps.js?v=20261122a';
-import { KB } from './kb.js?v=20261122a';
-import { Engine } from './engine.js?v=20261122a';
-import { Narrator } from './narrator.js?v=20261122a';
+import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261122b';
+import { TRAPS } from './traps.js?v=20261122b';
+import { KB } from './kb.js?v=20261122b';
+import { Engine } from './engine.js?v=20261122b';
+import { Narrator } from './narrator.js?v=20261122b';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -92,13 +92,14 @@ function showTab(t) {
   document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === t));
   const nav = { progress: 'progress', home: 'home', opening: 'home', line: 'home', drill: 'drill', build: 'settings', settings: 'settings', data: 'settings' }[t];
   document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === nav));
-  if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); requestAnimationFrame(() => cueNew());
+  if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); requestAnimationFrame(() => { cueNew(); fitTrainLayout(); });
     // opening the Train screen must never leave an idle board: start the selected opening if nothing is running
     if (!drill.line && !play && db.reps.length) setTimeout(() => { if (!drill.line && $('#drill').classList.contains('active')) startSession(drill.mode || 'due'); }, 0); }
   if (t === 'build') buildCg.redrawAll();
   if (t === 'line') lineCg.redrawAll();
   if (t === 'settings') renderSettings();
   scrollTo({ top: 0, behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto' });
+  requestAnimationFrame(fitTrainLayout);
 }
 const go = h => { if (location.hash !== h) history.pushState(null, '', h); route(); };
 function route() {
@@ -553,9 +554,44 @@ $('#testVoice').onclick = () => { const o = S().narrator; S().narrator = true; N
 function speakUi() { const b = $('#drillSpeak'); b.textContent = S().narrator ? '🔊' : '🔇'; b.setAttribute('aria-pressed', S().narrator); b.title = S().narrator ? 'Narrator on (click to mute)' : 'Narrator off (click to turn on)'; }
 $('#drillSpeak').onclick = () => { S().narrator = !S().narrator; save(); speakUi(); renderSettings(); if (!S().narrator) Narrator.cancel(); }; speakUi();
 $('#sNarr').addEventListener('change', () => { speakUi(); if (!S().narrator) Narrator.cancel(); });
-// keep the explanation box exactly as tall as the board beside it
-{ const fit = () => [['#drillBoard', '#drill .tnote'], ['#lineBoard', '#line .tnote']].forEach(([b, n]) => { const bd = $(b), nt = $(n); if (bd && nt) nt.style.setProperty('--bh', innerWidth > 900 ? bd.getBoundingClientRect().height + 'px' : 'auto'); });
-  const ro = new ResizeObserver(fit); ro.observe($('#drillBoard')); ro.observe($('#lineBoard')); addEventListener('resize', fit); } addEventListener('resize', () => cueNew());
+// keep the explanation box exactly as tall as the board beside it (desktop). On phones, size the
+// training shell to the visual viewport (Android Chrome URL bar + system nav) and shrink the board
+// so Back/Next stay in view instead of being clipped by overflow:hidden.
+function fitViewport() {
+  const vv = window.visualViewport;
+  const h = Math.max(1, Math.round((vv && vv.height) || window.innerHeight));
+  const top = Math.max(0, Math.round((vv && vv.offsetTop) || 0));
+  document.documentElement.style.setProperty('--app-h', h + 'px');
+  document.documentElement.style.setProperty('--app-top', top + 'px');
+}
+function fitTrainLayout() {
+  fitViewport();
+  const root = document.querySelector('#drill.active, #line.active');
+  const wraps = document.querySelectorAll('#drill .boardwrap, #line .boardwrap');
+  if (!root || innerWidth > 900) { wraps.forEach(el => { el.style.width = ''; el.style.height = ''; el.style.maxHeight = ''; }); return; }
+  const split = root.querySelector('.tsplit, .lsplit');
+  const board = root.querySelector('.boardwrap');
+  if (!split || !board) return;
+  const landscape = matchMedia('(orientation: landscape) and (max-height: 560px)').matches;
+  let size;
+  if (landscape) {
+    size = Math.max(120, Math.min(split.clientHeight, Math.floor(split.clientWidth * 0.55)));
+  } else {
+    const side = root.querySelector('.tside, .panel');
+    const sideH = (side && side.offsetParent) ? side.offsetHeight : 0;
+    const noteMin = Math.max(72, Math.min(120, Math.round(split.clientHeight * 0.28)));
+    const gaps = 16;
+    size = Math.max(120, Math.floor(Math.min(split.clientWidth, split.clientHeight - sideH - noteMin - gaps)));
+  }
+  board.style.width = size + 'px';
+  board.style.height = size + 'px';
+  board.style.maxHeight = size + 'px';
+  try { drillCg.state.dom.bounds.clear?.(); lineCg.state.dom.bounds.clear?.(); } catch {}
+}
+{ const fit = () => { [['#drillBoard', '#drill .tnote'], ['#lineBoard', '#line .tnote']].forEach(([b, n]) => { const bd = $(b), nt = $(n); if (bd && nt) nt.style.setProperty('--bh', innerWidth > 900 ? bd.getBoundingClientRect().height + 'px' : 'auto'); }); fitTrainLayout(); };
+  const ro = new ResizeObserver(fit); ro.observe($('#drillBoard')); ro.observe($('#lineBoard')); addEventListener('resize', fit);
+  if (window.visualViewport) { visualViewport.addEventListener('resize', fit); visualViewport.addEventListener('scroll', fit); }
+  fit(); } addEventListener('resize', () => cueNew());
 const drillNote = ply => { if (drill.view == null) coach(ply); navUi(); };
 // ---- explanation history: browse every move played so far (read-only board while browsing) ----
 function navUi() {

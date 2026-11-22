@@ -511,4 +511,41 @@ for (const [w, h, tag] of [[360, 740, '360x740'], [390, 844, '390x844'], [430, 9
   ok(desk.noteLeft && desk.navUnder && desk.bw >= 400, 'desktop train unchanged: explanation left of the board, Next under it ' + JSON.stringify(desk));
   await c.close(); }
 
+
+// m3: Back/Next always visible on short Android-like viewports; tool row does not overflow
+const ANDROID_UA = 'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.135 Mobile Safari/537.36';
+async function androidCtx(w, h) {
+  const c = await b.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: true, isLandscape: w > h, userAgent: ANDROID_UA });
+  const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message)); return { c, p };
+}
+const navVisible = () => {
+  const vis = (el) => { if (!el) return { ok: false }; const r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2; const hit = document.elementFromPoint(cx, cy); return { ok: r.width > 0 && r.height > 0 && r.top >= -1 && r.bottom <= innerHeight + 1 && r.left >= -1 && r.right <= innerWidth + 1 && !!(hit && el.contains(hit)), t: Math.round(r.top), b: Math.round(r.bottom), w: Math.round(r.width), h: Math.round(r.height), hit: hit && (hit.id || hit.tagName) }; };
+  const back = vis(document.querySelector('#drill.active #navBack, #line.active #lnPrev'));
+  const next = vis(document.querySelector('#drill.active #navFwd, #line.active #lnNext'));
+  const note = document.querySelector('#drill.active #drillNote, #line.active #lnNote');
+  const board = document.querySelector('#drill.active #drillBoard, #line.active #lineBoard');
+  const nr = note && note.getBoundingClientRect(), br = board && board.getBoundingClientRect();
+  const tbtns = document.querySelector('#drill.active .tbtns');
+  const overflow = tbtns ? tbtns.scrollWidth > tbtns.clientWidth + 1 : false;
+  const tbtnsRight = tbtns ? Math.round(tbtns.getBoundingClientRect().right) : 0;
+  const boardOverNote = !!(nr && br && br.bottom > nr.top + 2 && br.top < nr.bottom);
+  return { back, next, overflow, tbtnsRight, vw: innerWidth, vh: innerHeight, boardOverNote, noteTop: nr && Math.round(nr.top), boardBot: br && Math.round(br.bottom) };
+};
+for (const [w, h, tag] of [[412, 780, '412x780'], [412, 915, '412x915'], [384, 700, '384x700'], [360, 640, '360x640'], [390, 844, '390x844-m3'], [430, 932, '430x932-m3']]) {
+  const { c, p } = await androidCtx(w, h);
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide, #whiteList'); await skipGuide(p);
+  await p.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; s.help = 'guided'; });
+  await p.goto('http://localhost:8765/#/opening/reti'); await p.waitForSelector('#opening.active [data-act=due]');
+  await p.click('[data-act=due]'); await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(800);
+  let V = await p.evaluate(navVisible);
+  ok(V.back.ok && V.next.ok, `${tag} train: Back and Next are on screen and tappable (elementFromPoint) ${JSON.stringify(V)}`);
+  ok(!V.overflow && V.tbtnsRight <= w + 1, `${tag} train: Hint/Flip/Explain row does not overflow (${V.tbtnsRight} / ${w})`);
+  ok(!V.boardOverNote, `${tag} train: explanation is not covered by the board ${JSON.stringify({ noteTop: V.noteTop, boardBot: V.boardBot })}`);
+  if (tag === '412x780') await p.screenshot({ path: '/workspace/skoha-m3-after-412-train.png' });
+  await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active #lineBoard'); await p.waitForTimeout(500);
+  V = await p.evaluate(navVisible);
+  ok(V.back.ok && V.next.ok, `${tag} study: Back and Next are on screen and tappable ${JSON.stringify(V)}`);
+  await c.close();
+}
+
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);

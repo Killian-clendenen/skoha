@@ -18,7 +18,7 @@ button.primary,.btn.primary{background:var(--grad);color:#0a0d1a;border:0;box-sh
 .btn.ghost{background:transparent}.big{padding:13px 20px;font-size:16px}
 button.danger:hover{border-color:var(--bad)}
 main{max-width:1180px;margin:0 auto;padding:18px}.tab{display:none;animation:fade .35s ease}.tab.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes fade{from{opacity:0}}
 h1{font-size:clamp(34px,6vw,60px);line-height:1.05;letter-spacing:-.035em;margin:6px 0 14px}
 h2{font-size:18px;margin:22px 0 10px;letter-spacing:-.01em}h3{font-size:14px;margin:16px 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .hero{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center;padding:34px 0 18px}
@@ -335,14 +335,15 @@ footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
 .gimport .row{flex-wrap:wrap}.gimport input{flex:1 1 200px;min-height:44px;padding:0 12px;border-radius:var(--r);border:1px solid var(--line2);background:var(--surface);color:var(--text);font-size:16px}
 .glist{list-style:none;padding:0;display:grid;gap:8px}.glist li{padding:var(--s2) var(--s3);border-radius:var(--r);background:var(--surface);overflow-wrap:anywhere}
 
-/* ================= m2: phone-friendly pass (desktop rules unchanged) ================= */
-/* desktop: nav sits under the board after the HTML move */
-.tsplit,.lsplit{grid-template-columns:minmax(240px,340px) minmax(0,560px) minmax(240px,1fr);grid-template-areas:"note board side" "note nav side";align-items:start}
-.tsplit>.tnote,.lsplit>.tnote,.lsplit>.lnote{grid-area:note}
-.tsplit>.boardwrap,.lsplit>.boardwrap{grid-area:board}
-.tsplit>.tnav,.lsplit>.navbtns{grid-area:nav}
-.tsplit>.tside,.lsplit>.panel{grid-area:side}
-@media(max-width:1180px){.tsplit,.lsplit{grid-template-columns:minmax(220px,300px) minmax(0,1fr);grid-template-areas:"note board" "note nav" "side side"}}
+/* ================= m2/m3: phone-friendly pass (desktop rules: nav under the board) ================= */
+#drill.active,#line.active{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,560px) minmax(240px,1fr);grid-template-areas:"bar bar bar" "note board side" "note nav side";gap:var(--s5);align-items:start}
+#drill.active .trainbar,#line.active .crumbs{grid-area:bar}
+#drill.active .tsplit,#line.active .lsplit{display:contents}
+#drill.active .tnote,#line.active .tnote,#line.active .lnote{grid-area:note}
+#drill.active .boardwrap,#line.active .boardwrap{grid-area:board}
+#drill.active .tnav,#line.active .navbtns{grid-area:nav}
+#drill.active .tside,#line.active .panel{grid-area:side}
+@media(max-width:1180px){#drill.active,#line.active{grid-template-columns:minmax(220px,300px) minmax(0,1fr);grid-template-areas:"bar bar" "note board" "note nav" "side side"}}
 
 @media (max-width:900px){
   html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
@@ -375,28 +376,30 @@ footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
   .sres{min-height:48px}
 
   /* app-like training/study: fill the screen under the header, bar always visible */
-  body:has(#drill.active),body:has(#line.active){display:flex;flex-direction:column;height:100svh;max-height:100svh;overflow:hidden}
+  body:has(#drill.active),body:has(#line.active){display:flex;flex-direction:column;position:fixed;top:var(--app-top,0px);left:0;right:0;width:100%;height:var(--app-h,100svh);max-height:var(--app-h,100svh);overflow:hidden}
   body:has(#drill.active)>header,body:has(#line.active)>header{flex:0 0 auto}
   body:has(#drill.active)>main,body:has(#line.active)>main{flex:1 1 auto;min-height:0;overflow:hidden;padding-top:8px;padding-bottom:0;display:flex;flex-direction:column}
   body:has(#drill.active)>footer,body:has(#line.active)>footer{display:none}
-  #drill.active,#line.active{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding-bottom:0}
-  #drill.active .trainbar,#line.active .crumbs{flex:0 0 auto}
+  #drill.active,#line.active{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding-bottom:0;grid-template-columns:none;grid-template-areas:none;gap:0}
+  #drill.active .trainbar,#line.active .crumbs{flex:0 0 auto;grid-area:auto}
   #drill.active .tsplit,#line.active .lsplit{flex:1 1 auto;min-height:0;width:100%;min-width:0;display:flex;flex-direction:column;gap:8px;overflow:hidden;grid-template-columns:none;grid-template-areas:none;container-type:size}
-  #drill.active .boardwrap,#line.active .boardwrap{order:1;flex:0 0 auto;width:min(100cqw,calc(100cqh - 15rem));height:min(100cqw,calc(100cqh - 15rem));max-width:100%;max-height:calc(100cqh - 15rem);margin-inline:auto;align-self:center;overflow:hidden;aspect-ratio:1}
-  #drill.active .boardwrap .board,#line.active .boardwrap .board{width:100%;height:100%;max-height:none;aspect-ratio:1}
-  #drill.active .tnote,#line.active .lnote,#line.active .tnote{order:2;flex:1 1 auto;min-height:6.5rem;height:auto;overflow:auto;-webkit-overflow-scrolling:touch}
-  #drill.active .tnote .bnote .coach-card,#line.active .lnote .note{max-height:none;height:auto;min-height:0}
+  #drill.active .boardwrap,#line.active .boardwrap{order:1;flex:0 0 auto;grid-area:auto;width:min(100cqw,calc(100cqh - 12rem));height:auto;max-width:100%;max-height:calc(100cqh - 12rem);aspect-ratio:1;margin-inline:auto;align-self:center;overflow:hidden;z-index:1;min-height:0;box-sizing:border-box}
+  #drill.active .boardwrap .board,#line.active .boardwrap .board{width:100%;height:100%;max-width:100%;max-height:100%;aspect-ratio:1;box-sizing:border-box}
+  #drill.active .tnote,#line.active .lnote,#line.active .tnote{order:2;flex:1 1 auto;min-height:4.5rem;height:auto;overflow:auto;-webkit-overflow-scrolling:touch;grid-area:auto;position:relative;z-index:2}
+  #drill.active .tnote .bnote .coach-card,#line.active .lnote .note{max-height:100%;height:auto;min-height:0;overflow:auto}
   #drill.active .tside .msg,#drill.active #drillInfo,#drill.active #drillMoves{display:none}
-  #drill.active .tsplit>.tside{order:3;flex:0 0 auto;overflow:visible}
-  #line.active .lsplit>.panel{order:3;flex:0 1 auto;min-height:0;max-height:7.5rem;overflow:auto}
+  #drill.active .tsplit>.tside{order:3;flex:0 0 auto;overflow:visible;grid-area:auto}
+  #line.active .lsplit>.panel{order:3;flex:0 1 auto;min-height:0;max-height:7.5rem;overflow:auto;grid-area:auto}
   #drill.active .tside .tfoot{padding:4px 0;background:transparent;box-shadow:none;border:0}
-  #drill.active .tbtns{flex-wrap:nowrap;gap:6px}
-  #drill.active .tbtns button{flex:1;min-width:0;height:44px;min-height:44px;padding:0 8px}
-  #drill.active .tnav,#line.active .navbtns{order:5;flex:0 0 auto;margin-top:0;gap:10px;
-    padding:8px 0 max(8px,env(safe-area-inset-bottom));
+  #drill.active .tbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:stretch}
+  #drill.active .tbtns button{flex:1 1 4.5rem;min-width:44px;max-width:100%;height:44px;min-height:44px;padding:0 6px;overflow:hidden}
+  #drill.active #drillNext{display:none!important}
+  #drill.active .tnav,#line.active .navbtns{order:unset;flex:0 0 auto;grid-area:auto;margin-top:0;gap:10px;z-index:30;
+    padding:8px max(8px,env(safe-area-inset-left)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-right));
     background:rgba(7,10,20,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-    border-top:1px solid var(--line);width:100%}
+    border-top:1px solid var(--line);width:100%;box-sizing:border-box}
   #drill.active .tnav button,#line.active .navbtns button{min-height:48px;height:48px}
+  @media (max-width:480px){#drill.active .tbtns .blab{display:none}#drill.active .tbtns button{flex:1 1 0;min-width:44px}}
   /* compact train bar: opening + help on row 1, mode on row 2 */
   .trainbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;padding:8px 10px;margin-bottom:8px;gap:6px 8px}
   .trainbar select{height:44px;min-height:44px;max-width:none;width:100%;font-size:16px;grid-column:1/-1;grid-row:1}
@@ -429,7 +432,7 @@ footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
   body:has(#drill.active)>main,body:has(#line.active)>main{padding:4px max(12px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left))}
   #drill.active .tsplit,#line.active .lsplit{
     display:grid;grid-template-columns:minmax(0,auto) minmax(14rem,1fr);
-    grid-template-rows:minmax(0,1fr) auto auto;grid-template-areas:"board note" "board side" "nav nav";
+    grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"board note" "board side";
     gap:8px 12px;align-items:stretch;overflow:hidden;width:100%;min-width:0;container-type:normal
   }
   #drill.active .boardwrap,#line.active .boardwrap{
@@ -444,7 +447,7 @@ footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
   #drill.active .tsplit>.tside,#line.active .lsplit>.panel{grid-area:side;order:unset;min-height:0;max-height:4.75rem;overflow:auto}
   #line.active .lsplit>.panel .movelist,#line.active .lsplit>.panel .legend,#line.active .lsplit>.panel .row{display:none}
   #line.active .boardwrap,#drill.active .boardwrap{justify-self:start}
-  #drill.active .tnav,#line.active .navbtns{grid-area:nav;order:unset;margin:0;padding:6px 0 max(6px,env(safe-area-inset-bottom))}
+  #drill.active .tnav,#line.active .navbtns{flex:0 0 auto;margin:0;padding:6px max(8px,env(safe-area-inset-left)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-right))}
   .mcard{max-height:calc(100dvh - 8px)}
   .gsugg{max-height:min(36dvh,220px)}
   .gopts button{min-height:44px}
