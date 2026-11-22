@@ -1,10 +1,10 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync } from './core.js?v=20261122d';
-import { TRAPS } from './traps.js?v=20261122d';
-import { KB } from './kb.js?v=20261122d';
-import { Engine } from './engine.js?v=20261122d';
-import { Narrator } from './narrator.js?v=20261122d';
+import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, bookReplies, trapAt, explainIdea, evalForSide, formatScore, evalSwingFlag } from './core.js?v=20261122e';
+import { TRAPS } from './traps.js?v=20261122e';
+import { KB } from './kb.js?v=20261122e';
+import { Engine } from './engine.js?v=20261122e';
+import { Narrator } from './narrator.js?v=20261122e';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -316,13 +316,17 @@ const BRUSH = { G: 'green', R: 'red', Y: 'yellow', B: 'blue' };
 const shapesOf = n => n ? [...(n.cal || []).map(([o, d, c]) => ({ orig: o, dest: d, brush: BRUSH[c] || 'green' })), ...(n.csl || []).map(([o, c]) => ({ orig: o, brush: BRUSH[c] || 'green' }))] : [];
 const lineCg = Chessground($('#lineBoard'), { coordinates: true, animation: { enabled: true, duration: 200 }, drawable: { enabled: true, visible: true }, premovable: { enabled: false },
   movable: { free: false, color: undefined, showDests: true, events: { after: (o, d) => studyMove(o, d) } } });
-// playable study: make the line's next move on the board (either side); a wrong move snaps back with the right one shown
+// playable study: the line's next move advances as usual; any other legal move is accepted and we suggest a reply
 function studyMove(o, d) {
+  if (study.explore) return studyExploreMove(o, d);
   const exp = study.verbose[study.ply]?.m;
   if (exp && exp.from === o && exp.to === d) return studyGo(study.ply + 1);
-  Sound.play('error'); studyGo(study.ply, true);
-  if (exp) { $('#lnNote').insertAdjacentHTML('afterbegin', `<p class="studybad">Not this line: here it's <b>${esc(exp.san)}</b>. Follow the blue arrow.</p>`);
-    lineCg.setAutoShapes([...lineCg.state.drawable.autoShapes.filter(x => x.brush !== 'blue'), { orig: exp.from, dest: exp.to, brush: 'blue', modifiers: { lineWidth: 14 } }]); }
+  const c = new Chess(study.verbose[study.ply - 1]?.fen);
+  const m = tryMove(c, o, d);
+  if (!m) { Sound.play('error'); return studyGo(study.ply, true); }
+  study.explore = { fork: study.ply, chess: c, suggest: null, gen: 0 };
+  Sound.play(soundFor(m, c.inCheck()));
+  studyShowExplore(m);
 }
 const study = { rep: null, li: 0, ply: 0, chess: null, verbose: [] };
 function noteHtml(rep, line, ply, mv, inCheck) {
@@ -346,8 +350,9 @@ function studyGo(p, silent) {
   const line = study.rep.lines[study.li]; p = Math.max(0, Math.min(line.m.length, p)); const fwd = p === study.ply + 1; study.ply = p;
   const v = study.verbose[p - 1];
   lineCg.set({ fen: v ? v.fen : 'start', lastMove: v ? [v.m.from, v.m.to] : undefined, check: v?.check || false, turnColor: p % 2 ? 'black' : 'white' });
+  study.explore = null; if ($('#lnBackLine')) $('#lnBackLine').hidden = true; try { lineCg.state.dom.bounds.clear?.(); } catch {}
   { const nx = study.verbose[p]?.m, c = new Chess(v ? v.fen : undefined), mine = nx && nx.color === study.rep.color;
-    lineCg.set({ movable: { color: nx ? cname(nx.color) : undefined, dests: nx ? dests(c) : new Map() } });
+    lineCg.set({ movable: { color: c.isGameOver() ? undefined : turnColor(c), dests: dests(c) } });
     lineCg.setAutoShapes([...(v ? shapesOf(line.n?.[p - 1]) : []), ...(nx && !(mine && S().help === 'none') ? [{ orig: nx.from, dest: nx.to, brush: 'blue' }] : [])]); }
   $('#lnNote').innerHTML = v ? noteHtml(study.rep, line, p - 1, v.m, v.check)
     : `<div><span class="san">Start</span><span class="who opp">${esc(line.ch)}</span></div><p>${esc(study.rep.intros?.[line.ch] || 'Play the moves on the board (follow the blue arrow), or step through with ▶ and the → key. Every move comes with its idea.')}</p>`;
@@ -356,14 +361,62 @@ function studyGo(p, silent) {
   if (!silent && v && fwd) Sound.play(soundFor(v.m, v.check));
   if (!silent) { if (v) Narrator.say(v.m.san, line.n?.[p - 1]?.t || ''); else Narrator.cancel(); }
 }
-$('#lnFirst').onclick = () => studyGo(0); $('#lnPrev').onclick = () => studyGo(study.ply - 1); $('#lnNext').onclick = () => studyGo(study.ply + 1); $('#lnLast').onclick = () => studyGo(99);
+function studySyncExplore() {
+  const c = study.explore.chess, h = c.history({ verbose: true }).at(-1);
+  lineCg.set({ fen: c.fen(), lastMove: h ? [h.from, h.to] : undefined, check: c.inCheck(), turnColor: turnColor(c),
+    movable: { color: c.isGameOver() ? undefined : turnColor(c), dests: dests(c) } });
+}
+function studyExploreMove(o, d) {
+  const m = tryMove(study.explore.chess, o, d);
+  if (!m) { Sound.play('error'); return studySyncExplore(); }
+  Sound.play(soundFor(m, study.explore.chess.inCheck()));
+  studyShowExplore(m);
+}
+function studyBackLine() { if (!study.explore) return; const fork = study.explore.fork; study.explore = null; if ($('#lnBackLine')) $('#lnBackLine').hidden = true; studyGo(fork, true); }
+function studyExploreUndo() {
+  if (!study.explore) return;
+  const c = study.explore.chess;
+  if (!c.history().length) return studyBackLine();
+  c.undo();
+  const last = c.history({ verbose: true }).at(-1);
+  if (!c.history().length) return studyBackLine();
+  studyShowExplore(last);
+}
+async function studyShowExplore(last) {
+  const x = study.explore; if (!x) return;
+  studySyncExplore();
+  if ($('#lnBackLine')) $('#lnBackLine').hidden = false;
+  if (!last || last.color === study.rep.color) {
+    x.suggest = null; lineCg.setAutoShapes(last ? [{ orig: last.from, dest: last.to, brush: 'blue' }] : []);
+    $('#lnNote').innerHTML = `<div><span class="san">${esc(last?.san || '')}</span><span class="who you">Left the line</span></div><p>This isn't the next move of this line. Play a reply for the other side and I'll suggest what you should play, or go <b>Back to the line</b>.</p>`;
+    return;
+  }
+  $('#lnNote').innerHTML = `<div><span class="san">${esc(last.san)}</span><span class="who opp">Opponent</span></div><p>Looking up a reply…</p>`;
+  const s = await lookupSuggest(x.chess, study.rep.color, last, ++x.gen, g => study.explore && study.explore.gen === g);
+  if (!study.explore || s == null) return;
+  x.suggest = s;
+  paintSuggest(lineCg, $('#lnNote'), s, last, 'study');
+}
+function studyPlaySuggested() {
+  const s = study.explore?.suggest, top = s?.moves?.[0]; if (!top) return;
+  const m = tryMove(study.explore.chess, top.from, top.to, top.promotion);
+  if (!m) return studySyncExplore();
+  Sound.play(soundFor(m, study.explore.chess.inCheck()));
+  studyShowExplore(m);
+}
+$('#lnBackLine').onclick = () => studyBackLine();
+$('#lnFirst').onclick = () => { if (study.explore) studyBackLine(); studyGo(0); };
+$('#lnPrev').onclick = () => study.explore ? studyExploreUndo() : studyGo(study.ply - 1);
+$('#lnNext').onclick = () => study.explore ? studyPlaySuggested() : studyGo(study.ply + 1);
+$('#lnLast').onclick = () => { if (study.explore) studyBackLine(); studyGo(99); };
 $('#lnDrill').onclick = () => { const r = study.rep, li = study.li; go('#/train'); $('#drillRep').value = r.id; fillPickers(); $('#drillLine').value = li; setMode('line'); };
 const lineStep = d => { const r = study.rep, n = (study.li + d + r.lines.length) % r.lines.length; go(`#/line/${r.id}/${n}`); };
 $('#lnPrevLine').onclick = () => lineStep(-1); $('#lnNextLine').onclick = () => lineStep(1);
 addEventListener('keydown', e => {
   if (!$('#line').classList.contains('active') || e.target.matches('input,textarea,select')) return;
-  if (e.key === 'ArrowRight') { e.preventDefault(); studyGo(study.ply + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); studyGo(study.ply - 1); }
-  if (e.key === 'Home') studyGo(0); if (e.key === 'End') studyGo(99);
+  if (e.key === 'ArrowRight') { e.preventDefault(); study.explore ? studyPlaySuggested() : studyGo(study.ply + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); study.explore ? studyExploreUndo() : studyGo(study.ply - 1); }
+  if (e.key === 'Home') { if (study.explore) studyBackLine(); studyGo(0); } if (e.key === 'End') { if (study.explore) studyBackLine(); studyGo(99); }
 });
 
 function download(name, text, type) {
@@ -469,7 +522,7 @@ const cueShapes = m => [{ orig: m.from, dest: m.to, brush: 'blue', modifiers: { 
 // show the move to play for a new (unlearned) move: bold blue arrow, ringed from/to squares, pulsing target, "Play X" bubble
 function cueNew() {
   const p = $('#drillPulse'); if (p) p.hidden = true;
-  if (!drill.line || drill.view != null || !guided() || drill.waiting || drill.ply >= drill.line.length || drill.chess.turn() !== userColor()) return;
+  if (!drill.line || drill.explore || drill.view != null || !guided() || drill.waiting || drill.ply >= drill.line.length || drill.chess.turn() !== userColor()) return;
   if (!$('#drill').classList.contains('active')) return;
   const m = new Chess(drill.chess.fen()).move(drill.line[drill.ply]); if (!m) return;
   coach(drill.ply, true); drillCg.setAutoShapes([...cueShapes(m)]);
@@ -589,6 +642,18 @@ function fitTrainLayout() {
 const drillNote = ply => { if (drill.view == null) coach(ply); navUi(); };
 // ---- explanation history: browse every move played so far (read-only board while browsing) ----
 function navUi() {
+  if (drill.explore) {
+    const extra = Math.max(0, drill.chess.history().length - drill.explore.fork);
+    const canPlay = !!(drill.explore.suggest?.moves?.[0] && drill.chess.turn() === userColor());
+    $('#navPos').textContent = extra ? `Exploring · ${extra} move${extra > 1 ? 's' : ''} off the line` : 'Exploring';
+    $('#navBack').disabled = false;
+    $('#navFwd').disabled = !canPlay;
+    $('#navFwd').classList.toggle('primary', canPlay);
+    $('#navFwd').textContent = 'Play suggested ▶';
+    $('#drill').classList.toggle('browsing', false);
+    exploreUi();
+    return;
+  }
   const n = drill.line ? drill.ply : 0, v = drill.view ?? n;
   $('#navPos').textContent = n ? `Move ${v} of ${n}${drill.view == null ? '' : ' · browsing'}` : 'No moves yet';
   const done = drill.line && drill.ply >= drill.line.length;
@@ -597,9 +662,11 @@ function navUi() {
   $('#navFwd').classList.toggle('primary', !!drill.waiting || (done && drill.view == null));
   $('#navFwd').textContent = drill.view == null && done ? 'Next line ▶' : 'Next ▶';
   $('#drill').classList.toggle('browsing', drill.view != null);
+  exploreUi();
 }
 function navGo(v) {
   Narrator.cancel(); if (play) return;
+  if (drill.explore) { if (v < 0) exploreUndo(); else playSuggested(); return; }
   if (v > 0 && drill.view == null) {                 // live "Next": opponent's reply, or the next line
     if (drill.waiting) { drill.waiting = false; drillCg.set({ movable: { color: S().premove ? cname(userColor()) : undefined, dests: new Map() } }); drill.busy = true; drill.timer = setTimeout(playReply, 60); navUi(); return; }
     if (drill.line && drill.ply >= drill.line.length && !$('#drillNext').hidden) return nextLine();
@@ -627,6 +694,7 @@ function navGo(v) {
   coach(nv - 1); navUi();
 }
 $('#navBack').onclick = () => navGo(-1); $('#navFwd').onclick = () => navGo(1);
+$('#drillBackLine').onclick = () => exitExplore();
 addEventListener('keydown', e => {
   if (!$('#drill').classList.contains('active') || e.target.matches('input,textarea,select')) return;
   if (e.key === 'ArrowLeft') { e.preventDefault(); navGo(-1); } if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); navGo(1); }
@@ -644,7 +712,7 @@ const msg = (t, cls = '') => { $('#drillMsg').innerHTML = t; $('#drillMsg').clas
 function firstIllegal(m) { if (!m.length) return 0; const c = new Chess(); for (let i = 0; i < m.length; i++) { try { c.move(m[i]); } catch { return i; } } return null; }
 // self-check: when it's the user's live turn the board must accept their pieces; log why if not and repair
 function boardCheck(where) {
-  if (!drill.line || play || drill.view != null || drill.waiting || drill.busy || drill.ply >= drill.line.length || drill.chess.turn() !== userColor() || !$('#drill').classList.contains('active')) return true;
+  if (!drill.line || play || drill.explore || drill.view != null || drill.waiting || drill.busy || drill.ply >= drill.line.length || drill.chess.turn() !== userColor() || !$('#drill').classList.contains('active')) return true;
   const st = drillCg.state, why = [];
   if (st.movable.color !== cname(userColor())) why.push(`movable.color=${st.movable.color} expected ${cname(userColor())}`);
   if (!st.movable.dests || !st.movable.dests.size) why.push('no legal destinations');
@@ -658,7 +726,8 @@ window.__freereps.boardCheck = boardCheck;
 // keep chessground's cached board position in sync with layout changes (explanation box, menus, scrolling)
 { const fix = () => { drillCg.state.dom.bounds.clear?.(); lineCg.state.dom.bounds.clear?.(); };
   new ResizeObserver(fix).observe(document.querySelector('#drill .tsplit')); addEventListener('scroll', fix, { passive: true, capture: true });
-  $('#drillBoard').addEventListener('pointerdown', () => drillCg.state.dom.bounds.clear?.(), { capture: true }); }
+  $('#drillBoard').addEventListener('pointerdown', () => drillCg.state.dom.bounds.clear?.(), { capture: true });
+  $('#lineBoard').addEventListener('pointerdown', () => lineCg.state.dom.bounds.clear?.(), { capture: true }); }
 function startSession(mode) {
   endPlay(true); $('#playBar').hidden = true;
   clearTimeout(drill.timer);
@@ -706,6 +775,7 @@ $('#homeFix').onclick = () => { go('#/train'); startSpots(recentMistakes(db.reps
 $('#drillNext').onclick = () => nextLine();
 function nextLine() {
   endPlay(true); clearTimeout(drill.timer); $('#drillNext').hidden = true; $('#playBar').hidden = true;
+  drill.explore = null; if ($('#drillBackLine')) $('#drillBackLine').hidden = true; $('#drill').classList.remove('exploring');
   if (drill.qi >= drill.queue.length) {
     drillCg.set({ movable: { color: undefined } });
     msg(`Session complete: ${drill.done} lines, ${drill.perfect} perfect. ${drill.mode === 'random' ? '' : 'Pick another mode to keep going.'}`, 'ok');
@@ -729,6 +799,163 @@ function nextLine() {
 }
 function renderMoves() { $('#drillMoves').innerHTML = fmt(drill.chess.history()); drillStats(); }
 
+
+// ---------- explore: play either side; suggest a reply after an opponent move ----------
+function liveBoard() {
+  const c = drill.chess, can = !!(drill.line && !play && drill.view == null && !c.isGameOver() && (drill.explore || !drill.busy || drill.chess.turn() !== userColor()));
+  const color = can ? turnColor(c) : undefined;
+  drillCg.set({ fen: c.fen(), lastMove: lastMoveOf(c), turnColor: turnColor(c), check: c.inCheck(), movable: { color, dests: color ? dests(c) : new Map() } });
+}
+function uciMove(chess, uci) { return uci && uci !== '(none)' ? tryMove(chess, uci.slice(0, 2), uci.slice(2, 4), uci[4] || 'q') : null; }
+async function lookupSuggest(chess, color, oppMove, gen, still) {
+  const fen = chess.fen();
+  const book = bookReplies(db.reps, fen, color);
+  const trap = trapAt(fen, TRAPS);
+  const pack = (kind, moves, flag) => ({ kind, moves, flag, trap });
+  const flagFromTrap = moves => {
+    if (!trap) return null;
+    const san = trap.punish || moves[0]?.san;
+    const head = trap.note || `A known slip (${trap.name}).`;
+    return san ? `${head} Punish with ${san}.` : head;
+  };
+  if (book.length) {
+    const list = [];
+    for (const b of book) {
+      let mv; try { mv = new Chess(fen).move(b.san); } catch { continue; }
+      list.push({ san: mv.san, from: mv.from, to: mv.to, promotion: mv.promotion, text: b.text || 'This move is in your repertoire.', kind: 'book' });
+    }
+    if (!still(gen)) return null;
+    return pack('book', list, flagFromTrap(list));
+  }
+  engine ||= new Engine();
+  let analysis = { lines: [] };
+  try { analysis = await engine.analyse(fen, { time: 700, depth: 12, multipv: 3 }); } catch { analysis = { lines: [] }; }
+  if (!still(gen)) return null;
+  const list = [];
+  for (const ln of (analysis.lines || []).slice(0, 3)) {
+    const mv = uciMove(new Chess(fen), ln.move); if (!mv) continue;
+    const ev = evalForSide({ cp: ln.cp, mate: ln.mate }, chess.turn(), color);
+    const evTxt = formatScore(ev);
+    const idea = explainIdea(mv, fen, oppMove);
+    list.push({ san: mv.san, from: mv.from, to: mv.to, promotion: mv.promotion, text: (idea || 'The engine’s top choice here.') + (evTxt ? ` (${evTxt})` : ''), eval: ev, kind: 'engine' });
+  }
+  let flag = flagFromTrap(list);
+  if (!flag && list[0]) {
+    const before = new Chess(); const hist = chess.history();
+    try { hist.slice(0, -1).forEach(s => before.move(s)); } catch { before.reset(); }
+    if (hist.length && fenKey(before.fen()) !== fenKey(fen)) {
+      let prevA = { lines: [] };
+      try { prevA = await engine.analyse(before.fen(), { time: 400, depth: 10, multipv: 1 }); } catch {}
+      if (!still(gen)) return null;
+      const prevLn = prevA.lines[0];
+      if (prevLn) {
+        const ev0 = evalForSide({ cp: prevLn.cp, mate: prevLn.mate }, before.turn(), color);
+        const ev1 = list[0].eval;
+        flag = evalSwingFlag(ev0, ev1, list[0].san);
+      }
+    }
+  }
+  if (!still(gen)) return null;
+  return pack('engine', list, flag);
+}
+function paintSuggest(cg, el, s, opp, where) {
+  const top = s.moves[0];
+  const shapes = s.moves.filter(m => m.from && m.to).map((m, i) => ({ orig: m.from, dest: m.to, brush: s.kind === 'book' ? (i ? 'paleBlue' : 'blue') : (i ? 'yellow' : 'green'), modifiers: i === 0 ? { lineWidth: 14 } : undefined }));
+  cg.setAutoShapes(shapes);
+  const label = s.kind === 'book' ? 'Your repertoire' : 'Engine suggestion';
+  const who = s.kind === 'book' ? 'book' : 'engine';
+  const alts = s.moves.slice(1).map(m => m.san + (m.eval ? ' (' + formatScore(m.eval) + ')' : '')).join(', ');
+  const why = top?.text || (s.kind === 'book' ? 'This move is in your repertoire.' : 'No engine move found.');
+  const after = opp?.san ? `After ${opp.san}: ` : '';
+  const flag = s.flag ? `<p class="flag">${esc(s.flag)}</p>` : '';
+  const altsP = alts ? `<p class="alts">Also: ${esc(alts)}</p>` : '';
+  const hint = `<p class="prevnote">Play it on the board, press <b>Play suggested</b>, or <b>Back to the line</b>.</p>`;
+  if (where === 'study') {
+    el.innerHTML = `<div><span class="san">${esc(top?.san || '—')}</span><span class="who ${who}">${label}</span></div>${flag}<p>${esc(after + why)}</p>${altsP}${hint}`;
+    return;
+  }
+  el.className = 'bnote you pop';
+  el.innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${esc(top?.san || '—')}</span><span class="who ${who}">${label}</span></div>${flag}<p>${esc(after + why)}</p>${altsP}${hint}</div>`;
+}
+function exploreUi() {
+  const on = !!drill.explore;
+  if ($('#drillBackLine')) $('#drillBackLine').hidden = !on;
+  if (on && $('#drillPulse')) $('#drillPulse').hidden = true;
+  $('#drill').classList.toggle('exploring', on);
+}
+function startExplore(m) {
+  clearTimeout(drill.timer); clearTimeout(drill.wrongT);
+  drill.busy = false; drill.waiting = false;
+  drill.explore = { fork: drill.ply, gen: 0, suggest: null };
+  exploreUi(); liveBoard(); renderMoves(); navUi();
+  if (m.color === userColor()) {
+    drill.explore.suggest = null; drillCg.setAutoShapes([]);
+    $('#drillNote').className = 'bnote you pop';
+    $('#drillNote').innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${esc(m.san)}</span><span class="who you">Left the line</span></div><p>This isn’t the next move of this line. Play a reply for the other side and I’ll suggest what you should play, or go <b>Back to the line</b>.</p></div>`;
+    msg('Off the line. Play the opponent’s reply to see what you should play, or go Back to the line.');
+    return;
+  }
+  msg('Off this line. Finding a reply…');
+  requestDrillSuggest(m);
+}
+function onExploreMove(from, to) {
+  const m = tryMove(drill.chess, from, to);
+  if (!m) { Sound.play('error'); return liveBoard(); }
+  if (m.flags.includes('e') || m.flags.includes('p') || m.flags.includes('k') || m.flags.includes('q')) drillCg.set({ fen: drill.chess.fen() });
+  Sound.play(soundFor(m, drill.chess.inCheck()));
+  liveBoard(); renderMoves();
+  if (m.color !== userColor()) requestDrillSuggest(m);
+  else {
+    drill.explore.suggest = null; drillCg.setAutoShapes([]);
+    $('#drillNote').className = 'bnote you pop';
+    $('#drillNote').innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${esc(m.san)}</span><span class="who you">Your move</span></div><p>Played. Now try a reply for the opponent, or go <b>Back to the line</b>.</p></div>`;
+    msg('Your move is on the board. Play an opponent reply to see the recommended answer.');
+    navUi();
+  }
+}
+async function requestDrillSuggest(oppMove) {
+  const x = drill.explore; if (!x) return;
+  const gen = ++x.gen;
+  $('#drillNote').className = 'bnote you pop';
+  $('#drillNote').innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${esc(oppMove.san)}</span><span class="who opp">Opponent</span></div><p>Looking up a reply…</p></div>`;
+  const s = await lookupSuggest(drill.chess, userColor(), oppMove, gen, g => drill.explore && drill.explore.gen === g);
+  if (!s) return;
+  x.suggest = s;
+  paintSuggest(drillCg, $('#drillNote'), s, oppMove, 'drill');
+  const top = s.moves[0];
+  msg((s.flag ? s.flag + ' ' : '') + (top ? `Recommended: <b>${top.san}</b> (${s.kind === 'book' ? 'your repertoire' : 'engine'}).` : 'No reply found.'), s.flag ? 'bad' : 'ok');
+  navUi();
+}
+function exitExplore() {
+  if (!drill.explore) return;
+  const fork = drill.explore.fork;
+  while (drill.chess.history().length > fork) drill.chess.undo();
+  drill.explore = null; drill.view = null; drill.busy = false; drill.waiting = false;
+  exploreUi(); drillCg.setAutoShapes([]); liveBoard(); renderMoves();
+  if (drill.ply >= (drill.line || []).length) return lineDone();
+  advance();
+}
+function exploreUndo() {
+  if (!drill.explore) return;
+  if (drill.chess.history().length <= drill.explore.fork) return exitExplore();
+  drill.chess.undo();
+  if (drill.chess.history().length <= drill.explore.fork) return exitExplore();
+  const last = drill.chess.history({ verbose: true }).at(-1);
+  liveBoard(); renderMoves();
+  if (last && last.color !== userColor()) requestDrillSuggest(last);
+  else {
+    drill.explore.suggest = null; drillCg.setAutoShapes([]);
+    $('#drillNote').className = 'bnote you pop';
+    $('#drillNote').innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${esc(last?.san || '')}</span><span class="who you">Exploring</span></div><p>Play a reply for the opponent, or go <b>Back to the line</b>.</p></div>`;
+    navUi();
+  }
+}
+function playSuggested() {
+  const top = drill.explore?.suggest?.moves?.[0]; if (!top) return;
+  if (drill.chess.turn() !== userColor()) return;
+  onExploreMove(top.from, top.to);
+}
+
 function advance() {
   renderMoves();
   if (drill.ply >= drill.line.length) return lineDone();
@@ -745,16 +972,17 @@ function advance() {
     // step-by-step flow: after the user's move, wait for Next ▶ before the reply (unless auto-play is on)
     if (!S().autoReply && drill.ply > 0) {
       drill.waiting = true; drill.busy = false;
-      drillCg.set({ turnColor: turnColor(drill.chess), movable: { color: undefined, dests: new Map() } });
-      msg(`${$('#drillMsg').textContent.startsWith('✔') ? $('#drillMsg').innerHTML + ' · ' : ''}Read the idea, then <b>Next ▶</b> (Space) for the reply.`, 'ok'); navUi(); return;
+      drillCg.set({ turnColor: turnColor(drill.chess), check: drill.chess.inCheck(), movable: { color: turnColor(drill.chess), dests: dests(drill.chess) } });
+      msg(`${$('#drillMsg').textContent.startsWith('✔') ? $('#drillMsg').innerHTML + ' · ' : ''}Read the idea, then <b>Next ▶</b> (Space) for the reply — or play a different move for the opponent to see what you should play.`, 'ok'); navUi(); return;
     }
-    // opponent to move: user may premove meanwhile
-    drillCg.set({ turnColor: turnColor(drill.chess), movable: { color: S().premove ? cname(userColor()) : undefined, dests: new Map() } });
+    // auto-reply is about to fire: keep premove on the user's pieces (empty dests). Opponent dests are offered only while waiting for Next.
+    drillCg.set({ turnColor: turnColor(drill.chess), check: drill.chess.inCheck(), movable: { color: S().premove ? cname(userColor()) : undefined, dests: new Map() } });
     drill.busy = true;
     drill.timer = setTimeout(playReply, drill.ply === 0 ? 300 : S().delay);
   }
 }
 function playReply() {
+  if (drill.explore || play || drill.view != null || drill.chess.turn() === userColor()) { drill.busy = false; return; }
   const m = drill.chess.move(drill.line[drill.ply++]); drill.busy = false; drill.waiting = false;
   drillCg.move(m.from, m.to);
   if (m.flags.includes('e') || m.flags.includes('p')) drillCg.set({ fen: drill.chess.fen() });
@@ -765,6 +993,7 @@ function playReply() {
 const cardKey = () => userCards(drill.line, userColor()).find(c => c.ply === drill.ply).key;
 function showArrow(san, brush = 'green') { if (!$('#drill').classList.contains('active')) return; const m = new Chess(drill.chess.fen()).move(san); drillCg.setAutoShapes([{ orig: m.from, dest: m.to, brush }]); }
 $('#drillHint').onclick = () => {
+  if (drill.explore) { const top = drill.explore.suggest?.moves?.[0]; if (top) showArrow(top.san, drill.explore.suggest.kind === 'book' ? 'blue' : 'green'); return; }
   if (!drill.line || drill.ply >= drill.line.length || drill.chess.turn() !== userColor()) return;
   if (!drill.missed && !drill.learning) { drill.missed = true; record(false); }
   showArrow(drill.line[drill.ply]); msg(`Hint: <b>${drill.line[drill.ply]}</b>`, 'bad');
@@ -782,13 +1011,31 @@ function record(ok) {
   save();
 }
 function resync() {
+  if (drill.explore || drill.waiting || drill.chess.turn() !== userColor()) return liveBoard();
   drillCg.set({ fen: drill.chess.fen(), lastMove: lastMoveOf(drill.chess), turnColor: turnColor(drill.chess), check: drill.chess.inCheck(),
     movable: { color: cname(userColor()), dests: dests(drill.chess) } });
 }
 function onUserMove(from, to) {
   if (play) return playMove(from, to);
   if (drill.view != null) return;
-  if (!drill.line || drill.busy || drill.chess.turn() !== userColor()) return resync();
+  if (!drill.line) return resync();
+  if (drill.explore) return onExploreMove(from, to);
+  const myTurn = drill.chess.turn() === userColor();
+  // user may play the opponent's reply while we were waiting (or while auto-reply is about to fire)
+  if (!myTurn && (drill.waiting || drill.busy)) {
+    clearTimeout(drill.timer); drill.busy = false; drill.waiting = false;
+    const expected = drill.line[drill.ply];
+    const m = tryMove(drill.chess, from, to);
+    if (!m) { Sound.play('error'); return liveBoard(); }
+    if (m.flags.includes('e') || m.flags.includes('p') || m.flags.includes('k') || m.flags.includes('q')) drillCg.set({ fen: drill.chess.fen() });
+    Sound.play(soundFor(m, drill.chess.inCheck()));
+    if (m.san === expected) {
+      drill.ply++; drillCg.setAutoShapes([]);
+      drillNote(drill.ply - 1); advance(); return;
+    }
+    startExplore(m); return;
+  }
+  if (drill.busy || !myTurn) return resync();
   const expected = drill.line[drill.ply];
   const promo = (expected.match(/=([QRBN])/) || [, 'q'])[1].toLowerCase();
   const m = tryMove(drill.chess, from, to, promo);

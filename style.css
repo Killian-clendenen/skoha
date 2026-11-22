@@ -474,3 +474,15 @@ footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
   .gsugg{max-height:min(36dvh,220px)}
   .gopts button{min-height:44px}
 }
+
+/* explore suggestions on the training / study boards */
+.bnote .who.book{background:rgba(80,130,255,.22);color:#d6e4ff;border:1px solid rgba(80,130,255,.55)}
+.bnote .who.engine{border:1px solid var(--a3);color:var(--a3);background:rgba(255,207,110,.1)}
+.bnote p.flag,.note p.flag{color:var(--a3);font-weight:700}
+.bnote p.alts,.note p.alts{font-size:.9em;font-weight:500;color:var(--muted);margin-top:6px}
+.note .who.book{background:rgba(80,130,255,.22);color:#d6e4ff;border:1px solid rgba(80,130,255,.55)}
+.note .who.engine{border:1px solid var(--a3);color:var(--a3)}
+#drillBackLine,#lnBackLine{border-color:rgba(80,130,255,.45)}
+@media(max-width:900px){
+  #drillBackLine .blab,#lnBackLine{font-size:13px}
+}

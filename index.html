@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261122d">
+<link rel="stylesheet" href="style.css?v=20261122e">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32"><link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -57,7 +57,7 @@
       <div class="tnote lnote"><div class="note" id="lnNote"></div></div>
       <div class="boardwrap"><div id="lineBoard" class="board"></div></div>
       <aside class="panel">
-        <div class="lnhead"><div><div class="muted" id="lnChapter"></div><h2 id="lnTitle"></h2></div><button id="lnDrill" class="primary">Practise this line</button></div>
+        <div class="lnhead"><div><div class="muted" id="lnChapter"></div><h2 id="lnTitle"></h2></div><button id="lnBackLine" hidden title="Return to this line">↩ Back to the line</button><button id="lnDrill" class="primary">Practise this line</button></div>
         <div class="legend"><span><i class="lg g"></i>idea / control</span><span><i class="lg r"></i>threat / weakness</span><span><i class="lg y"></i>alternative</span><span><i class="lg b"></i>new move</span></div>
         <div class="movelist" id="lnMoves"></div>
         <div class="row"><button id="lnPrevLine">← Previous line</button><button id="lnNextLine">Next line →</button></div>
@@ -95,7 +95,7 @@
         <div class="tfoot">
           <div id="drillInfo" class="muted"></div>
           <div id="drillMoves" class="moves"></div>
-          <div class="tbtns"><button id="drillHint" title="Hint (H)" aria-label="Hint">💡 <span class="blab">Hint</span></button><button id="drillFlip" title="Flip (F)" aria-label="Flip">⇅ <span class="blab">Flip</span></button><button id="drillSpeak" aria-label="Narrator" aria-pressed="false">🔇</button><button id="drillStudy" title="Open this line in study view" aria-label="Explain line">📖 <span class="blab">Explain line</span></button><button id="drillNext" class="primary" hidden>Next line →</button></div>
+          <div class="tbtns"><button id="drillBackLine" hidden title="Return to the training line">↩ <span class="blab">Back to the line</span></button><button id="drillHint" title="Hint (H)" aria-label="Hint">💡 <span class="blab">Hint</span></button><button id="drillFlip" title="Flip (F)" aria-label="Flip">⇅ <span class="blab">Flip</span></button><button id="drillSpeak" aria-label="Narrator" aria-pressed="false">🔇</button><button id="drillStudy" title="Open this line in study view" aria-label="Explain line">📖 <span class="blab">Explain line</span></button><button id="drillNext" class="primary" hidden>Next line →</button></div>
           <div class="playbar" id="playBar" hidden><button id="playOut">♞ Play it out</button><select id="playLevel" aria-label="Engine level"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>
           <div class="playbar" id="playOn" hidden><button id="backTrain" class="primary">← Back to training</button><span class="muted" id="playInfo"></span></div>
         </div>
@@ -210,5 +210,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2) · Engine: Stockfish.js (GPL-3.0).</footer>
-<script type="module" src="app.js?v=20261122d"></script>
+<script type="module" src="app.js?v=20261122e"></script>
 </body></html>

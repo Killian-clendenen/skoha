@@ -360,3 +360,105 @@ export function firstDeviation(moves, color, ix) {
   }
   return { who: 'end', ply: moves.length };
 }
+
+// ---------- explore: book replies, trap flags, plain-words engine notes ----------
+const PIECE_NAME = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
+
+// Repertoire moves at this FEN for the user's color, across all loaded reps (matches transpositions).
+export function bookReplies(reps, fen, color) {
+  const key = fenKey(fen), bySan = new Map();
+  for (const rep of reps || []) {
+    if (rep.color !== color) continue;
+    for (const l of rep.lines || []) {
+      const c = new Chess();
+      for (let ply = 0; ply < l.m.length; ply++) {
+        if (fenKey(c.fen()) === key && c.turn() === color) {
+          const san = l.m[ply], n = l.n?.[ply], cur = bySan.get(san);
+          if (!cur) bySan.set(san, { san, text: n?.t || '', g: n?.g || '', cal: n?.cal || [], csl: n?.csl || [], name: rep.name, ch: l.ch, ply, rep: rep.id });
+          else if (!cur.text && n?.t) { cur.text = n.t; cur.cal = n.cal || cur.cal; cur.csl = n.csl || cur.csl; cur.g = n.g || cur.g; }
+          break;
+        }
+        try { c.move(l.m[ply]); } catch { break; }
+      }
+    }
+  }
+  return [...bySan.values()];
+}
+
+// If this position is the one right after a Punish-this blunder, return the trap and the punishing move.
+export function trapAt(fen, traps) {
+  const key = fenKey(fen);
+  for (const t of traps || []) {
+    const moves = String(t.m || '').split(/\s+/).filter(Boolean);
+    if (t.b == null || t.b >= moves.length) continue;
+    const c = new Chess(); let ok = true;
+    for (let i = 0; i <= t.b; i++) { try { c.move(moves[i]); } catch { ok = false; break; } }
+    if (!ok || fenKey(c.fen()) !== key) continue;
+    return { name: t.name, note: (t.n && (t.n[t.b] || t.n[String(t.b)])) || '', punish: moves[t.b + 1] || '', punishNote: (t.n && (t.n[t.b + 1] || t.n[String(t.b + 1)])) || '', starter: t.rep };
+  }
+  return null;
+}
+
+// Stockfish scores are for the side to move; flip into `color`'s perspective.
+export function evalForSide(score, turn, color) {
+  const flip = turn !== color;
+  if (!score) return { cp: null, mate: null };
+  if (score.mate != null && Number.isFinite(score.mate)) return { cp: null, mate: flip ? -score.mate : score.mate };
+  if (score.cp == null || !Number.isFinite(score.cp)) return { cp: null, mate: null };
+  return { cp: flip ? -score.cp : score.cp, mate: null };
+}
+
+export function formatScore({ cp, mate } = {}) {
+  if (mate != null && Number.isFinite(mate)) return mate > 0 ? `mate in ${mate}` : (mate < 0 ? `mated in ${-mate}` : 'mate');
+  if (cp == null || !Number.isFinite(cp)) return '';
+  const p = cp / 100;
+  return (p > -0.05 && p < 0 ? '0.0' : (p >= 0 ? '+' : '') + p.toFixed(1));
+}
+
+// Factual one-liner for a move: capture / recapture / develop / castle / check / attacks. No invented plans.
+export function explainIdea(m, beforeFen, prev) {
+  if (!m) return '';
+  if (m.flags?.includes('k')) return 'Castles kingside.';
+  if (m.flags?.includes('q')) return 'Castles queenside.';
+  const name = PIECE_NAME[m.piece] || 'piece';
+  const bits = [];
+  if (m.captured) {
+    if (prev && prev.captured && prev.to === m.to) bits.push(`Recaptures on ${m.to}.`);
+    else bits.push(`Takes the ${PIECE_NAME[m.captured] || 'piece'} on ${m.to}.`);
+  } else {
+    const home = m.color === 'w' ? '1' : '8';
+    if ('nbrq'.includes(m.piece) && m.from[1] === home) bits.push(`Develops the ${name} to ${m.to}.`);
+    else if (m.piece === 'p') bits.push(`Pawn to ${m.to}.`);
+    else bits.push(`The ${name} goes to ${m.to}.`);
+  }
+  try {
+    const c = new Chess(beforeFen);
+    c.move({ from: m.from, to: m.to, promotion: m.promotion || undefined });
+    if (c.inCheck()) bits.push('Gives check.');
+    const opp = m.color === 'w' ? 'b' : 'w';
+    const val = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
+    const parts = c.fen().split(' '); parts[1] = m.color;
+    const hits = new Chess(parts.join(' ')).moves({ square: m.to, verbose: true }) || [];
+    for (const h of hits) {
+      if (!h.captured) continue;
+      const p = c.get(h.to); if (!p || p.color !== opp || p.type === 'k') continue;
+      const defended = c.isAttacked(h.to, opp);
+      if (!defended) bits.push(`Attacks the undefended ${PIECE_NAME[p.type]} on ${h.to}.`);
+      else if (val[p.type] > val[m.piece]) bits.push(`Attacks the ${PIECE_NAME[p.type]} on ${h.to}.`);
+      if (bits.length >= 3) break;
+    }
+  } catch {}
+  return bits.join(' ');
+}
+
+export function evalSwingFlag(before, after, punishSan) {
+  if (!punishSan) return null;
+  if (after?.mate != null && after.mate > 0 && (before?.mate == null || before.mate < 0 || after.mate < before.mate))
+    return `This allows mate — punish with ${punishSan}.`;
+  if (before?.cp == null || after?.cp == null) return null;
+  const d = after.cp - before.cp;
+  if (d >= 300) return `This drops material — punish with ${punishSan}.`;
+  if (d >= 100) return `This drops a pawn — punish with ${punishSan}.`;
+  return null;
+}
+

@@ -1,8 +1,9 @@
 // node test.mjs — starter PGNs (every move legal), PGN parser, SM-2, drill sequencing, sounds.
 import { readFileSync } from 'node:fs';
 import { Chess } from '../vendor/chess.js';
-import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm } from '../core.js';
+import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, sanToWords, speechText, pickVoice, dayKey, addReview, goalStreak, ringSvg, suggestOpenings, navStep, validateLine, parsePgn, userCards, schedule, buildQueue, soundFor, toPgn, dedupe, repMoves, fenKey, parseComment, describeMove, buildSearchIndex, search, isMoveQuery, norm, bookReplies, trapAt, explainIdea, evalForSide, formatScore, evalSwingFlag } from '../core.js';
 import { KB } from '../kb.js';
+import { TRAPS } from '../traps.js';
 const validSq = q => /^[a-h][1-8]$/.test(q);
 let fail = 0, pass = 0; const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL ' + m); } if (process.env.V) console.log((c ? 'PASS ' : 'FAIL ') + m); };
 const idx = JSON.parse(readFileSync(new URL('../starters/', import.meta.url).pathname + 'index.json', 'utf8'));
@@ -160,5 +161,41 @@ ok(pickVoice([{ name: 'Fred', lang: 'en-US' }, { name: 'Google US English', lang
   ok(firstDeviation(['e4', 'c5', 'Nf3', 'd6', 'Bb5+', 'Bd7', 'Bxd7+'], 'b', ix).who === 'end', 'firstDeviation: end of prep');
   ok(firstDeviation(['d4', 'd5'], 'b', ix).who === null, 'firstDeviation: not your opening');
   ok(firstDeviation(['e4', 'e5'], 'b', ix).who === 'you', 'firstDeviation: your first move differs');
+}
+
+{ // explore: book replies by FEN / transposition, traps, plain-words ideas, eval helpers
+  const raw = readFileSync(new URL('../starters/reti.pgn', import.meta.url), 'utf8');
+  const parsed = parsePgn(raw);
+  const rep = { id: 'reti', name: 'Réti Opening', color: 'w', starter: 'reti', lines: parsed.lines };
+  const play = (...ms) => { const c = new Chess(); ms.forEach(s => c.move(s)); return c; };
+  const afterC4 = play('Nf3', 'd5', 'c4');
+  ok(bookReplies([rep], afterC4.fen(), 'w').length === 0, 'bookReplies: after 2.c4 it is Black to move, so no White book replies');
+  const dxc = play('Nf3', 'd5', 'c4', 'dxc4');
+  const r1 = bookReplies([rep], dxc.fen(), 'w');
+  ok(r1.some(x => x.san === 'e3') && r1.some(x => x.san === 'Na3'), 'Réti 2...dxc4: book replies include 3.e3 and 3.Na3 (' + r1.map(x => x.san).join(', ') + ')');
+  ok(/recapture|bishop/i.test(r1.find(x => x.san === 'e3')?.text || ''), '2...dxc4 3.e3 keeps its annotation');
+  const d4 = play('Nf3', 'd5', 'c4', 'd4');
+  const r2 = bookReplies([rep], d4.fen(), 'w');
+  ok(r2.some(x => x.san === 'e3') && r2.some(x => x.san === 'g3'), 'Réti 2...d4: book replies include 3.e3 and 3.g3 (' + r2.map(x => x.san).join(', ') + ')');
+  ok(/challenge|d4/i.test(r2.find(x => x.san === 'e3')?.text || ''), '2...d4 3.e3 keeps its annotation');
+  // transposition: same position reached by a different move order still hits the book
+  ok(bookReplies([rep], dxc.fen(), 'w').map(x => x.san).sort().join() === r1.map(x => x.san).sort().join(), 'bookReplies is stable for the same FEN');
+  ok(bookReplies([rep], dxc.fen(), 'b').length === 0, 'bookReplies ignores the other color');
+
+  const trap = trapAt(play('Nf3', 'Nc6', 'd4', 'd5', 'c4', 'Bg4', 'cxd5', 'Nxd4').fen(), TRAPS);
+  ok(trap && trap.punish === 'Qxd4' && /pin/i.test(trap.name + ' ' + trap.note), 'trapAt: Réti ...Nxd4 pin trick flags Qxd4');
+  ok(!trapAt(play('Nf3', 'd5', 'c4', 'dxc4').fen(), TRAPS), 'trapAt: a normal 2...dxc4 is not a trap');
+
+  { const c = new Chess(); 'e4 e5 Nf3 Nc6 Bc4 Bc5'.split(' ').forEach(s => c.move(s)); const fen = c.fen(); ok(explainIdea(c.move('O-O'), fen) === 'Castles kingside.', 'explainIdea: castles kingside'); }
+  { const c = new Chess(); c.move('e4'); c.move('d5'); const fen = c.fen(); const prev = c.history({ verbose: true }).at(-1); ok(/^Takes the pawn on d5\./.test(explainIdea(c.move('exd5'), fen, prev)), 'explainIdea: capture'); }
+  { const c = new Chess(); 'e4 d5 exd5'.split(' ').forEach(s => c.move(s)); const fen = c.fen(); const prev = c.history({ verbose: true }).at(-1); ok(/^Recaptures on d5\./.test(explainIdea(c.move('Qxd5'), fen, prev)), 'explainIdea: recapture'); }
+  { const c = new Chess(); const fen = c.fen(); ok(/^Develops the knight to f3\./.test(explainIdea(c.move('Nf3'), fen)), 'explainIdea: develops'); }
+  { const c = new Chess(); c.move('e4'); c.move('e5'); c.move('Qh5'); c.move('Nc6'); const fen = c.fen(); ok(/Gives check/.test(explainIdea(c.move('Qxf7+'), fen)), 'explainIdea: check'); }
+
+  ok(formatScore({ cp: 42 }) === '+0.4' && formatScore({ cp: -150 }) === '-1.5' && formatScore({ mate: 3 }) === 'mate in 3', 'formatScore');
+  ok(evalForSide({ cp: 40 }, 'w', 'w').cp === 40 && evalForSide({ cp: 40 }, 'b', 'w').cp === -40, 'evalForSide flips for the other side');
+  ok(evalSwingFlag({ cp: 20 }, { cp: 140 }, 'e3') === 'This drops a pawn — punish with e3.', 'evalSwingFlag: ~1 pawn');
+  ok(evalSwingFlag({ cp: 0 }, { cp: 80 }, 'e3') === null, 'evalSwingFlag: small swing is silent');
+  ok(/drops material/.test(evalSwingFlag({ cp: 0 }, { cp: 320 }, 'Qxd4')), 'evalSwingFlag: piece-sized swing');
 }
 console.log(`${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

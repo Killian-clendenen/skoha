@@ -424,12 +424,24 @@ await retiMoves('everything learned, nothing due', FX('ls-c2e3afe.json'), { lear
   await c.close(); }
 { const c = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
   await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForTimeout(1200); if (await p.isVisible('#gSkip')) { await p.click('#gSkip'); await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForTimeout(600); }
-  const bb = await p.locator('#lineBoard cg-board').boundingBox(), w = bb.width / 8; const pt = q => [bb.x + (q.charCodeAt(0) - 97 + .5) * w, bb.y + (8 - +q[1] + .5) * w];
-  const tap2 = async (a, z) => { await p.touchscreen.tap(...pt(a)); await p.waitForTimeout(80); await p.touchscreen.tap(...pt(z)); await p.waitForTimeout(350); };
+  const tap2 = async (a, z) => {
+    const bb = await p.locator('#lineBoard cg-board').boundingBox(), w = bb.width / 8;
+    const pt = q => [bb.x + (q.charCodeAt(0) - 97 + .5) * w, bb.y + (8 - +q[1] + .5) * w];
+    await p.touchscreen.tap(...pt(a)); await p.waitForTimeout(80); await p.touchscreen.tap(...pt(z)); await p.waitForTimeout(350);
+  };
   ok(await p.locator('#lineBoard svg line, #lineBoard svg path').count() > 0, 'study: blue guide arrow for the first move');
-  await tap2('e2', 'e4'); ok(/Not this line/.test(await p.textContent('#lnNote')) && await p.evaluate(() => window.__freereps.study?.ply ?? -1) === 0, 'study: wrong move snaps back with the right one named');
+  await tap2('e2', 'e4');
+  ok(/left the line|back to the line/i.test(await p.textContent('#lnNote')) && await p.evaluate(() => window.__freereps.study?.ply === 0 && !!window.__freereps.study.explore), 'study: an off-line move is accepted and offers Back to the line');
+  ok(await p.isVisible('#lnBackLine'), 'study: Back to the line button appears');
+  await p.evaluate(() => { document.querySelector('#lnBackLine')?.click(); scrollTo(0, 0); });
+  await p.waitForTimeout(400);
+  ok(/Start/.test(await p.textContent('#lnNote')) && await p.evaluate(() => !window.__freereps.study.explore && window.__freereps.study.ply === 0), 'study: Back to the line restores the start');
   await tap2('g1', 'f3'); ok(/Réti starts flexibly/.test(await p.textContent('#lnNote')), 'study: playing Nf3 on the board advances the line'); ok(await p.evaluate(() => scrollY) === 0, 'study: stepping does not scroll the page on phones');
   await p.click('#lnNext'); await p.waitForTimeout(250); await tap2('c2', 'c4'); ok(/signature Réti move/.test(await p.textContent('#lnNote')), 'study: play the next own move after Next');
+  await tap2('d5', 'c4'); await p.waitForTimeout(400);
+  ok(/your repertoire/i.test(await p.textContent('#lnNote')) && /e3|Na3/.test(await p.textContent('#lnNote')), 'study: after ...dxc4 the repertoire reply (e3/Na3) is shown');
+  await p.evaluate(() => document.querySelector('#lnBackLine')?.click()); await p.waitForTimeout(200);
+  ok(/signature Réti move/.test(await p.textContent('#lnNote')) && await p.evaluate(() => !window.__freereps.study.explore), 'study: Back to the line returns to 2.c4');
   await p.click('#lnPrev'); await p.click('#lnPrev'); await p.click('#lnPrev'); await p.waitForTimeout(200); ok(/Start/.test(await p.textContent('#lnNote')), 'study: Back returns to the start');
   await p.screenshot({ path: '/workspace/skoha-feat-study.png' }); ok(!errs.length, 'no page errors in study ' + errs.join());
   await c.close(); }
@@ -635,5 +647,54 @@ for (const [w, h, tag, dpr] of m4sizes) {
   ok(L.next.ok, 'due-reviews after Nf3: Next is visible so the line can continue');
   await p.screenshot({ path: '/workspace/skoha-m5-412-due-after-tap.png' });
   await c.close(); }
+
+
+{ // Explore on the training board: play the opponent's move, get a book (or engine) reply
+  const p = await fresh({ width: 412, height: 780 }); await p.click('#gSkip');
+  await p.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.anim = 80; s.autoReply = false; s.help = 'guided'; s.confirm = false; s.flip = false; });
+  await p.goto('http://localhost:8765/#/opening/reti'); await p.waitForSelector('#opening.active [data-act=due]');
+  await p.click('[data-act=due]'); await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(600);
+  const line0 = await p.evaluate(() => window.__freereps.drill.line.slice(0, 3).join(' '));
+  ok(line0 === 'Nf3 d5 c4', 'explore setup: Réti line starts 1.Nf3 d5 2.c4 (' + line0 + ')');
+  const play = async (a, z) => { await clickSq(p, a, true); await p.waitForTimeout(80); await clickSq(p, z, true); await p.waitForTimeout(400); };
+  await play('g1', 'f3');
+  ok(await p.evaluate(() => window.__freereps.drill.waiting && window.__freereps.drill.chess.history().join(' ') === 'Nf3'), 'after 1.Nf3 the opponent is to move (or Next)');
+  await play('d7', 'd5');
+  ok(await p.evaluate(() => !window.__freereps.drill.explore && window.__freereps.drill.chess.history().join(' ') === 'Nf3 d5'), 'playing the book reply ...d5 yourself continues the line');
+  await play('c2', 'c4');
+  ok(await p.evaluate(() => window.__freereps.drill.waiting && window.__freereps.drill.chess.history().join(' ') === 'Nf3 d5 c4'), 'after 2.c4, waiting on Black');
+  await play('d5', 'c4');
+  await p.waitForFunction(() => /your repertoire/i.test(document.querySelector('#drillNote')?.innerText || ''), null, { timeout: 4000 });
+  const n1 = await p.textContent('#drillNote');
+  ok(/your repertoire/i.test(n1) && /e3/.test(n1) && /Na3/.test(n1), 'after ...dxc4: book replies e3 and Na3 — ' + n1.replace(/\s+/g, ' ').slice(0, 180));
+  ok(await p.evaluate(() => { const sh = window.__freereps.cg.state.drawable.autoShapes; return sh.some(s => s.brush === 'blue' && s.dest) && !!window.__freereps.drill.explore; }), 'after ...dxc4: blue repertoire arrows');
+  ok(await p.isVisible('#drillBackLine'), 'Back to the line is shown while exploring');
+  const nav = await p.evaluate(() => { const b = document.querySelector('#drill.active #drillBoard').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(), back = document.querySelector('#navBack').getBoundingClientRect();
+    return { under: n.top >= b.bottom - 2 && n.top <= b.bottom + 40, label: document.querySelector('#navFwd').textContent, backIn: back.top >= -2 && back.bottom <= innerHeight + 2 }; });
+  ok(nav.under && /Play suggested/.test(nav.label) && nav.backIn, 'phone: Play suggested sits under the board — ' + JSON.stringify(nav));
+  await p.screenshot({ path: '/workspace/skoha-explore-dxc4.png' });
+  await p.click('#navFwd'); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => { const h = window.__freereps.drill.chess.history(); return h[h.length - 1] === 'e3' || h[h.length - 1] === 'Na3'; }), 'Play suggested plays a book move (e3 or Na3)');
+  await p.click('#drillBackLine'); await p.waitForTimeout(350);
+  ok(await p.evaluate(() => !window.__freereps.drill.explore && window.__freereps.drill.chess.history().join(' ') === 'Nf3 d5 c4' && window.__freereps.drill.waiting), 'Back to the line restores 2.c4 and the training line');
+  await play('d5', 'd4');
+  await p.waitForFunction(() => /your repertoire/i.test(document.querySelector('#drillNote')?.innerText || ''), null, { timeout: 4000 });
+  const n2 = await p.textContent('#drillNote');
+  ok(/your repertoire/i.test(n2) && /e3/.test(n2) && /g3/.test(n2), 'after ...d4: book replies e3 and g3 — ' + n2.replace(/\s+/g, ' ').slice(0, 180));
+  await p.screenshot({ path: '/workspace/skoha-explore-d4.png' });
+  await p.evaluate(() => document.querySelector('#drillBackLine')?.click());
+  await p.waitForFunction(() => !window.__freereps.drill.explore, null, { timeout: 4000 });
+  await p.evaluate(() => document.querySelector('#drillBoard')?.scrollIntoView({ block: 'center' }));
+  await p.waitForSelector('#drill.active #drillBoard cg-board');
+  await p.waitForTimeout(400);
+  // out of book: a rare sideline, engine should suggest something legal
+  await play('a7', 'a5');
+  await p.waitForFunction(() => /engine suggestion|your repertoire/i.test(document.querySelector('#drillNote')?.innerText || ''), null, { timeout: 15000 });
+  const n3 = await p.textContent('#drillNote');
+  ok(/engine suggestion/i.test(n3) || /your repertoire/i.test(n3), 'after a rare ...a5: a suggestion appears — ' + n3.replace(/\s+/g, ' ').slice(0, 180));
+  ok(await p.evaluate(() => window.__freereps.cg.state.drawable.autoShapes.some(s => s.dest)), 'out-of-book suggestion draws an arrow');
+  await p.screenshot({ path: '/workspace/skoha-explore-engine.png' });
+  await p.context().close();
+}
 
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
