@@ -1,5 +1,5 @@
 // Free, offline-capable narrator using the browser's Web Speech API (speechSynthesis).
-import { sanToWords, speechText, pickVoice } from './core.js?v=20261103g';
+import { sanToWords, speechText, pickVoice } from './core.js?v=20261122a';
 const ss = () => window.speechSynthesis;
 let unlocked = false, settings = () => ({});
 export const Narrator = {

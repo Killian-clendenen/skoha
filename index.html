@@ -1,17 +1,17 @@
 <!doctype html>
 <html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <title>Skoha — the fountain of youth for your chess</title>
 <meta name="description" content="Free chess opening trainer: annotated repertoires, knowledge base, spaced repetition, premoves, PGN import.">
 <meta name="theme-color" content="#070a14">
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261103g">
+<link rel="stylesheet" href="style.css?v=20261122a">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32"><link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Skoha">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Skoha"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head><body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <header>
@@ -55,9 +55,8 @@
     <div class="crumbs" id="lineCrumbs"></div>
     <div class="split lsplit">
       <div class="tnote lnote"><div class="note" id="lnNote"></div></div>
-      <div class="boardwrap"><div id="lineBoard" class="board"></div>
+      <div class="boardwrap"><div id="lineBoard" class="board"></div></div>
         <div class="navbtns"><button id="lnFirst" title="Start (Home)">⏮</button><button id="lnPrev" title="Back (←)">◀</button><button id="lnNext" title="Forward (→)">▶</button><button id="lnLast" title="End (End)">⏭</button></div>
-      </div>
       <aside class="panel">
         <div class="lnhead"><div><div class="muted" id="lnChapter"></div><h2 id="lnTitle"></h2></div><button id="lnDrill" class="primary">Practise this line</button></div>
         <div class="legend"><span><i class="lg g"></i>idea / control</span><span><i class="lg r"></i>threat / weakness</span><span><i class="lg y"></i>alternative</span><span><i class="lg b"></i>new move</span></div>
@@ -90,8 +89,8 @@
         <div class="bstage"><div id="drillBoard" class="board"></div></div>
         <div class="tprogress"><i id="drillProg"></i></div>
         <div class="confirmbar" id="confirmBar" hidden><span id="confirmTxt"></span><button id="confirmNo">✕ Undo</button><button id="confirmYes" class="primary">✓ Confirm</button></div>
-        <div class="tnav"><button id="navBack" title="Back (←)" aria-label="Back">◀ Back</button><span id="navPos" class="muted">No moves yet</span><button id="navFwd" title="Next (→ / Space / Enter)" aria-label="Next">Next ▶</button></div>
       </div>
+        <div class="tnav"><button id="navBack" title="Back (←)" aria-label="Back">◀ Back</button><span id="navPos" class="muted">No moves yet</span><button id="navFwd" title="Next (→ / Space / Enter)" aria-label="Next">Next ▶</button></div>
       <div class="tside">
         <div id="drillMsg" class="msg">Pick an opening to practise.</div>
         <div class="tfoot">
@@ -211,5 +210,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2) · Engine: Stockfish.js (GPL-3.0).</footer>
-<script type="module" src="app.js?v=20261103g"></script>
+<script type="module" src="app.js?v=20261122a"></script>
 </body></html>

@@ -168,10 +168,10 @@ await mp.waitForSelector('#whiteList .ocard'); const bw = await mp.evaluate(() =
 ok(bw <= 390, 'mobile no horizontal overflow (' + bw + ')');
 await mp.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; });
 await mp.goto('http://localhost:8765/#/opening/sicilian'); await mp.waitForSelector('#opening.active [data-act=random]'); await mp.click('[data-act=random]'); await mp.waitForTimeout(900);
-const mg = await mp.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote .coach-card').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(); return { bb: b.bottom, inside: c.top >= n.bottom - 1 && c.right <= 391, w: document.documentElement.scrollWidth, bw: b.width }; });
-ok(mg.inside && mg.w <= 390 && mg.bw > 300, `mobile train: explanation box below the board and Back/Next, no overflow (${JSON.stringify(mg)})`);
+const mg = await mp.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), c = document.querySelector('#drillNote').getBoundingClientRect(), n = document.querySelector('#navFwd').getBoundingClientRect(); return { bb: b.bottom, bt: b.top, bw: b.width, ct: c.top, cb: c.bottom, nt: n.top, nb: n.bottom, nh: n.height, w: document.documentElement.scrollWidth, vh: innerHeight, noteBelowBoard: c.top >= b.bottom - 2, noteAboveNav: c.bottom <= n.top + 2, navInView: n.top >= -2 && n.bottom <= innerHeight + 2, boardInView: b.top >= -2 && b.bottom <= innerHeight + 2 }; });
+ok(mg.noteBelowBoard && mg.noteAboveNav && mg.navInView && mg.boardInView && mg.w <= 390 && mg.bw >= 250, `mobile train: board, explanation and Back/Next all on screen without overlap (${JSON.stringify(mg)})`);
 ok((await mp.textContent('#drillNote')).length > 10, 'mobile: coach explains opponent move');
-const tb = await mp.locator('#navBack').boundingBox(); ok(tb.height >= 48 && tb.width >= 100 && tb.y > mg.bb - 1, 'mobile: large Back/Next tap targets under board ' + JSON.stringify(tb));
+const tb = await mp.locator('#navBack').boundingBox(); ok(tb.height >= 48 && tb.width >= 90 && tb.y > mg.bb - 1, 'mobile: large Back/Next tap targets under the board ' + JSON.stringify(tb));
 await mp.screenshot({ path: '/workspace/skoha-annot-mobile.png' });
 
 
@@ -387,7 +387,8 @@ await retiMoves('everything learned, nothing due', FX('ls-c2e3afe.json'), { lear
   ok(w <= 360, `phone: opening line list fits the screen (right edge ${Math.round(w)})`);
   await c.close(); await (async () => { const c2 = await b.newContext({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true }); const q = await c2.newPage();
     await q.goto('http://localhost:8765/#/opening/reti'); await q.waitForTimeout(1200); if (await q.isVisible('#gSkip')) await q.click('#gSkip'); await q.click('[data-act=due]'); await q.waitForTimeout(800);
-    const bb = await q.locator('#drillBoard').boundingBox(); ok(bb.height <= 390, `landscape phone: board fits screen height (${Math.round(bb.height)})`); await c2.close(); })(); }
+    const bb = await q.locator('#drillBoard').boundingBox(); ok(bb.height <= 390 && bb.y >= 0 && bb.y + bb.height <= 392, `landscape phone: board fits on screen (${JSON.stringify({y: Math.round(bb.y), h: Math.round(bb.height)})})`);
+    const nv = await q.locator('#navFwd').boundingBox(); ok(nv && nv.y >= 0 && nv.y + nv.height <= 392, 'landscape phone: Next is on screen'); await c2.close(); })(); }
 { const c = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); const p = await c.newPage();
   await p.goto('http://localhost:8765/'); await p.waitForTimeout(1200); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
   ok(await p.isHidden('#homeFix'), 'no Fix-mistakes button without mistakes');
@@ -456,4 +457,58 @@ await retiMoves('everything learned, nothing due', FX('ls-c2e3afe.json'), { lear
   await p.click('#ccDrill'); await p.waitForTimeout(700);
   ok(await p.evaluate(() => { const d = window.__freereps.drill; return d.mode === 'spots' && d.ply === 4 && d.rep.starter === 'reti'; }), 'Drill my spots jumps to the game position');
   ok(!errs.length, 'no page errors in import ' + errs.join()); await c.close(); }
+
+// m2 phone-friendly regressions: 360/390/430 portrait + landscape, every key flow
+async function phoneCtx(w, h) { const c = await b.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: w <= 500 }); const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message)); return { c, p }; }
+function phoneLayout() {
+  const box = (sel) => { const el = document.querySelector(sel); if (!el) return null; const r = el.getBoundingClientRect(); return { t: r.top, b: r.bottom, l: r.left, r: r.right, w: r.width, h: r.height, in: r.top >= -2 && r.bottom <= innerHeight + 2 && r.left >= -2 && r.right <= innerWidth + 2 }; };
+  const board = box('#drill.active #drillBoard') || box('#line.active #lineBoard');
+  const nav = box('#drill.active #navFwd') || box('#line.active #lnNext');
+  const note = box('#drill.active #drillNote') || box('#line.active #lnNote');
+  const overlap = note && nav && note.b > nav.t + 2 && note.t < nav.b;
+  const inputs = [...document.querySelectorAll('input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([hidden]), select:not([hidden]), textarea')].filter(el => el.offsetParent && getComputedStyle(el).display !== 'none');
+  const zoom = inputs.filter(el => parseFloat(getComputedStyle(el).fontSize) < 16).map(el => el.id + ':' + getComputedStyle(el).fontSize);
+  return { sw: document.documentElement.scrollWidth, vw: innerWidth, vh: innerHeight, overflow: document.documentElement.scrollWidth > innerWidth + 1, board, nav, note, overlap, zoom, searchFs: parseFloat(getComputedStyle(document.querySelector('#search')).fontSize) };
+}
+async function skipGuide(p) {
+  await p.waitForTimeout(200);
+  if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  await p.evaluate(() => { try { const db = window.__freereps.db(); db.guided = true; const g = document.getElementById('guide'); if (g) g.hidden = true; } catch {} });
+}
+for (const [w, h, tag] of [[360, 740, '360x740'], [390, 844, '390x844'], [430, 932, '430x932'], [844, 390, 'landscape']]) {
+  const { c, p } = await phoneCtx(w, h);
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide, #whiteList'); await skipGuide(p);
+  await p.goto('http://localhost:8765/#/'); await p.waitForSelector('#whiteList .ocard');
+  let L = await p.evaluate(phoneLayout);
+  ok(!L.overflow, `${tag} home: no horizontal overflow (${L.sw})`);
+  ok(L.searchFs >= 16, `${tag} search font-size is ${L.searchFs}px (no iOS zoom)`);
+  await p.goto('http://localhost:8765/#/progress'); await p.waitForSelector('#progress.active #progressBody');
+  L = await p.evaluate(phoneLayout);
+  ok(!L.overflow && L.zoom.length === 0, `${tag} progress: fits and inputs ≥16px ${L.zoom.join(',')}`);
+  await p.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; });
+  await p.goto('http://localhost:8765/#/opening/reti'); await p.waitForSelector('#opening.active [data-act=due]');
+  L = await p.evaluate(phoneLayout);
+  ok(!L.overflow, `${tag} opening: no horizontal overflow`);
+  await p.click('[data-act=due]'); await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(700);
+  L = await p.evaluate(phoneLayout);
+  ok(L.board && L.board.in && L.nav && L.nav.in && L.note && L.note.in && !L.overlap && !L.overflow && L.board.w >= 180, `${tag} train: board, explanation and Next all on screen without overlap (${JSON.stringify(L)})`);
+  await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active #lineBoard'); await p.waitForTimeout(500);
+  L = await p.evaluate(phoneLayout);
+  ok(L.board && L.board.in && L.nav && L.nav.in && L.note && L.note.in && !L.overlap && !L.overflow && L.board.w >= 180, `${tag} study: board, explanation and Next all on screen without overlap (${JSON.stringify(L)})`);
+  await c.close();
+}
+{ const { c, p } = await phoneCtx(360, 740);
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden]) .mcard');
+  const g = await p.evaluate(() => { const c = document.querySelector('#guide .mcard').getBoundingClientRect(), t = document.querySelector('#gTitle').getBoundingClientRect(); return { ch: c.height, cb: c.bottom, vh: innerHeight, titleRight: t.right, cardRight: c.right, title: document.querySelector('#gTitle').textContent, overflow: t.right > c.right + 2 || c.bottom > innerHeight + 2 }; });
+  ok(!g.overflow && /30 seconds/.test(g.title), 'guide modal and title fit a 360px phone ' + JSON.stringify(g));
+  await p.screenshot({ path: '/workspace/skoha-m2-after-360x740-guide.png' });
+  await c.close(); }
+{ const { c, p } = await phoneCtx(1200, 800);
+  await p.goto('http://localhost:8765/'); await skipGuide(p);
+  await p.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; });
+  await p.goto('http://localhost:8765/#/opening/reti'); await p.waitForSelector('#opening.active [data-act=due]'); await p.click('[data-act=due]'); await p.waitForTimeout(700);
+  const desk = await p.evaluate(() => { const b = document.querySelector('#drillBoard').getBoundingClientRect(), n = document.querySelector('#drillNote').getBoundingClientRect(), nav = document.querySelector('#navFwd').getBoundingClientRect(); return { noteLeft: n.right <= b.left + 8, navUnder: nav.top >= b.bottom - 2, bw: b.width }; });
+  ok(desk.noteLeft && desk.navUnder && desk.bw >= 400, 'desktop train unchanged: explanation left of the board, Next under it ' + JSON.stringify(desk));
+  await c.close(); }
+
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
