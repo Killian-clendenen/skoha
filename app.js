@@ -1,10 +1,10 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, bookReplies, trapAt, explainIdea, evalForSide, formatScore, evalSwingFlag } from './core.js?v=20261122e';
-import { TRAPS } from './traps.js?v=20261122e';
-import { KB } from './kb.js?v=20261122e';
-import { Engine } from './engine.js?v=20261122e';
-import { Narrator } from './narrator.js?v=20261122e';
+import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, bookReplies, trapAt, explainIdea, evalForSide, formatScore, evalSwingFlag } from './core.js?v=20261126a';
+import { TRAPS } from './traps.js?v=20261126a';
+import { KB } from './kb.js?v=20261126a';
+import { Engine } from './engine.js?v=20261126a';
+import { Narrator } from './narrator.js?v=20261126a';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -81,8 +81,34 @@ const cname = c => c === 'w' ? 'white' : 'black';
 const turnColor = c => cname(c.turn());
 function lastMoveOf(chess) { const h = chess.history({ verbose: true }); const l = h[h.length - 1]; return l ? [l.from, l.to] : undefined; }
 function boardOpts() {
-  return { animation: { enabled: S().anim > 0, duration: S().anim }, coordinates: S().coords,
+  return { animation: { enabled: S().anim > 0, duration: S().anim }, coordinates: S().coords, blockTouchScroll: true,
     movable: { showDests: S().dests, free: false }, premovable: { enabled: S().premove, showDests: S().dests }, draggable: { showGhost: true } };
+}
+function squareFromBoard(el, x, y, orientation = 'white') {
+  const b = (el?.querySelector?.('cg-board') || el)?.getBoundingClientRect?.();
+  if (!b || !b.width) return null;
+  let file = Math.floor((x - b.left) / b.width * 8), rankTop = Math.floor((y - b.top) / b.height * 8);
+  if (file < 0 || file > 7 || rankTop < 0 || rankTop > 7) return null;
+  if (orientation !== 'white') { file = 7 - file; rankTop = 7 - rankTop; }
+  return String.fromCharCode(97 + file) + (8 - rankTop);
+}
+// On phones the page can scroll, so a drag must not be stolen. When it's the opponent's turn, touching
+// their piece offers legal dests (and cancels auto-reply); touching your own piece still premoves.
+function armFreePlay(ev, chess, cg, boardEl, userCol, onOpp) {
+  if (!chess || ev.button) return;
+  const pt = ev.touches?.[0] || ev;
+  if (pt.clientX == null) return;
+  try { cg.state.dom.bounds.clear?.(); } catch {}
+  const sq = squareFromBoard(boardEl, pt.clientX, pt.clientY, cg.state.orientation);
+  if (!sq) return;
+  const piece = chess.get(sq);
+  if (!piece) return;
+  // A capture dest is often one of your own pieces. Don't steal that tap for a premove.
+  const selected = cg.state.selected;
+  if (selected && cg.state.movable.dests?.get(selected)?.includes(sq)) return;
+  if (piece.color === chess.turn()) onOpp?.(sq, piece);
+  else if (piece.color === userCol && S().premove && chess.turn() !== userCol)
+    cg.set({ turnColor: turnColor(chess), movable: { color: cname(userCol), dests: new Map() } });
 }
 function tryMove(chess, from, to, promo = 'q') { try { return chess.move({ from, to, promotion: promo }); } catch { return null; } }
 
@@ -314,7 +340,7 @@ function renderOpening(rep) {
 // ---------- line page (study view with annotations + arrows) ----------
 const BRUSH = { G: 'green', R: 'red', Y: 'yellow', B: 'blue' };
 const shapesOf = n => n ? [...(n.cal || []).map(([o, d, c]) => ({ orig: o, dest: d, brush: BRUSH[c] || 'green' })), ...(n.csl || []).map(([o, c]) => ({ orig: o, brush: BRUSH[c] || 'green' }))] : [];
-const lineCg = Chessground($('#lineBoard'), { coordinates: true, animation: { enabled: true, duration: 200 }, drawable: { enabled: true, visible: true }, premovable: { enabled: false },
+const lineCg = Chessground($('#lineBoard'), { coordinates: true, blockTouchScroll: true, animation: { enabled: true, duration: 200 }, drawable: { enabled: true, visible: true }, premovable: { enabled: false },
   movable: { free: false, color: undefined, showDests: true, events: { after: (o, d) => studyMove(o, d) } } });
 // playable study: the line's next move advances as usual; any other legal move is accepted and we suggest a reply
 function studyMove(o, d) {
@@ -726,8 +752,25 @@ window.__freereps.boardCheck = boardCheck;
 // keep chessground's cached board position in sync with layout changes (explanation box, menus, scrolling)
 { const fix = () => { drillCg.state.dom.bounds.clear?.(); lineCg.state.dom.bounds.clear?.(); };
   new ResizeObserver(fix).observe(document.querySelector('#drill .tsplit')); addEventListener('scroll', fix, { passive: true, capture: true });
-  $('#drillBoard').addEventListener('pointerdown', () => drillCg.state.dom.bounds.clear?.(), { capture: true });
-  $('#lineBoard').addEventListener('pointerdown', () => lineCg.state.dom.bounds.clear?.(), { capture: true }); }
+  const bindFree = (el, fn) => { el.addEventListener('pointerdown', fn, { capture: true }); el.addEventListener('touchstart', fn, { capture: true, passive: true }); };
+  bindFree($('#drillBoard'), ev => {
+    if (play || !drill.line || drill.view != null) return;
+    armFreePlay(ev, drill.chess, drillCg, $('#drillBoard'), userColor(), () => {
+      if (drill.explore) return;
+      if (drill.chess.turn() === userColor()) return;
+      clearTimeout(drill.timer); drill.busy = false;
+      const want = turnColor(drill.chess), have = drillCg.state.movable.color;
+      if (have !== want || !drillCg.state.movable.dests?.size)
+        drillCg.set({ turnColor: want, check: drill.chess.inCheck(), movable: { color: want, dests: dests(drill.chess) } });
+    });
+  });
+  bindFree($('#lineBoard'), ev => {
+    if (!study.rep) return;
+    const c = study.explore?.chess || new Chess(study.verbose[study.ply - 1]?.fen);
+    armFreePlay(ev, c, lineCg, $('#lineBoard'), study.rep.color, () => {
+      lineCg.set({ turnColor: turnColor(c), movable: { color: turnColor(c), dests: dests(c) } });
+    });
+  }); }
 function startSession(mode) {
   endPlay(true); $('#playBar').hidden = true;
   clearTimeout(drill.timer);
@@ -975,8 +1018,8 @@ function advance() {
       drillCg.set({ turnColor: turnColor(drill.chess), check: drill.chess.inCheck(), movable: { color: turnColor(drill.chess), dests: dests(drill.chess) } });
       msg(`${$('#drillMsg').textContent.startsWith('✔') ? $('#drillMsg').innerHTML + ' · ' : ''}Read the idea, then <b>Next ▶</b> (Space) for the reply — or play a different move for the opponent to see what you should play.`, 'ok'); navUi(); return;
     }
-    // auto-reply is about to fire: keep premove on the user's pieces (empty dests). Opponent dests are offered only while waiting for Next.
-    drillCg.set({ turnColor: turnColor(drill.chess), check: drill.chess.inCheck(), movable: { color: S().premove ? cname(userColor()) : undefined, dests: new Map() } });
+    // Auto-reply can still fire, but the opponent's pieces stay movable so you can play a different reply (or premove yours by touching it).
+    drillCg.set({ turnColor: turnColor(drill.chess), check: drill.chess.inCheck(), movable: { color: turnColor(drill.chess), dests: dests(drill.chess) } });
     drill.busy = true;
     drill.timer = setTimeout(playReply, drill.ply === 0 ? 300 : S().delay);
   }
@@ -1021,8 +1064,8 @@ function onUserMove(from, to) {
   if (!drill.line) return resync();
   if (drill.explore) return onExploreMove(from, to);
   const myTurn = drill.chess.turn() === userColor();
-  // user may play the opponent's reply while we were waiting (or while auto-reply is about to fire)
-  if (!myTurn && (drill.waiting || drill.busy)) {
+  // user may play the opponent's reply (Next-to-wait, auto-reply window, or after we cancelled the timer)
+  if (!myTurn) {
     clearTimeout(drill.timer); drill.busy = false; drill.waiting = false;
     const expected = drill.line[drill.ply];
     const m = tryMove(drill.chess, from, to);

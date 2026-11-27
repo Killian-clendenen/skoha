@@ -486,3 +486,14 @@ footer{padding-bottom:max(var(--s4),env(safe-area-inset-bottom))}
 @media(max-width:900px){
   #drillBackLine .blab,#lnBackLine{font-size:13px}
 }
+
+/* Destination dots must not steal touchend: chessground cancels a drag if the finger lifts on a different element. */
+cg-board square.move-dest, cg-board square.premove-dest, cg-board square.oc.move-dest, cg-board square.oc.premove-dest { pointer-events: none !important; }
+.expltip{margin:6px 0 0;text-align:center;color:var(--muted);font-size:13px;line-height:1.35}
+@media(max-width:900px){.expltip{font-size:12px;margin:4px 8px 0}}
+
+.tnote .expltip,.lnote .expltip{display:none}
+@media(max-width:900px){
+  .tnote,.lnote{display:flex;flex-direction:column}
+  .tnote .expltip,.lnote .expltip{display:block;text-align:center;margin:0 0 6px}
+}

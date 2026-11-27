@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261122e">
+<link rel="stylesheet" href="style.css?v=20261126a">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32"><link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -54,7 +54,7 @@
   <section id="line" class="tab">
     <div class="crumbs" id="lineCrumbs"></div>
     <div class="split lsplit">
-      <div class="tnote lnote"><div class="note" id="lnNote"></div></div>
+      <div class="tnote lnote"><p class="expltip">Tip: move either side’s pieces to explore</p><div class="note" id="lnNote"></div></div>
       <div class="boardwrap"><div id="lineBoard" class="board"></div></div>
       <aside class="panel">
         <div class="lnhead"><div><div class="muted" id="lnChapter"></div><h2 id="lnTitle"></h2></div><button id="lnBackLine" hidden title="Return to this line">↩ Back to the line</button><button id="lnDrill" class="primary">Practise this line</button></div>
@@ -84,7 +84,7 @@
       <div class="tstats" id="drillStats" aria-live="polite"></div>
     </div>
     <div class="tsplit">
-      <div class="tnote"><div id="drillNote" class="bnote empty" aria-live="polite"></div></div>
+      <div class="tnote"><p class="expltip" id="exploreTip">Tip: move either side’s pieces to explore</p><div id="drillNote" class="bnote empty" aria-live="polite"></div></div>
       <div class="boardwrap">
         <div class="bstage"><div id="drillBoard" class="board"></div></div>
         <div class="tprogress"><i id="drillProg"></i></div>
@@ -210,5 +210,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2) · Engine: Stockfish.js (GPL-3.0).</footer>
-<script type="module" src="app.js?v=20261122e"></script>
+<script type="module" src="app.js?v=20261126a"></script>
 </body></html>

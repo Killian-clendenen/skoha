@@ -697,4 +697,86 @@ for (const [w, h, tag, dpr] of m4sizes) {
   await p.context().close();
 }
 
+
+const touchDrag = async (p, selector, from, to, white = true) => {
+  const bb = await p.locator(selector).boundingBox(); if (!bb) throw new Error('no board for drag');
+  const pt = s => { const f = s.charCodeAt(0) - 97, r = +s[1] - 1, w = bb.width / 8; return { x: bb.x + ((white ? f : 7 - f) + .5) * w, y: bb.y + ((white ? 7 - r : r) + .5) * w }; };
+  const A = pt(from), Z = pt(to), cdp = await p.context().newCDPSession(p);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: A.x, y: A.y, id: 0 }] });
+  await p.waitForTimeout(40);
+  for (let i = 1; i <= 12; i++) {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: A.x + (Z.x - A.x) * i / 12, y: A.y + (Z.y - A.y) * i / 12, id: 0 }] });
+    await p.waitForTimeout(16);
+  }
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await p.waitForTimeout(400);
+};
+const touchTap2 = async (p, selector, from, to, white = true) => {
+  const bb = await p.locator(selector).boundingBox(); if (!bb) throw new Error('no board for tap');
+  const pt = s => { const f = s.charCodeAt(0) - 97, r = +s[1] - 1, w = bb.width / 8; return [bb.x + ((white ? f : 7 - f) + .5) * w, bb.y + ((white ? 7 - r : r) + .5) * w]; };
+  await p.touchscreen.tap(...pt(from)); await p.waitForTimeout(80); await p.touchscreen.tap(...pt(to)); await p.waitForTimeout(400);
+};
+{ // Mobile touch (Android Chrome shape): tap-tap and drag for the opponent after 2.c4
+  const ua = 'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36';
+  const c = await b.newContext({ viewport: { width: 412, height: 780 }, hasTouch: true, isMobile: true, userAgent: ua, deviceScaleFactor: 2.625 });
+  const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message));
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden])'); await p.click('#gSkip');
+  await p.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.anim = 80; s.autoReply = false; s.help = 'guided'; s.confirm = false; s.flip = false; });
+  await p.evaluate(() => { document.querySelector('#whiteList .ocard.featured')?.click(); });
+  await p.waitForSelector('#opening.active [data-act=due]'); await p.click('[data-act=due]');
+  await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(700);
+  ok(await p.isVisible('#exploreTip') && /move either side/i.test(await p.textContent('#exploreTip')), 'phone: explore tip is visible near the note');
+  const board = '#drillBoard cg-board';
+  await touchTap2(p, board, 'g1', 'f3');
+  ok(await p.evaluate(() => window.__freereps.drill.waiting && window.__freereps.cg.state.movable.color === 'black' && window.__freereps.cg.state.movable.dests?.get('d7')), 'phone: after 1.Nf3, Black pieces are movable');
+  await touchDrag(p, board, 'd7', 'd5');
+  ok(await p.evaluate(() => window.__freereps.drill.chess.history().join(' ') === 'Nf3 d5'), 'phone: dragging Black ...d5 continues the line');
+  await touchTap2(p, board, 'c2', 'c4');
+  ok(await p.evaluate(() => window.__freereps.drill.waiting && window.__freereps.drill.chess.history().join(' ') === 'Nf3 d5 c4'), 'phone: after 2.c4, waiting on Black');
+  await touchDrag(p, board, 'd5', 'c4');
+  await p.waitForFunction(() => /your repertoire/i.test(document.querySelector('#drillNote')?.innerText || ''), null, { timeout: 4000 });
+  const n = await p.textContent('#drillNote');
+  ok(/your repertoire/i.test(n) && /e3/.test(n) && /Na3/.test(n) && await p.evaluate(() => window.__freereps.drill.chess.history().includes('dxc4')), 'phone drag: after ...dxc4 the book reply is shown — ' + n.replace(/\s+/g, ' ').slice(0, 160));
+  await p.screenshot({ path: '/workspace/skoha-explore-touch-dxc4.png' });
+  await p.evaluate(() => document.querySelector('#drillBackLine')?.click());
+  await p.waitForFunction(() => !window.__freereps.drill.explore, null, { timeout: 4000 });
+  await p.evaluate(() => document.querySelector('#drillBoard')?.scrollIntoView({ block: 'center' }));
+  await p.waitForTimeout(300);
+  await touchTap2(p, board, 'd5', 'c4');
+  await p.waitForFunction(() => /your repertoire/i.test(document.querySelector('#drillNote')?.innerText || ''), null, { timeout: 4000 });
+  ok(await p.evaluate(() => window.__freereps.drill.chess.history().includes('dxc4')), 'phone tap-tap: ...dxc4 is accepted');
+  await c.close();
+}
+{ // Auto-reply on: you can still grab a Black piece before the engine/book reply fires
+  const ua = 'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36';
+  const c = await b.newContext({ viewport: { width: 412, height: 780 }, hasTouch: true, isMobile: true, userAgent: ua, deviceScaleFactor: 2.625 });
+  const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message));
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden])'); await p.click('#gSkip');
+  await p.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 2500; s.anim = 80; s.autoReply = true; s.help = 'guided'; s.confirm = false; s.flip = false; });
+  await p.evaluate(() => { document.querySelector('#whiteList .ocard.featured')?.click(); });
+  await p.waitForSelector('#opening.active [data-act=due]'); await p.click('[data-act=due]');
+  await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(600);
+  const board = '#drillBoard cg-board';
+  await touchTap2(p, board, 'g1', 'f3');
+  ok(await p.evaluate(() => window.__freereps.cg.state.movable.color === 'black' && window.__freereps.cg.state.movable.dests?.get('d7')), 'auto-reply on: Black is still movable after 1.Nf3');
+  await touchDrag(p, board, 'd7', 'd5');
+  ok(await p.evaluate(() => window.__freereps.drill.chess.history().join(' ') === 'Nf3 d5' && !window.__freereps.drill.busy), 'auto-reply on: dragging ...d5 cancels the auto reply and continues the line');
+  await c.close();
+}
+{ // Study page, phone touch: step to 2.c4 then drag ...dxc4
+  const ua = 'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36';
+  const c = await b.newContext({ viewport: { width: 412, height: 780 }, hasTouch: true, isMobile: true, userAgent: ua, deviceScaleFactor: 2.625 });
+  const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message));
+  await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForTimeout(800);
+  if (await p.isVisible('#gSkip')) { await p.click('#gSkip'); await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForTimeout(600); }
+  await p.waitForSelector('#line.active #lineBoard cg-board');
+  ok(await p.locator('#line.active .expltip').isVisible(), 'study: explore tip is visible on a phone');
+  for (let i = 0; i < 3; i++) { await p.evaluate(() => document.querySelector('#lnNext')?.click()); await p.waitForTimeout(200); }
+  ok(await p.evaluate(() => window.__freereps.study.ply === 3 && window.__freereps.lineCg.state.movable.color === 'black' && window.__freereps.lineCg.state.movable.dests?.get('d5')), 'study at 2.c4: Black pawn on d5 is movable');
+  await touchDrag(p, '#lineBoard cg-board', 'd5', 'c4');
+  await p.waitForFunction(() => /your repertoire/i.test(document.querySelector('#lnNote')?.innerText || '') || !!window.__freereps.study.explore, null, { timeout: 4000 });
+  ok(await p.evaluate(() => !!window.__freereps.study.explore) && /your repertoire|e3|Na3/i.test(await p.textContent('#lnNote')), 'study phone drag: ...dxc4 shows a repertoire reply');
+  await c.close();
+}
+
 await b.close(); srv.close(); console.log(fail ? fail + ' FAIL' : 'ALL E2E PASS'); process.exit(fail ? 1 : 0);
