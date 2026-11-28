@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261126a">
+<link rel="stylesheet" href="style.css?v=20261127a">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32"><link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -132,7 +132,7 @@
     <div class="settings panel">
       <div class="sgroup"><h2>Board</h2>
       <label>Board colours <select id="sTheme"><option value="brown">Classic wood</option><option value="blue">Ice blue</option><option value="green">Tournament green</option><option value="aurora">Aurora (violet)</option><option value="slate">Slate</option></select></label>
-      <label>Piece animation <select id="sAnim"><option value="0">Off</option><option value="120">Fast</option><option value="200">Normal</option><option value="320">Slow</option></select></label>
+      <label>Piece animation <select id="sAnim"><option value="0">Off</option><option value="80">Fast</option><option value="120">Normal</option><option value="200">Relaxed</option></select></label>
       <label><input type="checkbox" id="sDests"> Show dots where a piece can move</label>
       <label><input type="checkbox" id="sCoords"> Show a–h / 1–8 around the board</label>
       <label><input type="checkbox" id="sFlip"> Turn the board around</label></div>
@@ -142,7 +142,7 @@
       <label><input type="checkbox" id="sAutoNext"> Go to the next line automatically</label>
       <label><input type="checkbox" id="sPremove"> Let me move before the opponent has replied</label>
       <label><input type="checkbox" id="sConfirm"> On touch screens, confirm each move before it counts</label>
-      <label>Opponent speed <select id="sDelay"><option value="150">Instant</option><option value="400">Normal</option><option value="800">Relaxed</option></select></label>
+      <label>Opponent speed <select id="sDelay"><option value="150">Instant</option><option value="300">Normal</option><option value="600">Relaxed</option></select></label>
       <label>New lines per session <input type="number" id="sNew" min="0" max="100"></label>
       <label>Daily goal (reviews per day) <input type="number" id="sGoal" min="1" max="500"></label></div>
       <div class="sgroup" id="narrBox"><h2>Narrator</h2>
@@ -210,5 +210,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2) · Engine: Stockfish.js (GPL-3.0).</footer>
-<script type="module" src="app.js?v=20261126a"></script>
+<script type="module" src="app.js?v=20261127a"></script>
 </body></html>

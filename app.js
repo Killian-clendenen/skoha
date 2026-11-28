@@ -1,14 +1,14 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, bookReplies, trapAt, explainIdea, evalForSide, formatScore, evalSwingFlag } from './core.js?v=20261126a';
-import { TRAPS } from './traps.js?v=20261126a';
-import { KB } from './kb.js?v=20261126a';
-import { Engine } from './engine.js?v=20261126a';
-import { Narrator } from './narrator.js?v=20261126a';
+import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, bookReplies, trapAt, explainIdea, evalForSide, formatScore, evalSwingFlag } from './core.js?v=20261127a';
+import { TRAPS } from './traps.js?v=20261127a';
+import { KB } from './kb.js?v=20261127a';
+import { Engine } from './engine.js?v=20261127a';
+import { Narrator } from './narrator.js?v=20261127a';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
-const DEF = { sound: true, volume: 0.7, anim: 200, delay: 400, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false, dailyGoal: 10, narrator: false, voice: '', voiceRate: 1, voicePitch: 1, narrOpp: true, confirm: false, help: 'guided' };
+const DEF = { sound: true, volume: 0.7, anim: 120, delay: 300, premove: true, dests: true, coords: true, autoNext: true, flip: false, newLimit: 10, theme: 'brown', notes: true, autoReply: false, dailyGoal: 10, narrator: false, voice: '', voiceRate: 1, voicePitch: 1, narrOpp: true, confirm: false, help: 'guided' };
 let db = load();
 function load() {
   try {
@@ -38,11 +38,30 @@ function repair(d) {
   num('newLimit', 1, 100); num('dailyGoal', 1, 500); num('delay', 0, 5000); num('anim', 0, 2000); num('volume', 0, 1); num('voiceRate', 0.3, 3); num('voicePitch', 0.3, 2);
   for (const k of Object.keys(DEF)) if (typeof DEF[k] === 'boolean') st[k] = typeof st[k] === 'boolean' ? st[k] : DEF[k];
   if (!['guided', 'none'].includes(st.help)) st.help = 'guided';
+  // one-time: pick up the snappier defaults if the user still had the old "Normal" values
+  if (!st.feel) { if (st.anim === 200) st.anim = 120; else if (st.anim === 320) st.anim = 200; if (st.delay === 400) st.delay = 300; else if (st.delay === 800) st.delay = 600; st.feel = 1; }
   return d;
 }
 function migrate(d) { d.reps.forEach(r => r.lines = dedupe(r.lines.map(l => Array.isArray(l) ? { m: l, ch: 'Main' } : l))); return d; }
 function toast(t) { let e = document.querySelector('.toast'); if (!e) { e = document.createElement('div'); e.className = 'toast'; e.setAttribute('role', 'status'); document.body.append(e); } e.textContent = t; e.classList.add('show'); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove('show'), 3200); }
-function save() { localStorage.setItem(KEY, JSON.stringify(db)); }
+function persistable() {
+  // Starter lines are reloaded from PGN; writing ~400KB on every move made pieces feel laggy.
+  return { ...db, reps: db.reps.map(r => r.starter ? { id: r.id, name: r.name, color: r.color, starter: r.starter } : r) };
+}
+let saveTimer = 0, saveDirty = false;
+function flushSave() {
+  if (!saveDirty) return;
+  saveDirty = false;
+  if (saveTimer) { cancelAnimationFrame(saveTimer); saveTimer = 0; }
+  try { localStorage.setItem(KEY, JSON.stringify(persistable())); } catch (e) { console.warn('save', e); }
+}
+function save() {
+  saveDirty = true;
+  if (saveTimer) return;
+  saveTimer = requestAnimationFrame(() => { saveTimer = 0; setTimeout(flushSave, 0); });
+}
+addEventListener('pagehide', flushSave);
+addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
 const S = () => db.settings;
 const cardsOf = rep => db.cards[rep.id] ||= {};
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -116,6 +135,7 @@ function tryMove(chess, from, to, promo = 'q') { try { return chess.move({ from,
 function showTab(t) {
   if (t !== 'drill') drillCg.setAutoShapes([]); if (t !== 'line') lineCg.setAutoShapes([]);
   document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === t));
+  document.body.classList.toggle('training', t === 'drill' || t === 'line');
   const nav = { progress: 'progress', home: 'home', opening: 'home', line: 'home', drill: 'drill', build: 'settings', settings: 'settings', data: 'settings' }[t];
   document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === nav));
   if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); requestAnimationFrame(() => { cueNew(); fitTrainLayout(); });
@@ -340,7 +360,7 @@ function renderOpening(rep) {
 // ---------- line page (study view with annotations + arrows) ----------
 const BRUSH = { G: 'green', R: 'red', Y: 'yellow', B: 'blue' };
 const shapesOf = n => n ? [...(n.cal || []).map(([o, d, c]) => ({ orig: o, dest: d, brush: BRUSH[c] || 'green' })), ...(n.csl || []).map(([o, c]) => ({ orig: o, brush: BRUSH[c] || 'green' }))] : [];
-const lineCg = Chessground($('#lineBoard'), { coordinates: true, blockTouchScroll: true, animation: { enabled: true, duration: 200 }, drawable: { enabled: true, visible: true }, premovable: { enabled: false },
+const lineCg = Chessground($('#lineBoard'), { coordinates: true, blockTouchScroll: true, animation: { enabled: S().anim > 0, duration: S().anim }, drawable: { enabled: true, visible: true }, premovable: { enabled: false },
   movable: { free: false, color: undefined, showDests: true, events: { after: (o, d) => studyMove(o, d) } } });
 // playable study: the line's next move advances as usual; any other legal move is accepted and we suggest a reply
 function studyMove(o, d) {
@@ -507,21 +527,28 @@ function setMode(m) {
 document.querySelectorAll('#modes button').forEach(b => b.onclick = () => setMode(b.dataset.mode));
 $('#drillStudy').onclick = () => { if (drill.rep && drill.li >= 0) go(`#/line/${drill.rep.id}/${drill.li}`); };
 // coach "cutout": explains the move just played (or the new move to play), with arrows on the board
+function moveAt(line, ply, upcoming = false) {
+  const hist = !upcoming && drill.view == null && drill.chess ? drill.chess.history({ verbose: true }) : null;
+  if (hist && hist.length === ply + 1) return { mv: hist[ply], inCheck: drill.chess.inCheck(), fen: drill.chess.fen() };
+  const c = new Chess(); line.m.slice(0, ply).forEach(x => c.move(x));
+  const mv = c.move(line.m[ply]);
+  return { mv, inCheck: c.inCheck(), fen: c.fen() };
+}
 function coach(ply, upcoming = false) {
   const l = drill.rep.lines[drill.li]; const n = l.n?.[ply]; const el = $('#drillNote');
   if (!S().notes && !upcoming) { el.className = 'bnote empty'; return; }
-  const c = new Chess(); l.m.slice(0, ply).forEach(x => c.move(x)); const mv = c.move(l.m[ply]);
+  const { mv, inCheck, fen } = moveAt(l, ply, upcoming);
   const mine = (ply % 2 === 0 ? 'w' : 'b') === userColor();
   const num = Math.floor(ply / 2) + 1 + (ply % 2 ? '...' : '.');
-  const text = n?.t || describeMove(mv, c.inCheck());
+  const text = n?.t || describeMove(mv, inCheck);
   const label = upcoming ? (drill.learning ? 'New move: why we play it' : 'Guided: your move') : mine ? 'Your move' : 'Opponent\'s reply';
   // bubble goes over the top edge (opponent's back ranks) unless the move or its arrows live there
   const whiteView = drillCg.state.orientation === 'white', row = q => whiteView ? 8 - +q[1] : +q[1] - 1;
-  const nx = !upcoming && !mine && l.m[ply + 1] ? new Chess(c.fen()).move(l.m[ply + 1]) : null;
+  let nx = null; if (!upcoming && !mine && l.m[ply + 1]) { try { nx = new Chess(fen).move(l.m[ply + 1]); } catch {} }
   const sqs = [mv.to, ...(nx ? [nx.from, nx.to] : []), ...(n?.cal || []).flatMap(([o, d]) => [o, d]), ...(n?.csl || []).map(([q]) => q)];
   const topHits = sqs.filter(q => row(q) <= 1).length, botHits = sqs.filter(q => row(q) >= 6).length;
   const topHalf = topHits > 0 && topHits >= botHits;
-  el.className = `bnote ${topHalf ? 'at-bottom' : 'at-top'} ${upcoming ? 'up' : mine ? 'you' : 'opp'}`;
+  el.className = `bnote ${topHalf ? 'at-bottom' : 'at-top'} ${upcoming ? 'up' : mine ? 'you' : 'opp'} pop`;
   let body = `<p class="${n?.t ? '' : 'auto'}">${esc(text)}</p>`;
   if (upcoming) {
     const prev = ply > 0 ? l.n?.[ply - 1] : null, pc = new Chess(); l.m.slice(0, Math.max(0, ply - 1)).forEach(x => pc.move(x));
@@ -530,7 +557,6 @@ function coach(ply, upcoming = false) {
       (S().notes && pm && (prev?.t) ? `<p class="prevnote">After ${Math.floor((ply - 1) / 2) + 1}${(ply - 1) % 2 ? '...' : '.'}${esc(l.m[ply - 1])}: ${esc(prev.t)}</p>` : '');
   }
   el.innerHTML = `<div class="coach-card"><div class="coach-head"><span class="coach-san">${num} ${esc(l.m[ply])}${esc(n?.g || '')}</span><span class="who ${mine ? 'you' : 'opp'}">${label}</span></div>${body}</div>`;
-  el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
   if ($('#drill').classList.contains('active') && (mine || upcoming || S().narrOpp)) Narrator.say(upcoming ? null : l.m[ply], upcoming ? `New move: ${playLead(mv)}. ${S().notes ? text : ''}` : (S().notes ? text : ''));
   if ($('#drill').classList.contains('active')) {
     const sh = shapesOf(n);
@@ -636,9 +662,17 @@ $('#sNarr').addEventListener('change', () => { speakUi(); if (!S().narrator) Nar
 // keep the explanation box exactly as tall as the board beside it (desktop). On phones,
 // cap the board at min(available width, 55% of window.innerHeight) so Back/Next — which
 // sit in normal flow immediately below the board — stay on screen with it. No vh-shell.
+function boardAnimating() { return !!(drillCg?.state?.animation?.current || lineCg?.state?.animation?.current); }
+let boundsTimer = 0;
 function clearBoardBounds() {
-  try { drillCg.state.dom.bounds.clear?.(); } catch {}
-  try { lineCg.state.dom.bounds.clear?.(); } catch {}
+  if (boundsTimer) return;
+  const go = () => {
+    boundsTimer = 0;
+    if (boardAnimating()) { boundsTimer = setTimeout(go, 80); return; }
+    try { drillCg.state.dom.bounds.clear?.(); } catch {}
+    try { lineCg.state.dom.bounds.clear?.(); } catch {}
+  };
+  boundsTimer = requestAnimationFrame(go);
 }
 function fitTrainLayout() {
   const root = document.querySelector('#drill.active, #line.active');
@@ -661,9 +695,18 @@ function fitTrainLayout() {
   board.style.maxHeight = size + 'px';
   clearBoardBounds();
 }
-{ const fit = () => { [['#drillBoard', '#drill .tnote'], ['#lineBoard', '#line .tnote']].forEach(([b, n]) => { const bd = $(b), nt = $(n); if (bd && nt) nt.style.setProperty('--bh', innerWidth > 900 ? bd.getBoundingClientRect().height + 'px' : 'auto'); }); fitTrainLayout(); };
+{ let fitT = 0;
+  const fitNow = () => { [['#drillBoard', '#drill .tnote'], ['#lineBoard', '#line .tnote']].forEach(([b, n]) => { const bd = $(b), nt = $(n); if (bd && nt) nt.style.setProperty('--bh', innerWidth > 900 ? bd.getBoundingClientRect().height + 'px' : 'auto'); }); fitTrainLayout(); };
+  const fit = () => {
+    if (fitT) return;
+    fitT = requestAnimationFrame(() => {
+      fitT = 0;
+      if (boardAnimating()) { fitT = setTimeout(fit, 80); return; }
+      fitNow();
+    });
+  };
   const ro = new ResizeObserver(fit); ro.observe($('#drillBoard')); ro.observe($('#lineBoard')); addEventListener('resize', fit);
-  if (window.visualViewport) { visualViewport.addEventListener('resize', fit); visualViewport.addEventListener('scroll', fit); }
+  if (window.visualViewport) { visualViewport.addEventListener('resize', fit); }
   fit(); } addEventListener('resize', () => cueNew());
 const drillNote = ply => { if (drill.view == null) coach(ply); navUi(); };
 // ---- explanation history: browse every move played so far (read-only board while browsing) ----

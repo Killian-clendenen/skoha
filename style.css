@@ -497,3 +497,11 @@ cg-board square.move-dest, cg-board square.premove-dest, cg-board square.oc.move
   .tnote,.lnote{display:flex;flex-direction:column}
   .tnote .expltip,.lnote .expltip{display:block;text-align:center;margin:0 0 6px}
 }
+
+/* Keep the board snappy: heavy blurs and looping aurora fight piece animation, especially on phones. */
+body.training .aurora i{animation:none}
+@media (max-width:900px){
+  .aurora i{animation:none;filter:blur(48px);opacity:.14}
+  header{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(7,10,20,.92)}
+  .trainbar,.stat,.ocard,.panel{backdrop-filter:none;-webkit-backdrop-filter:none}
+}
