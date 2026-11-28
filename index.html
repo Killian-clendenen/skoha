@@ -1,13 +1,26 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
-<title>Skoha — the fountain of youth for your chess</title>
-<meta name="description" content="Free chess opening trainer: annotated repertoires, knowledge base, spaced repetition, premoves, PGN import.">
+<title>Skoha — Learn your chess openings</title>
+<meta name="description" content="Learn your chess openings with spaced repetition. Free, no account, works offline.">
 <meta name="theme-color" content="#070a14">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Skoha">
+<meta property="og:title" content="Skoha — Learn your chess openings">
+<meta property="og:description" content="Learn your chess openings with spaced repetition. Free, no account, works offline.">
+<meta property="og:url" content="https://sk0ha.com/">
+<meta property="og:image" content="https://sk0ha.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Skoha — Learn your chess openings">
+<meta name="twitter:description" content="Learn your chess openings with spaced repetition. Free, no account, works offline.">
+<meta name="twitter:image" content="https://sk0ha.com/og.png">
+<link rel="canonical" href="https://sk0ha.com/">
 <link rel="stylesheet" href="vendor/chessground.base.css">
 <link rel="stylesheet" href="vendor/chessground.brown.css">
 <link rel="stylesheet" href="vendor/chessground.cburnett.css">
-<link rel="stylesheet" href="style.css?v=20261127a">
+<link rel="stylesheet" href="style.css?v=20261127b">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32"><link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -15,25 +28,32 @@
 </head><body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <header>
-  <a class="brand" href="#/"><span class="logo">♞</span> Sko<span class="grad">ha</span></a>
+  <a class="brand" href="#/" data-nav="home"><span class="logo">♞</span> Sko<span class="grad">ha</span></a>
   <nav>
-    <a href="#/" data-nav="home">Home</a>
     <a href="#/train" data-nav="drill">Train</a>
+    <a href="#/openings" data-nav="openings">Openings</a>
     <a href="#/progress" data-nav="progress">Progress</a>
-    <a href="#/settings" data-nav="settings">Settings</a>
+    <a href="#/settings" data-nav="settings" class="navico" title="Settings" aria-label="Settings">⚙</a>
   </nav>
 </header>
 <main>
   <section id="home" class="tab active">
-    <div class="hero">
-      <div class="hero-text">
-        <p class="eyebrow">Free · no account · open source</p>
-        <h1>The <span class="grad">fountain of youth</span><br>for your chess.</h1>
-        <p class="lead">Every move explained, with arrows that show the idea, and spaced repetition so the lines stick.</p>
-        <div class="row"><a class="btn primary big" href="#/train" id="heroTrain">Start training</a><button class="btn big" id="homeFix" hidden>🎯 Fix my mistakes</button></div>
-      </div>
-      <div class="stats" id="stats"></div>
+    <div class="welcome">
+      <h1>Learn your chess openings with spaced repetition</h1>
+      <p class="lead">Play a line today. I’ll ask you to play it again tomorrow, then next week, until it sticks.</p>
+      <div class="row welcome-cta"><a class="btn primary huge" href="#/train" id="heroTrain">Start learning</a><button class="btn" id="homeFix" hidden>Fix my mistakes</button></div>
+      <p class="muted micro">Free · no account · works offline</p>
+      <div class="stats slim" id="stats"></div>
     </div>
+    <h2 class="sect">Popular openings</h2>
+    <div id="homePicks" class="ocards picks"></div>
+    <p class="row center"><a class="btn" href="#/openings">See all openings →</a></p>
+  </section>
+
+  <section id="openings" class="tab">
+    <div class="crumbs"><a href="#/">Home</a> › Openings</div>
+    <h1>Openings</h1>
+    <p class="lead short">Pick a repertoire to study, or search by name, moves or ECO code.</p>
     <div class="searchwrap" role="search">
       <span class="sicon" aria-hidden="true">⌕</span>
       <input id="search" type="search" autocomplete="off" spellcheck="false" placeholder="Search openings, defences, ECO or moves — try “Najdorf”, “e4 c5”, “B90”" aria-label="Search openings" aria-controls="searchResults">
@@ -95,13 +115,13 @@
         <div class="tfoot">
           <div id="drillInfo" class="muted"></div>
           <div id="drillMoves" class="moves"></div>
-          <div class="tbtns"><button id="drillBackLine" hidden title="Return to the training line">↩ <span class="blab">Back to the line</span></button><button id="drillHint" title="Hint (H)" aria-label="Hint">💡 <span class="blab">Hint</span></button><button id="drillFlip" title="Flip (F)" aria-label="Flip">⇅ <span class="blab">Flip</span></button><button id="drillSpeak" aria-label="Narrator" aria-pressed="false">🔇</button><button id="drillStudy" title="Open this line in study view" aria-label="Explain line">📖 <span class="blab">Explain line</span></button><button id="drillNext" class="primary" hidden>Next line →</button></div>
+          <div class="tbtns"><button id="drillBackLine" hidden title="Return to the training line">↩ <span class="blab">Back to the line</span></button><button id="drillFlip" title="Flip (F)" aria-label="Flip">⇅ <span class="blab">Flip</span></button><button id="drillSpeak" aria-label="Narrator" aria-pressed="false">🔇</button><button id="drillStudy" title="Open this line in study view" aria-label="Explain line">📖 <span class="blab">Explain line</span></button><button id="drillNext" class="primary" hidden>Next line →</button></div>
           <div class="playbar" id="playBar" hidden><button id="playOut">♞ Play it out</button><select id="playLevel" aria-label="Engine level"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>
           <div class="playbar" id="playOn" hidden><button id="backTrain" class="primary">← Back to training</button><span class="muted" id="playInfo"></span></div>
         </div>
       </div>
     </div>
-    <div class="tnav"><button id="navBack" title="Back (←)" aria-label="Back">◀ Back</button><span id="navPos" class="muted">No moves yet</span><button id="navFwd" title="Next (→ / Space / Enter)" aria-label="Next">Next ▶</button></div>
+    <div class="tnav"><span id="navPos" class="muted">No moves yet</span><button id="navBack" title="Back (←)" aria-label="Back">◀ Back</button><button id="drillHint" title="Hint (H)" aria-label="Hint">💡 Hint</button><button id="navFwd" title="Next (→ / Space / Enter)" aria-label="Next">Next ▶</button></div>
   </section>
 
   <section id="build" class="tab">
@@ -132,19 +152,21 @@
     <div class="settings panel">
       <div class="sgroup"><h2>Board</h2>
       <label>Board colours <select id="sTheme"><option value="brown">Classic wood</option><option value="blue">Ice blue</option><option value="green">Tournament green</option><option value="aurora">Aurora (violet)</option><option value="slate">Slate</option></select></label>
-      <label>Piece animation <select id="sAnim"><option value="0">Off</option><option value="80">Fast</option><option value="120">Normal</option><option value="200">Relaxed</option></select></label>
-      <label><input type="checkbox" id="sDests"> Show dots where a piece can move</label>
-      <label><input type="checkbox" id="sCoords"> Show a–h / 1–8 around the board</label>
-      <label><input type="checkbox" id="sFlip"> Turn the board around</label></div>
+      <label>Piece animation <select id="sAnim"><option value="0">Off</option><option value="80">Fast</option><option value="120">Normal</option><option value="200">Relaxed</option></select></label></div>
       <div class="sgroup"><h2>Training</h2>
       <label><input type="checkbox" id="sNotes"> Show explanations while practising</label>
+      <label>Daily goal (reviews per day) <input type="number" id="sGoal" min="1" max="500"></label></div>
+      <details class="sgroup adv" id="advSettings"><summary>Advanced</summary>
+      <label><input type="checkbox" id="sDests"> Show dots where a piece can move</label>
+      <label><input type="checkbox" id="sCoords"> Show a–h / 1–8 around the board</label>
+      <label><input type="checkbox" id="sFlip"> Turn the board around</label>
       <label><input type="checkbox" id="sAutoReply"> Opponent replies by itself (off: press Next ▶ to see the reply)</label>
       <label><input type="checkbox" id="sAutoNext"> Go to the next line automatically</label>
       <label><input type="checkbox" id="sPremove"> Let me move before the opponent has replied</label>
       <label><input type="checkbox" id="sConfirm"> On touch screens, confirm each move before it counts</label>
       <label>Opponent speed <select id="sDelay"><option value="150">Instant</option><option value="300">Normal</option><option value="600">Relaxed</option></select></label>
       <label>New lines per session <input type="number" id="sNew" min="0" max="100"></label>
-      <label>Daily goal (reviews per day) <input type="number" id="sGoal" min="1" max="500"></label></div>
+      </details>
       <div class="sgroup" id="narrBox"><h2>Narrator</h2>
       <label><input type="checkbox" id="sNarr"> Read each move and its explanation aloud</label>
       <label><input type="checkbox" id="sNarrOpp"> Also read the opponent's moves</label>
@@ -199,7 +221,7 @@
       <div class="mfoot"><button class="primary" id="gNext0">Suggest openings</button></div>
     </div>
     <div class="gstep" data-step="1" hidden>
-      <h2>Good places to start</h2><p class="muted">Pick one now; you can add the rest anytime from Home.</p>
+      <h2>Good places to start</h2><p class="muted">Pick one now; you can add the rest anytime from Openings.</p>
       <div id="gSugg" class="gsugg"></div>
       <div class="mfoot"><button id="gBack1">Back</button><button class="primary" id="gNext1">Quick tour</button></div>
     </div>
@@ -210,5 +232,5 @@
   </div>
 </div>
 <footer>Skoha: free &amp; open source (GPL-3.0). <a id="srcLink" href="https://github.com/Killian-clendenen/skoha">Source code</a> · Board: chessground (GPL-3.0) · Rules: chess.js (BSD-2) · Engine: Stockfish.js (GPL-3.0).</footer>
-<script type="module" src="app.js?v=20261127a"></script>
+<script type="module" src="app.js?v=20261127b"></script>
 </body></html>

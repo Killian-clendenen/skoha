@@ -1,10 +1,10 @@
 import { Chess, SQUARES } from './vendor/chess.js';
 import { Chessground } from './vendor/chessground.min.js';
-import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, bookReplies, trapAt, explainIdea, evalForSide, formatScore, evalSwingFlag } from './core.js?v=20261127a';
-import { TRAPS } from './traps.js?v=20261127a';
-import { KB } from './kb.js?v=20261127a';
-import { Engine } from './engine.js?v=20261127a';
-import { Narrator } from './narrator.js?v=20261127a';
+import { gameMoves, bookIndex, firstDeviation, lastDays, mistakeSpots, validateLine, parsePgn, dedupe, userCards, schedule, isDue, buildQueue, soundFor, toPgn, repMoves, fenKey, describeMove, buildSearchIndex, search, navStep, suggestOpenings, dayKey, addReview, goalStreak, ringSvg, guidedPass, syncPayload, mergeData, encodeSync, decodeSync, bookReplies, trapAt, explainIdea, evalForSide, formatScore, evalSwingFlag } from './core.js?v=20261127b';
+import { TRAPS } from './traps.js?v=20261127b';
+import { KB } from './kb.js?v=20261127b';
+import { Engine } from './engine.js?v=20261127b';
+import { Narrator } from './narrator.js?v=20261127b';
 
 const KEY = 'freereps.v2';  // same key as v2 so progress carries over
 const $ = s => document.querySelector(s);
@@ -136,8 +136,8 @@ function showTab(t) {
   if (t !== 'drill') drillCg.setAutoShapes([]); if (t !== 'line') lineCg.setAutoShapes([]);
   document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === t));
   document.body.classList.toggle('training', t === 'drill' || t === 'line');
-  const nav = { progress: 'progress', home: 'home', opening: 'home', line: 'home', drill: 'drill', build: 'settings', settings: 'settings', data: 'settings' }[t];
-  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === nav));
+  const nav = { progress: 'progress', home: 'home', openings: 'openings', opening: 'openings', line: 'openings', drill: 'drill', build: 'openings', settings: 'settings', data: 'settings' }[t];
+  document.querySelectorAll('header [data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === nav));
   if (t === 'drill') { renderDrillSelect(); drillCg.redrawAll(); requestAnimationFrame(() => { cueNew(); fitTrainLayout(); });
     // opening the Train screen must never leave an idle board: start the selected opening if nothing is running
     if (!drill.line && !play && db.reps.length) setTimeout(() => { if (!drill.line && $('#drill').classList.contains('active')) startSession(drill.mode || 'due'); }, 0); }
@@ -154,6 +154,7 @@ function route() {
   else if (p === 'line' && repById(a)) { showTab('line'); openLine(repById(a), Number(b) || 0); }
   else if (p === 'train') showTab('drill');
   else if (p === 'build') showTab('build');
+  else if (p === 'openings') { showTab('openings'); renderHome(); }
   else if (p === 'progress') { showTab('progress'); renderProgress(); }
   else if (p === 'settings') showTab('settings');
   else if (p === 'data') showTab('data');
@@ -209,8 +210,9 @@ function renderHome() {
   $('#stats').innerHTML = `<div class="goal" id="goalRing">${ringSvg(done, goal)}<div><div class="l">Today's goal</div><div class="gsub">${done >= goal ? 'Done for today ✓' : (goal - done) + ' reviews to go'}</div><div class="streak" id="streakN">🔥 <b>${sk}</b> day streak</div></div></div>` +
     [[T.due, 'due now'], [T.learned + '/' + T.total, 'moves learned'], [st.reviews ? Math.round(100 * st.correct / st.reviews) + '%' : '–', 'accuracy']]
     .map(([n, l]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join(''); }
-  { const n = recentMistakes(db.reps).length, b = $('#homeFix'); b.hidden = !n; b.textContent = `🎯 Fix my mistakes (${n})`; }
-  const W = $('#whiteList'), B = $('#blackList'), C = $('#customList'); W.innerHTML = B.innerHTML = C.innerHTML = '';
+  { const n = recentMistakes(db.reps).length, b = $('#homeFix'); if (b) { b.hidden = !n; b.textContent = n ? `Fix my mistakes (${n})` : ''; } }
+  { const ht = $('#heroTrain'); if (ht) ht.textContent = T.due ? `Train · ${T.due} due` : (T.learned ? 'Continue training' : 'Start learning'); }
+  const W = $('#whiteList'), B = $('#blackList'), C = $('#customList'); if (W && B && C) { W.innerHTML = B.innerHTML = C.innerHTML = ''; }
   const starters = db.reps.filter(r => r.starter).sort((a, b) => STARTERS.findIndex(s => s.id === a.starter) - STARTERS.findIndex(s => s.id === b.starter));
   const tied = (b, w) => (metaOf(b).vs || []).includes(w.starter) ? 0 : 1;
   const blackFor = w => starters.filter(b => b.color === 'b' && (metaOf(b).answers === metaOf(w).first || (metaOf(b).vs || []).includes(w.starter))).sort((a, b) => tied(a, w) - tied(b, w));
@@ -220,6 +222,13 @@ function renderHome() {
   starters.filter(r => r.color === 'b').forEach(r => B.append(ocard(r, vsChips(`vs 1.${metaOf(r).answers || '?'}`, whiteFor(r)))));
   SIDX = null; if ($('#search').value.trim()) runSearch();
   const custom = db.reps.filter(r => !r.starter); $('#customWrap').hidden = !custom.length; custom.forEach(r => C.append(ocard(r)));
+
+  const hp = $('#homePicks');
+  if (hp) {
+    hp.innerHTML = '';
+    const ids = ['reti', 'italian', 'london', 'sicilian', 'caro-kann', 'french'];
+    ids.forEach(id => { const r = starters.find(x => x.starter === id); if (r) hp.append(ocard(r)); });
+  }
   const removed = STARTERS.filter(s => (db.removed || []).includes(s.id));
   if (removed.length) { const d = document.createElement('div'); d.className = 'muted'; d.innerHTML = 'Removed starters: ' + removed.map(s => `<button data-restore="${s.id}">Restore ${esc(s.name)}</button>`).join(' ');
     d.querySelectorAll('button').forEach(b => b.onclick = async () => { db.removed = db.removed.filter(x => x !== b.dataset.restore); await loadStarters(); renderHome(); }); C.after(d); $('#customWrap').hidden = false; }
@@ -232,8 +241,8 @@ function runSearch() {
   const q = $('#search').value, box = $('#searchResults');
   sRes = q.trim() ? search(sIndex(), q, 10) : []; sSel = 0;
   const hit = new Set(sRes.map(r => r.id));
-  document.querySelectorAll('#home .ocard').forEach(c => c.hidden = !!q.trim() && !hit.has(c.dataset.id));
-  document.querySelectorAll('#home .ocards').forEach(l => { const h = l.previousElementSibling; if (h?.classList.contains('sect')) h.hidden = !!q.trim() && ![...l.children].some(c => !c.hidden); });
+  document.querySelectorAll('#openings .ocard').forEach(c => c.hidden = !!q.trim() && !hit.has(c.dataset.id));
+  document.querySelectorAll('#openings .ocards').forEach(l => { const h = l.previousElementSibling; if (h?.classList.contains('sect')) h.hidden = !!q.trim() && ![...l.children].some(c => !c.hidden); });
   $('#searchEmpty').hidden = !q.trim() || sRes.length > 0;
   box.hidden = !sRes.length;
   box.innerHTML = sRes.map((r, i) => `<a role="option" class="sres${i === sSel ? ' on' : ''}" data-i="${i}" href="#/opening/${r.id}">
@@ -255,7 +264,7 @@ $('#search').addEventListener('keydown', e => {
   else if (e.key === 'Escape') { $('#search').value = ''; runSearch(); $('#search').blur(); }
 });
 document.addEventListener('click', e => { if (!e.target.closest('.searchwrap')) $('#searchResults').hidden = true; });
-addEventListener('keydown', e => { if (e.key === '/' && $('#home').classList.contains('active') && !e.target.matches('input,textarea,select')) { e.preventDefault(); $('#search').focus(); } });
+addEventListener('keydown', e => { if (e.key === '/' && !e.target.matches('input,textarea,select')) { e.preventDefault(); if (!$('#openings').classList.contains('active')) go('#/openings'); $('#search').focus(); } });
 
 // ---------- progress page ----------
 function renderProgress() {
@@ -385,7 +394,7 @@ function openLine(rep, li) {
   study.rep = rep; study.li = Math.min(li, rep.lines.length - 1); const line = rep.lines[study.li];
   const c = new Chess(); study.verbose = line.m.map(s => { const m = c.move(s); return { m, check: c.inCheck(), fen: c.fen() }; });
   const idx = rep.lines.map((l, i) => i).filter(i => rep.lines[i].ch === line.ch); const k = idx.indexOf(study.li) + 1;
-  $('#lineCrumbs').innerHTML = `<a href="#/">Home</a> › <a href="#/opening/${rep.id}">${esc(rep.name)}</a> › ${esc(line.ch)} › Line ${k}`;
+  $('#lineCrumbs').innerHTML = `<a href="#/">Home</a> › <a href="#/openings">Openings</a> › <a href="#/opening/${rep.id}">${esc(rep.name)}</a> › ${esc(line.ch)} › Line ${k}`;
   $('#lnChapter').textContent = `${rep.name} · ${line.ch}`; $('#lnTitle').textContent = `Line ${k} of ${idx.length}`;
   lineCg.set({ orientation: cname(rep.color) });
   $('#lnMoves').innerHTML = line.m.map((s, i) => `${i % 2 ? '' : `<span class="n">${i / 2 + 1}.</span>`}<button data-p="${i + 1}" class="${(i % 2 === 0 ? 'w' : 'b') === rep.color ? 'you' : ''} ${line.n?.[i]?.t ? 'has' : ''}">${esc(s)}${esc(line.n?.[i]?.g || '')}</button>`).join('');
@@ -1224,7 +1233,7 @@ function editRep(r) {
   go('#/build'); buildSync(); bmsg('Editing "' + r.name + '". Add/remove lines, then Save repertoire.');
 }
 buildSync(); renderSettings(); applyTheme();
-loadStarters().then(() => { route(); if (!db.guided) { if (Object.values(db.cards || {}).some(c => c && Object.keys(c).length)) { db.guided = true; save(); } else openGuide(); } });
+loadStarters().then(() => { route(); if (!db.guided) { if (Object.values(db.cards || {}).some(c => c && Object.keys(c).length)) { db.guided = true; save(); flushSave(); } else openGuide(); } });
 // ---------- first-visit guide ----------
 const G = { side: 'both', level: 'beginner', tour: 0, pick: null };
 const TOUR = [
@@ -1234,7 +1243,7 @@ const TOUR = [
 ];
 function gStep(n) { document.querySelectorAll('#guide .gstep').forEach(s => s.hidden = +s.dataset.step !== n); }
 function openGuide() { $('#guide').hidden = false; gStep(0); }
-function closeGuide(goTo) { $('#guide').hidden = true; db.guided = true; db.profile = { side: G.side, level: G.level }; save(); const r = goTo && repById(goTo); if (r) { go('#/train'); $('#drillRep').value = r.id; setMode('due'); } }
+function closeGuide(goTo) { $('#guide').hidden = true; db.guided = true; db.profile = { side: G.side, level: G.level }; save(); flushSave(); const r = goTo && repById(goTo); if (r) { go('#/train'); $('#drillRep').value = r.id; setMode('due'); } }
 window.__freereps.openGuide = openGuide;
 $('#replayGuide').onclick = () => { go('#/'); openGuide(); };
 document.querySelectorAll('#guide .gopts').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => {

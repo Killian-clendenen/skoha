@@ -7,7 +7,7 @@ let fail = 0; const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); i
 const b = await chromium.launch({ executablePath: process.env.CHROME || (fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined), args: ['--autoplay-policy=no-user-gesture-required'] });
 const pg = await b.newPage({ viewport: { width: 1200, height: 820 } });
 const errs = []; pg.on('pageerror', e => errs.push(e.message)); pg.on('console', m => { if (m.type() === 'error' && !/status of 501/.test(m.text())) errs.push(m.text()); });
-await pg.goto('http://localhost:8765/'); await pg.waitForSelector('#whiteList .ocard.featured');
+await pg.goto('http://localhost:8765/'); await pg.waitForSelector('#guide, #heroTrain');
 // first-visit guide: side + level -> suggestions -> 3-step tour -> lands on the picked opening
 await pg.waitForSelector('#guide:not([hidden])'); ok(true, 'guide shown on first visit');
 await pg.click('#guide [data-k=side] [data-v=b]'); await pg.click('#guide [data-k=level] [data-v=advanced]'); await pg.click('#gNext0');
@@ -15,7 +15,11 @@ ok((await pg.textContent('#gSugg')).includes('Sicilian'), 'advanced Black -> Sic
 await pg.click('#gNext1'); for (let i = 0; i < 3; i++) await pg.click('#gTourNext');
 ok(await pg.isHidden('#guide') && /#\/train/.test(pg.url()) && await pg.inputValue('#drillRep') === 'sicilian', 'Start training opens training on the suggested opening');
 await pg.reload(); await pg.waitForTimeout(800); ok(await pg.isHidden('#guide'), 'guide not shown again');
-await pg.goto('http://localhost:8765/#/'); await pg.waitForSelector('#whiteList .ocard.featured');
+await pg.goto('http://localhost:8765/#/'); await pg.waitForSelector('#heroTrain');
+ok(/Learn your chess openings with spaced repetition/.test(await pg.textContent('#home h1')), 'home headline is a single clear sentence');
+ok(/Start learning|Train ·|Continue/.test(await pg.textContent('#heroTrain')), 'home has one big Train button');
+ok(await pg.locator('#homePicks .ocard').count() >= 4, 'home shows a short opening picker');
+await pg.goto('http://localhost:8765/#/openings'); await pg.waitForSelector('#whiteList .ocard.featured');
 ok((await pg.textContent('#whiteList .ocard:first-child h3')).includes('Réti'), 'Réti featured first in White openings');
 const nW = await pg.locator('#whiteList .ocard').count(), nB = await pg.locator('#blackList .ocard').count();
 ok(nW >= 12 && nB >= 14 && (await pg.textContent('#blackList')).includes('London System'), `White ${nW} / Black ${nB} cards, QGD tied to London`);
@@ -23,17 +27,17 @@ ok((await pg.textContent('#whiteList .ocard[data-id=ruy]')).includes('Berlin Def
 // search: instant filter + keyboard
 await pg.click('#search'); await pg.keyboard.type('Najdorf'); await pg.waitForTimeout(80);
 ok((await pg.locator('#searchResults .sres').first().textContent()).includes('Najdorf'), 'search "Najdorf" -> first result is the Najdorf chapter');
-ok((await pg.locator('#home .ocard:not([hidden])').count()) === 1, 'cards filtered to matching opening');
+ok((await pg.locator('#openings .ocard:not([hidden])').count()) === 1, 'cards filtered to matching opening');
 await pg.screenshot({ path: '/workspace/skoha-home.png' });
 await pg.keyboard.press('Enter'); await pg.waitForSelector('#opening.active #ch-sicilian-najdorf'); await pg.waitForTimeout(400);
 ok(await pg.evaluate(() => { const r = document.getElementById('ch-sicilian-najdorf').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; }), 'Enter jumps to Sicilian > Najdorf chapter');
-await pg.goto('http://localhost:8765/#/'); await pg.waitForSelector('#whiteList .ocard');
+await pg.goto('http://localhost:8765/#/openings'); await pg.waitForSelector('#whiteList .ocard');
 await pg.keyboard.press('/'); await pg.keyboard.type('e4 c5');
 ok((await pg.locator('#searchResults .sres').first().textContent()).includes('Sicilian'), 'search by moves "e4 c5" -> Sicilian');
 await pg.fill('#search', 'grunfeld'); await pg.waitForTimeout(50); await pg.keyboard.press('ArrowDown'); await pg.keyboard.press('ArrowUp');
 ok((await pg.locator('#searchResults .sres.on').textContent()).includes('Grünfeld'), 'accent-insensitive + arrow keys');
 await pg.fill('#search', 'xyzzy'); await pg.waitForTimeout(50); ok(!(await pg.isHidden('#searchEmpty')), 'empty-state shown');
-await pg.keyboard.press('Escape'); ok((await pg.locator('#home .ocard[hidden]').count()) === 0, 'Escape clears filter');
+await pg.keyboard.press('Escape'); ok((await pg.locator('#openings .ocard[hidden]').count()) === 0, 'Escape clears filter');
 ok((await pg.textContent('#whiteList')).includes('vs 1...f5'), 'Réti card shows defences (chapters)');
 await pg.screenshot({ path: root + '/screenshot-home.png', fullPage: false });
 // Home -> Opening -> Line
@@ -52,7 +56,7 @@ for (let i = 0; i < 2; i++) { await pg.keyboard.press('ArrowRight'); await pg.wa
 ok((await pg.textContent('#lnNote')).includes('signature Réti move'), 'keyboard → steps to 2.c4 note');
 ok((await pg.locator('#lineBoard svg line, #lineBoard svg path').count()) > 0, 'arrow drawn for 2.c4');
 await pg.screenshot({ path: root + '/screenshot-line.png' });
-await pg.goto('http://localhost:8765/#/'); await pg.waitForSelector('#whiteList .ocard');
+await pg.goto('http://localhost:8765/#/openings'); await pg.waitForSelector('#whiteList .ocard');
 await pg.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.anim = 120; s.autoNext = false; s.autoReply = true; });
 await pg.goto('http://localhost:8765/#/opening/reti'); await pg.waitForSelector('#opening.active [data-act=due]'); await pg.click('[data-act=due]'); await pg.waitForTimeout(500);
 // click squares on the board helper (white orientation)
@@ -152,9 +156,9 @@ await pg.evaluate(() => document.querySelector('#modeBox').open = true); await p
   ok((await pg.textContent('#navPos')).includes('No moves yet') || /Move 0/.test(await pg.textContent('#navPos')), 'switching lines resets the counter: ' + await pg.textContent('#navPos'));
   ok(await pg.isDisabled('#navBack'), 'Back disabled at line start'); }
 await pg.click('nav [data-nav=settings]'); await pg.click('#testSounds'); await pg.waitForTimeout(400); await pg.selectOption('#sTheme', 'aurora'); ok(await pg.evaluate(() => document.body.classList.contains('bt-aurora')), 'board theme switch');
-ok(await pg.locator('nav a').count() === 4, 'four-item nav (Home, Train, Progress, Settings)');
+ok(await pg.locator('nav a').count() === 4, 'four-item nav (Train, Openings, Progress, Settings)');
 ok(await pg.inputValue('#sGoal') === '10', 'daily goal default 10');
-await pg.fill('#sGoal', '3'); await pg.dispatchEvent('#sGoal', 'change'); await pg.click('nav [data-nav=home]'); await pg.waitForSelector('#goalRing');
+await pg.fill('#sGoal', '3'); await pg.dispatchEvent('#sGoal', 'change'); await pg.click('a.brand'); await pg.waitForSelector('#goalRing');
 { const t = await pg.textContent('#goalRing'); ok(/\d+\/3/.test(t) && /day streak/.test(t), 'home ring + streak: ' + t.replace(/\s+/g, ' ')); }
 ok(await pg.evaluate(() => Object.values(window.__freereps.db().history || {})[0] > 0), 'reviews counted today');
 await pg.screenshot({ path: '/workspace/skoha-goal-home.png' }); await pg.click('nav [data-nav=settings]');
@@ -164,7 +168,7 @@ await pg.click('nav [data-nav=settings]'); await pg.screenshot({ path: '/workspa
 ok(errs.length === 0, 'no page errors ' + errs.join(' | '));
 // mobile
 const mp = await b.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }); await mp.goto('http://localhost:8765/'); await mp.waitForSelector('#guide:not([hidden])'); await mp.screenshot({ path: '/workspace/skoha-guide-mobile.png' }); await mp.tap('#gSkip');
-await mp.waitForSelector('#whiteList .ocard'); const bw = await mp.evaluate(() => document.documentElement.scrollWidth);
+await mp.waitForSelector('#heroTrain'); const bw = await mp.evaluate(() => document.documentElement.scrollWidth);
 ok(bw <= 390, 'mobile no horizontal overflow (' + bw + ')');
 await mp.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; });
 await mp.goto('http://localhost:8765/#/opening/sicilian'); await mp.waitForSelector('#opening.active [data-act=random]'); await mp.click('[data-act=random]'); await mp.waitForTimeout(900);
@@ -299,12 +303,12 @@ const clickSq = async (p, s, white = true) => { const bb = await p.locator('#dri
   ok(await p.evaluate(async () => (await Promise.all(['icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png'].map(u => fetch(u).then(r => r.ok && r.headers.get('content-type') === 'image/png')))).every(Boolean)), 'icons served');
   await p.evaluate(() => navigator.serviceWorker.ready); await p.reload(); await p.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 15000 });
   ok(true, 'service worker controls the page');
-  await p.waitForTimeout(1500); await c.setOffline(true); await p.reload(); await p.waitForSelector('#whiteList .ocard', { timeout: 15000 }).then(() => ok(true, 'app loads offline from the service worker'), () => ok(false, 'offline load'));
+  await p.waitForTimeout(1500); await c.setOffline(true); await p.reload(); await p.waitForSelector('#heroTrain, #whiteList .ocard', { timeout: 15000 }).then(() => ok(true, 'app loads offline from the service worker'), () => ok(false, 'offline load'));
   await p.goto('http://localhost:8765/#/opening/italian'); await p.waitForSelector('#opening.active [data-act=due]'); await p.click('[data-act=due]'); await p.waitForTimeout(700);
   ok((await cueState(p)).arrows.length === 1, 'training works offline');
   await c.setOffline(false);
   // new deploy: change served index.html; network-first means the very next load shows it (no stale cache)
-  global.__marker = '<!--deploy-2-->'; await p.goto('http://localhost:8765/#/'); await p.reload(); await p.waitForSelector('#whiteList .ocard');
+  global.__marker = '<!--deploy-2-->'; await p.goto('http://localhost:8765/#/openings'); await p.reload(); await p.waitForSelector('#whiteList .ocard');
   ok((await p.content()).includes('deploy-2'), 'new deploy is picked up on the next online load'); global.__marker = '';
   await c.close(); }
 // ---- regression: the Réti must work for fresh users AND with data saved by older versions ----
@@ -312,7 +316,7 @@ async function retiFlow(tag, seed, vp = { width: 1200, height: 820 }) {
   const c = await b.newContext({ viewport: vp }); const pe = [];
   if (seed) await c.addInitScript(s => { if (!localStorage.getItem('freereps.v2')) localStorage.setItem('freereps.v2', s); }, seed);
   const p = await c.newPage(); p.on('pageerror', e => pe.push(e.message));
-  await p.goto('http://localhost:8765/'); await p.waitForSelector('#whiteList .ocard'); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  await p.goto('http://localhost:8765/#/openings'); await p.waitForSelector('#whiteList .ocard'); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
   const card = p.locator('#whiteList .ocard').filter({ hasText: 'Réti Opening' }); ok(await card.count() === 1, tag + ': exactly one Réti card');
   await card.locator('.chip').first().click(); await p.waitForSelector('#opening.active [data-act=due]');
   await p.click('#opening [data-act=due]'); await p.waitForTimeout(800);
@@ -322,7 +326,7 @@ async function retiFlow(tag, seed, vp = { width: 1200, height: 820 }) {
   await p.click('#helpToggle'); await p.waitForTimeout(150); await p.click('#helpToggle');
   await p.goto('http://localhost:8765/#/line/reti/0'); await p.waitForSelector('#line.active'); await p.click('#lnNext'); await p.waitForTimeout(300);
   ok((await p.textContent('#lnNote')).length > 20, tag + ': study page works');
-  for (const q of ['Reti', 'Réti', 'Nf3']) { await p.goto('http://localhost:8765/#/'); await p.fill('#search', q); await p.waitForTimeout(200); ok((await p.textContent('#searchResults')).includes('Réti Opening'), tag + ': search ' + q); }
+  for (const q of ['Reti', 'Réti', 'Nf3']) { await p.goto('http://localhost:8765/#/openings'); await p.fill('#search', q); await p.waitForTimeout(200); ok((await p.textContent('#searchResults')).includes('Réti Opening'), tag + ': search ' + q); }
   ok(pe.length === 0, tag + ': no page errors ' + pe.join(' | '));
   const db = await p.evaluate(() => window.__freereps.db()); await c.close(); return db;
 }
@@ -338,7 +342,7 @@ async function retiMoves(tag, seed, { touch = false, learnAll = false } = {}) {
   const c = await b.newContext(touch ? { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true } : { viewport: { width: 1366, height: 768 } });
   if (seed) await c.addInitScript(s => { if (!localStorage.getItem('freereps.v2')) localStorage.setItem('freereps.v2', s); }, seed);
   const p = await c.newPage(); const pe = [], warn = []; p.on('pageerror', e => pe.push(e.message)); p.on('console', m => { if (m.type() === 'warning' && m.text().includes('[skoha] board not movable')) warn.push(m.text()); });
-  await p.goto('http://localhost:8765/'); await p.waitForSelector('#whiteList .ocard'); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  await p.goto('http://localhost:8765/#/openings'); await p.waitForSelector('#whiteList .ocard'); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
   if (learnAll) await p.evaluate(() => { const db = window.__freereps.db(), r = db.reps.find(x => x.starter === 'reti'), cs = db.cards[r.id] ||= {};
     // every White move of every line learned and not due for a month
     for (const l of r.lines) { const C = window.__freereps.drill.chess.constructor, g = new C(); l.m.forEach((s, i) => { if (i % 2 === 0) cs[g.fen().split(' ').slice(0, 4).join(' ') + '|' + s] = { ease: 2.5, interval: 30, reps: 4, lapses: 0, due: Date.now() + 30 * 864e5 }; g.move(s); }); } });
@@ -365,7 +369,8 @@ async function retiMoves(tag, seed, { touch = false, learnAll = false } = {}) {
 for (const [tag, f] of [['fresh', null], ['narrator-era data', 'ls-c2e3afe.json']]) for (const via of ['nav [data-nav=drill]', '#heroTrain']) {
   const c = await b.newContext({ viewport: { width: 1366, height: 768 } }); const sd = f && fs.readFileSync(root + '/tests/fixtures/' + f, 'utf8');
   if (sd) await c.addInitScript(s => { if (!localStorage.getItem('freereps.v2')) localStorage.setItem('freereps.v2', s); }, sd);
-  const p = await c.newPage(); await p.goto('http://localhost:8765/'); await p.waitForSelector('#whiteList .ocard'); await p.waitForTimeout(300); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  const p = await c.newPage(); await p.goto('http://localhost:8765/'); await p.waitForSelector('#heroTrain, #guide'); await p.waitForTimeout(300); if (await p.isVisible('#gSkip')) await p.click('#gSkip');
+  if (via === '#heroTrain') { await p.goto('http://localhost:8765/#/'); await p.waitForSelector('#heroTrain'); }
   await p.click(via); await p.waitForTimeout(900);
   const st = await p.evaluate(() => ({ rep: window.__freereps.drill.rep?.name, line: !!window.__freereps.drill.line, mov: window.__freereps.cg.state.movable.color, dests: window.__freereps.cg.state.movable.dests?.size }));
   const bb = await p.locator('#drillBoard cg-board').boundingBox(), w = bb.width / 8; await p.mouse.click(bb.x + 6.5 * w, bb.y + 7.5 * w); await p.mouse.click(bb.x + 5.5 * w, bb.y + 5.5 * w); await p.waitForTimeout(350);
@@ -489,8 +494,8 @@ async function skipGuide(p) {
 }
 for (const [w, h, tag] of [[360, 740, '360x740'], [390, 844, '390x844'], [430, 932, '430x932'], [844, 390, 'landscape']]) {
   const { c, p } = await phoneCtx(w, h);
-  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide, #whiteList'); await skipGuide(p);
-  await p.goto('http://localhost:8765/#/'); await p.waitForSelector('#whiteList .ocard');
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden]), #heroTrain'); await skipGuide(p);
+  await p.goto('http://localhost:8765/#/openings'); await p.waitForSelector('#whiteList .ocard');
   let L = await p.evaluate(phoneLayout);
   ok(!L.overflow, `${tag} home: no horizontal overflow (${L.sw})`);
   ok(L.searchFs >= 16, `${tag} search font-size is ${L.searchFs}px (no iOS zoom)`);
@@ -545,7 +550,7 @@ const navVisible = () => {
 };
 for (const [w, h, tag] of [[412, 780, '412x780'], [412, 915, '412x915'], [384, 700, '384x700'], [360, 640, '360x640'], [390, 844, '390x844-m3'], [430, 932, '430x932-m3']]) {
   const { c, p } = await androidCtx(w, h);
-  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide, #whiteList'); await skipGuide(p);
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden]), #heroTrain'); await skipGuide(p);
   await p.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; s.help = 'guided'; });
   await p.goto('http://localhost:8765/#/opening/reti'); await p.waitForSelector('#opening.active [data-act=due]');
   await p.click('[data-act=due]'); await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(800);
@@ -582,7 +587,7 @@ function m4Layout() {
   return { vh: innerHeight, vw: innerWidth, sw: document.documentElement.scrollWidth, overflow: document.documentElement.scrollWidth > innerWidth + 1, back: vis(document.querySelector('#drill.active #navBack, #line.active #lnPrev')), next: vis(document.querySelector('#drill.active #navFwd, #line.active #lnNext')), board: br && { t: br.top, b: br.bottom, w: br.width, h: br.height, in: br.top >= -2 && br.bottom <= innerHeight + 2 }, overlap, navUnderBoard, noteBelowNav, g1: sq(6, 0), f3: sq(5, 2) };
 }
 async function m4OpenTrain(p) {
-  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide, #whiteList'); await skipGuide(p);
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden]), #heroTrain'); await skipGuide(p);
   await p.evaluate(() => { const s = window.__freereps.db().settings; s.delay = 150; s.autoReply = false; s.help = 'guided'; });
   await p.goto('http://localhost:8765/#/opening/reti'); await p.waitForSelector('#opening.active [data-act=due]');
   await p.click('[data-act=due]'); await p.waitForSelector('#drill.active #drillBoard cg-board'); await p.waitForTimeout(700);
@@ -625,7 +630,7 @@ for (const [w, h, tag, dpr] of m4sizes) {
   ok(await p.evaluate(() => /\bNf3\b/.test(window.__freereps.drill.chess.history().join(' '))), '412x780 drag g1-f3 plays Nf3');
   await c.close(); }
 { const { c, p } = await m4Ctx(412, 780, 2.625);
-  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide, #whiteList'); await skipGuide(p);
+  await p.goto('http://localhost:8765/'); await p.waitForSelector('#guide:not([hidden]), #heroTrain'); await skipGuide(p);
   const seeded = await p.evaluate(async () => {
     const v = (document.querySelector('script[src*="app.js"]')?.src.match(/v=([^&]+)/) || [, ''])[1];
     const { userCards } = await import('./core.js?v=' + v);
